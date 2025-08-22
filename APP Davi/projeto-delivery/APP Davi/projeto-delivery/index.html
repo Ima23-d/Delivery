@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PedidoFácil - Plataforma de Delivery</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; min-height: 100vh; }
+        
+        .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
+        
+        .header { text-align: center; margin-bottom: 50px; }
+        .logo { font-size: 3.5rem; margin-bottom: 20px; }
+        .title { font-size: 2.5rem; font-weight: bold; margin-bottom: 15px; }
+        .subtitle { font-size: 1.2rem; opacity: 0.9; margin-bottom: 30px; }
+        .description { font-size: 1rem; opacity: 0.8; max-width: 600px; margin: 0 auto; line-height: 1.6; }
+        
+        .modules-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-bottom: 50px; }
+        
+        .module-card { background: rgba(255,255,255,0.1); border-radius: 20px; padding: 30px; text-align: center; 
+            backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); transition: all 0.3s ease; }
+        .module-card:hover { transform: translateY(-5px); background: rgba(255,255,255,0.2); }
+        
+        .module-icon { font-size: 3rem; margin-bottom: 20px; }
+        .module-title { font-size: 1.5rem; font-weight: bold; margin-bottom: 15px; }
+        .module-description { font-size: 0.9rem; opacity: 0.9; margin-bottom: 20px; line-height: 1.5; }
+        .module-features { list-style: none; margin-bottom: 25px; }
+        .module-features li { font-size: 0.85rem; opacity: 0.8; margin-bottom: 8px; }
+        .module-features li:before { content: "✓ "; color: #4ade80; }
+        
+        .access-btn { background: rgba(255,255,255,0.2); color: white; border: 2px solid rgba(255,255,255,0.3);
+            padding: 12px 25px; border-radius: 25px; text-decoration: none; font-weight: 600; 
+            transition: all 0.3s ease; display: inline-block; }
+        .access-btn:hover { background: rgba(255,255,255,0.3); border-color: rgba(255,255,255,0.5); transform: scale(1.05); }
+        
+        .business-model { background: rgba(255,255,255,0.1); border-radius: 20px; padding: 30px; margin-bottom: 40px;
+            backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); }
+        .business-title { font-size: 1.8rem; font-weight: bold; margin-bottom: 20px; text-align: center; }
+        .fees-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
+        .fee-item { text-align: center; padding: 20px; background: rgba(255,255,255,0.1); border-radius: 15px; }
+        .fee-value { font-size: 2rem; font-weight: bold; color: #4ade80; margin-bottom: 10px; }
+        .fee-label { font-size: 1rem; margin-bottom: 5px; }
+        .fee-description { font-size: 0.8rem; opacity: 0.8; }
+        
+        .tech-stack { background: rgba(255,255,255,0.1); border-radius: 20px; padding: 30px; margin-bottom: 40px;
+            backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); }
+        .tech-title { font-size: 1.8rem; font-weight: bold; margin-bottom: 20px; text-align: center; }
+        .tech-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 20px; }
+        .tech-item { text-align: center; padding: 15px; }
+        .tech-icon { font-size: 2rem; margin-bottom: 10px; }
+        .tech-name { font-size: 0.9rem; font-weight: 600; }
+        
+        .footer { text-align: center; margin-top: 50px; padding-top: 30px; border-top: 1px solid rgba(255,255,255,0.2); }
+        .footer-text { opacity: 0.8; font-size: 0.9rem; }
+        
+        .demo-accounts { background: rgba(255,255,255,0.1); border-radius: 20px; padding: 30px; margin-bottom: 40px;
+            backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); }
+        .demo-title { font-size: 1.8rem; font-weight: bold; margin-bottom: 20px; text-align: center; }
+        .demo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+        .demo-item { background: rgba(255,255,255,0.1); border-radius: 15px; padding: 20px; }
+        .demo-role { font-size: 1.1rem; font-weight: bold; margin-bottom: 10px; }
+        .demo-email { font-size: 0.9rem; opacity: 0.9; margin-bottom: 5px; }
+        .demo-password { font-size: 0.8rem; opacity: 0.7; }
+        
+        @media (max-width: 768px) { 
+            .logo { font-size: 2.5rem; }
+            .title { font-size: 2rem; }
+            .modules-grid { grid-template-columns: 1fr; }
+            .fees-grid { grid-template-columns: 1fr; }
+            .tech-grid { grid-template-columns: repeat(2, 1fr); }
+            .demo-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="logo">🚀</div>
+            <h1 class="title">PedidoFácil</h1>
+            <p class="subtitle">Plataforma de Delivery com Taxas Fixas e Transparentes</p>
+            <p class="description">
+                Sistema completo de delivery desenvolvido com HTML + CSS + JavaScript puro, 
+                integrado ao Firebase para autenticação, banco de dados e armazenamento.
+            </p>
+        </header>
+
+        <div class="business-model">
+            <h2 class="business-title">💰 Modelo de Negócio</h2>
+            <div class="fees-grid">
+                <div class="fee-item">
+                    <div class="fee-value">R$ 1,00</div>
+                    <div class="fee-label">Restaurantes</div>
+                    <div class="fee-description">Taxa fixa por pedido</div>
+                </div>
+                <div class="fee-item">
+                    <div class="fee-value">R$ 1,00</div>
+                    <div class="fee-label">Entregadores</div>
+                    <div class="fee-description">Taxa fixa por entrega</div>
+                </div>
+                <div class="fee-item">
+                    <div class="fee-value">R$ 2,00</div>
+                    <div class="fee-label">Plataforma</div>
+                    <div class="fee-description">Taxa fixa por pedido entregue</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tech-stack">
+            <h2 class="tech-title">🛠️ Stack Tecnológico</h2>
+            <div class="tech-grid">
+                <div class="tech-item">
+                    <div class="tech-icon">🌐</div>
+                    <div class="tech-name">HTML5</div>
+                </div>
+                <div class="tech-item">
+                    <div class="tech-icon">🎨</div>
+                    <div class="tech-name">CSS3</div>
+                </div>
+                <div class="tech-item">
+                    <div class="tech-icon">⚡</div>
+                    <div class="tech-name">JavaScript</div>
+                </div>
+                <div class="tech-item">
+                    <div class="tech-icon">🔥</div>
+                    <div class="tech-name">Firebase</div>
+                </div>
+                <div class="tech-item">
+                    <div class="tech-icon">📱</div>
+                    <div class="tech-name">Responsivo</div>
+                </div>
+                <div class="tech-item">
+                    <div class="tech-icon">🔒</div>
+                    <div class="tech-name">Seguro</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modules-grid">
+            <div class="module-card">
+                <div class="module-icon">🛒</div>
+                <h3 class="module-title">Módulo Cliente</h3>
+                <p class="module-description">
+                    Interface completa para clientes fazerem pedidos, acompanharem status e avaliarem entregas.
+                </p>
+                <ul class="module-features">
+                    <li>Cadastro e login seguro</li>
+                    <li>Busca e filtros de restaurantes</li>
+                    <li>Carrinho de compras</li>
+                    <li>Checkout com taxas transparentes</li>
+                    <li>Acompanhamento em tempo real</li>
+                    <li>Sistema de avaliações</li>
+                </ul>
+                <a href="cliente/cadastro_login_cliente.html" class="access-btn">Acessar como Cliente</a>
+            </div>
+
+            <div class="module-card">
+                <div class="module-icon">🏪</div>
+                <h3 class="module-title">Módulo Restaurante</h3>
+                <p class="module-description">
+                    Painel administrativo para restaurantes gerenciarem pedidos, cardápio e configurações.
+                </p>
+                <ul class="module-features">
+                    <li>Dashboard com estatísticas</li>
+                    <li>Gerenciamento de pedidos</li>
+                    <li>CRUD de produtos</li>
+                    <li>Configurações de horários</li>
+                    <li>Relatórios de performance</li>
+                    <li>Perfil personalizável</li>
+                </ul>
+                <a href="restaurante/cadastro_login_restaurante.html" class="access-btn">Acessar como Restaurante</a>
+            </div>
+
+            <div class="module-card">
+                <div class="module-icon">🚚</div>
+                <h3 class="module-title">Módulo Entregador</h3>
+                <p class="module-description">
+                    Sistema para entregadores aceitarem pedidos, gerenciarem entregas e acompanharem ganhos.
+                </p>
+                <ul class="module-features">
+                    <li>Dashboard de entregas</li>
+                    <li>Aceitar/rejeitar pedidos</li>
+                    <li>Atualização de status</li>
+                    <li>Histórico de entregas</li>
+                    <li>Controle de disponibilidade</li>
+                    <li>Relatórios de ganhos</li>
+                </ul>
+                <a href="entregador/cadastro_login_entregador.html" class="access-btn">Acessar como Entregador</a>
+            </div>
+
+            <div class="module-card">
+                <div class="module-icon">⚙️</div>
+                <h3 class="module-title">Módulo Administrativo</h3>
+                <p class="module-description">
+                    Painel completo para administradores gerenciarem toda a plataforma e usuários.
+                </p>
+                <ul class="module-features">
+                    <li>Dashboard da plataforma</li>
+                    <li>Gestão de usuários</li>
+                    <li>Controle de restaurantes</li>
+                    <li>Gestão de entregadores</li>
+                    <li>Monitoramento de pedidos</li>
+                    <li>Relatórios avançados</li>
+                </ul>
+                <a href="admin/cadastro_login_admin.html" class="access-btn">Acessar como Admin</a>
+            </div>
+        </div>
+
+        <div class="demo-accounts">
+            <h2 class="demo-title">🧪 Contas de Demonstração</h2>
+            <div class="demo-grid">
+                <div class="demo-item">
+                    <div class="demo-role">👤 Cliente Demo</div>
+                    <div class="demo-email">cliente@demo.com</div>
+                    <div class="demo-password">123456</div>
+                </div>
+                <div class="demo-item">
+                    <div class="demo-role">🏪 Restaurante Demo</div>
+                    <div class="demo-email">restaurante@demo.com</div>
+                    <div class="demo-password">123456</div>
+                </div>
+                <div class="demo-item">
+                    <div class="demo-role">🚚 Entregador Demo</div>
+                    <div class="demo-email">entregador@demo.com</div>
+                    <div class="demo-password">123456</div>
+                </div>
+                <div class="demo-item">
+                    <div class="demo-role">⚙️ Admin Demo</div>
+                    <div class="demo-email">admin@demo.com</div>
+                    <div class="demo-password">123456</div>
+                </div>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <p class="footer-text">
+                <strong>PedidoFácil</strong> - Desenvolvido com ❤️ para revolucionar o delivery no Brasil!<br>
+                Simples, Transparente, Eficiente
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        // Adicionar efeitos de scroll suave
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Adicionar animação de entrada para os cards
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Aplicar animação aos cards
+        document.querySelectorAll('.module-card').forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'all 0.6s ease';
+            observer.observe(card);
+        });
+
+        // Adicionar contador de visitantes (simulado)
+        let visitantes = localStorage.getItem('visitantes') || 0;
+        visitantes = parseInt(visitantes) + 1;
+        localStorage.setItem('visitantes', visitantes);
+
+        // Mostrar mensagem de boas-vindas
+        if (visitantes === 1) {
+            setTimeout(() => {
+                alert('🎉 Bem-vindo ao PedidoFácil! Esta é sua primeira visita. Explore todos os módulos!');
+            }, 1000);
+        }
+    </script>
+</body>
+</html>

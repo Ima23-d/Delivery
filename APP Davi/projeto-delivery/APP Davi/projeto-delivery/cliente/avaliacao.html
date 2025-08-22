@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PedidoFácil - Avaliar Pedido</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8f9fa;
+            color: #333;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .back-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 25px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        /* Main Content */
+        .main {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Order Info */
+        .order-info {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .order-header {
+            background: #667eea;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .order-header h2 {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+
+        .order-header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .order-content {
+            padding: 20px;
+        }
+
+        .restaurant-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .restaurant-icon {
+            width: 50px;
+            height: 50px;
+            background: #667eea;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .restaurant-details h3 {
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .restaurant-details p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .order-summary {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .order-summary h4 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .order-items {
+            margin-bottom: 15px;
+        }
+
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #e1e5e9;
+        }
+
+        .order-item:last-child {
+            border-bottom: none;
+        }
+
+        .item-details {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .item-quantity {
+            background: #667eea;
+            color: white;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        .item-name {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .item-price {
+            color: #27ae60;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .order-total {
+            text-align: right;
+            font-weight: bold;
+            color: #27ae60;
+            font-size: 1.1rem;
+        }
+
+        /* Rating Section */
+        .rating-section {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .rating-header {
+            background: #f39c12;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .rating-header h2 {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+
+        .rating-header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .rating-content {
+            padding: 30px;
+        }
+
+        .rating-categories {
+            margin-bottom: 30px;
+        }
+
+        .rating-category {
+            margin-bottom: 25px;
+        }
+
+        .category-title {
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .stars-container {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .star {
+            font-size: 2rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: #ddd;
+        }
+
+        .star:hover,
+        .star.active {
+            color: #ffc107;
+            transform: scale(1.1);
+        }
+
+        .rating-value {
+            margin-left: 15px;
+            font-weight: bold;
+            color: #667eea;
+            min-width: 30px;
+        }
+
+        /* Comments Section */
+        .comments-section {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .comments-header {
+            background: #27ae60;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .comments-header h2 {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+
+        .comments-header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .comments-content {
+            padding: 30px;
+        }
+
+        .comment-group {
+            margin-bottom: 25px;
+        }
+
+        .comment-label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .comment-input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 16px;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 100px;
+            transition: border-color 0.3s ease;
+        }
+
+        .comment-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .comment-hint {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        /* Submit Button */
+        .submit-section {
+            margin-bottom: 100px; /* Espaço para o bottom nav */
+        }
+
+        .submit-btn {
+            width: 100%;
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 20px;
+            border-radius: 15px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(39, 174, 96, 0.3);
+        }
+
+        .submit-btn:hover {
+            background: #229954;
+            transform: translateY(-2px);
+            box-shadow: 0 7px 20px rgba(39, 174, 96, 0.4);
+        }
+
+        .submit-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Success Message */
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .success-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-top: 1px solid #e1e5e9;
+            padding: 15px 0;
+            z-index: 100;
+        }
+
+        .nav-items {
+            display: flex;
+            justify-content: space-around;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .nav-item.active {
+            color: #667eea;
+        }
+
+        .nav-icon {
+            font-size: 1.5rem;
+        }
+
+        .nav-text {
+            font-size: 12px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .main {
+                padding: 15px;
+            }
+            
+            .header-content {
+                padding: 0 15px;
+            }
+            
+            .rating-content,
+            .comments-content {
+                padding: 20px;
+            }
+            
+            .stars-container {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <button class="back-btn" onclick="voltarParaPedidos()">
+                ← Voltar
+            </button>
+            <div class="logo">⭐ Avaliar Pedido</div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <!-- Order Info -->
+        <section class="order-info" id="order-info">
+            <div class="order-header">
+                <h2>📋 Detalhes do Pedido</h2>
+                <p>Confirme os itens antes de avaliar</p>
+            </div>
+            <div class="order-content" id="order-content">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Carregando detalhes do pedido...</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Rating Section -->
+        <section class="rating-section">
+            <div class="rating-header">
+                <h2>⭐ Avaliação Geral</h2>
+                <p>Como foi sua experiência com este pedido?</p>
+            </div>
+            <div class="rating-content">
+                <div class="rating-categories">
+                    <div class="rating-category">
+                        <div class="category-title">
+                            <span>🍽️</span>
+                            <span>Qualidade da Comida</span>
+                        </div>
+                        <div class="stars-container">
+                            <div class="star" data-category="comida" data-value="1">⭐</div>
+                            <div class="star" data-category="comida" data-value="2">⭐</div>
+                            <div class="star" data-category="comida" data-value="3">⭐</div>
+                            <div class="star" data-category="comida" data-value="4">⭐</div>
+                            <div class="star" data-category="comida" data-value="5">⭐</div>
+                            <span class="rating-value" id="comida-rating">0</span>
+                        </div>
+                    </div>
+
+                    <div class="rating-category">
+                        <div class="category-title">
+                            <span>🚚</span>
+                            <span>Serviço de Entrega</span>
+                        </div>
+                        <div class="stars-container">
+                            <div class="star" data-category="entrega" data-value="1">⭐</div>
+                            <div class="star" data-category="entrega" data-value="2">⭐</div>
+                            <div class="star" data-category="entrega" data-value="3">⭐</div>
+                            <div class="star" data-category="entrega" data-value="4">⭐</div>
+                            <div class="star" data-category="entrega" data-value="5">⭐</div>
+                            <span class="rating-value" id="entrega-rating">0</span>
+                        </div>
+                    </div>
+
+                    <div class="rating-category">
+                        <div class="category-title">
+                            <span>⏱️</span>
+                            <span>Velocidade do Serviço</span>
+                        </div>
+                        <div class="stars-container">
+                            <div class="star" data-category="velocidade" data-value="1">⭐</div>
+                            <div class="star" data-category="velocidade" data-value="2">⭐</div>
+                            <div class="star" data-category="velocidade" data-value="3">⭐</div>
+                            <div class="star" data-category="velocidade" data-value="4">⭐</div>
+                            <div class="star" data-category="velocidade" data-value="5">⭐</div>
+                            <span class="rating-value" id="velocidade-rating">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Comments Section -->
+        <section class="comments-section">
+            <div class="comments-header">
+                <h2>💬 Comentários</h2>
+                <p>Conte-nos mais sobre sua experiência</p>
+            </div>
+            <div class="comments-content">
+                <div class="comment-group">
+                    <label class="comment-label" for="comida-comment">
+                        🍽️ Comentário sobre a comida
+                    </label>
+                    <textarea 
+                        class="comment-input" 
+                        id="comida-comment" 
+                        placeholder="Como estava o sabor, temperatura, apresentação... (opcional)"
+                    ></textarea>
+                    <div class="comment-hint">Deixe em branco se não quiser comentar</div>
+                </div>
+
+                <div class="comment-group">
+                    <label class="comment-label" for="entrega-comment">
+                        🚚 Comentário sobre a entrega
+                    </label>
+                    <textarea 
+                        class="comment-input" 
+                        id="entrega-comment" 
+                        placeholder="Como foi o atendimento do entregador, pontualidade... (opcional)"
+                    ></textarea>
+                    <div class="comment-hint">Deixe em branco se não quiser comentar</div>
+                </div>
+
+                <div class="comment-group">
+                    <label class="comment-label" for="geral-comment">
+                        💭 Comentário geral
+                    </label>
+                    <textarea 
+                        class="comment-input" 
+                        id="geral-comment" 
+                        placeholder="Alguma sugestão ou observação geral... (opcional)"
+                    ></textarea>
+                    <div class="comment-hint">Deixe em branco se não quiser comentar</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Submit Section -->
+        <section class="submit-section">
+            <button class="submit-btn" onclick="enviarAvaliacao()" id="submit-btn">
+                🚀 Enviar Avaliação
+            </button>
+        </section>
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <div class="nav-items">
+            <div class="nav-item" onclick="navegarPara('home')">
+                <div class="nav-icon">🏠</div>
+                <div class="nav-text">Início</div>
+            </div>
+            <div class="nav-item active" onclick="navegarPara('pedidos')">
+                <div class="nav-icon">📋</div>
+                <div class="nav-text">Meus Pedidos</div>
+            </div>
+            <div class="nav-item" onclick="navegarPara('carrinho')">
+                <div class="nav-icon">🛒</div>
+                <div class="nav-text">Carrinho</div>
+            </div>
+            <div class="nav-item" onclick="navegarPara('perfil')">
+                <div class="nav-icon">👤</div>
+                <div class="nav-text">Perfil</div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+
+    <script>
+  const firebaseConfig = {
+  apiKey: "AIzaSyDQ6IxIEGg1pYibe8zJ_DQO2bnWa0Beng0",
+  authDomain: "appdelivery-38949.firebaseapp.com",
+  projectId: "appdelivery-38949",
+  storageBucket: "appdelivery-38949.firebasestorage.app",
+  messagingSenderId: "717102909889",
+  appId: "1:717102909889:web:581ee8f19f6f3c68cb4740"
+};
+
+        // Inicializar Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // Variáveis globais
+        let currentUser = null;
+        let pedidoAtual = null;
+        let ratings = {
+            comida: 0,
+            entrega: 0,
+            velocidade: 0
+        };
+
+        // Inicializar página
+        document.addEventListener('DOMContentLoaded', function() {
+            verificarAutenticacao();
+            configurarEstrelas();
+        });
+
+        // Verificar autenticação
+        function verificarAutenticacao() {
+            auth.onAuthStateChanged((user) => {
+                if (user) {
+                    db.collection('usuarios').doc(user.uid).get().then((doc) => {
+                        if (doc.exists && doc.data().tipo === 'cliente') {
+                            currentUser = {
+                                uid: user.uid,
+                                email: user.email,
+                                ...doc.data()
+                            };
+                            carregarPedido();
+                        } else {
+                            window.location.href = 'cadastro_login_cliente.html';
+                        }
+                    });
+                } else {
+                    window.location.href = 'cadastro_login_cliente.html';
+                }
+            });
+        }
+
+        // Carregar dados do pedido
+        async function carregarPedido() {
+            const pedidoId = localStorage.getItem('pedidoParaAvaliar');
+            
+            if (!pedidoId) {
+                alert('ID do pedido não encontrado');
+                window.location.href = 'pedido_status.html';
+                return;
+            }
+
+            try {
+                const pedidoDoc = await db.collection('pedidos').doc(pedidoId).get();
+                
+                if (pedidoDoc.exists) {
+                    pedidoAtual = {
+                        id: pedidoDoc.id,
+                        ...pedidoDoc.data()
+                    };
+                    
+                    // Verificar se o pedido já foi avaliado
+                    if (pedidoAtual.avaliado) {
+                        alert('Este pedido já foi avaliado');
+                        window.location.href = 'pedido_status.html';
+                        return;
+                    }
+                    
+                    exibirDetalhesPedido();
+                } else {
+                    alert('Pedido não encontrado');
+                    window.location.href = 'pedido_status.html';
+                }
+            } catch (error) {
+                console.error('Erro ao carregar pedido:', error);
+                alert('Erro ao carregar dados do pedido');
+            }
+        }
+
+        // Exibir detalhes do pedido
+        function exibirDetalhesPedido() {
+            if (!pedidoAtual) return;
+
+            const container = document.getElementById('order-content');
+            
+            const html = `
+                <div class="restaurant-info">
+                    <div class="restaurant-icon">🍽️</div>
+                    <div class="restaurant-details">
+                        <h3>${pedidoAtual.restauranteNome}</h3>
+                        <p>Restaurante</p>
+                    </div>
+                </div>
+                
+                <div class="order-summary">
+                    <h4>Itens do Pedido</h4>
+                    <div class="order-items">
+                        ${pedidoAtual.itens.map(item => `
+                            <div class="order-item">
+                                <div class="item-details">
+                                    <div class="item-quantity">${item.quantidade}</div>
+                                    <div class="item-name">${item.nome}</div>
+                                </div>
+                                <div class="item-price">R$ ${(item.preco * item.quantidade).toFixed(2)}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="order-total">
+                        Total: R$ ${pedidoAtual.total.toFixed(2)}
+                    </div>
+                </div>
+            `;
+            
+            container.innerHTML = html;
+        }
+
+        // Configurar sistema de estrelas
+        function configurarEstrelas() {
+            document.querySelectorAll('.star').forEach(star => {
+                star.addEventListener('click', function() {
+                    const category = this.dataset.category;
+                    const value = parseInt(this.dataset.value);
+                    
+                    // Atualizar rating
+                    ratings[category] = value;
+                    
+                    // Atualizar interface
+                    atualizarEstrelas(category, value);
+                });
+            });
+        }
+
+        // Atualizar estrelas na interface
+        function atualizarEstrelas(category, value) {
+            const stars = document.querySelectorAll(`[data-category="${category}"]`);
+            const ratingDisplay = document.getElementById(`${category}-rating`);
+            
+            // Atualizar estrelas
+            stars.forEach((star, index) => {
+                if (index < value) {
+                    star.classList.add('active');
+                } else {
+                    star.classList.remove('active');
+                }
+            });
+            
+            // Atualizar valor numérico
+            ratingDisplay.textContent = value;
+        }
+
+        // Enviar avaliação
+        async function enviarAvaliacao() {
+            // Verificar se todas as categorias foram avaliadas
+            if (ratings.comida === 0 || ratings.entrega === 0 || ratings.velocidade === 0) {
+                alert('Por favor, avalie todas as categorias antes de enviar');
+                return;
+            }
+
+            const btn = document.getElementById('submit-btn');
+            btn.disabled = true;
+            btn.textContent = '🔄 Enviando...';
+
+            try {
+                // Coletar comentários
+                const comentarios = {
+                    comida: document.getElementById('comida-comment').value.trim(),
+                    entrega: document.getElementById('entrega-comment').value.trim(),
+                    geral: document.getElementById('geral-comment').value.trim()
+                };
+
+                // Calcular média geral
+                const mediaGeral = (ratings.comida + ratings.entrega + ratings.velocidade) / 3;
+
+                // Salvar avaliação no Firestore
+                await db.collection('avaliacoes').add({
+                    pedidoId: pedidoAtual.id,
+                    clienteId: currentUser.uid,
+                    clienteNome: currentUser.nome,
+                    restauranteId: pedidoAtual.restauranteId,
+                    restauranteNome: pedidoAtual.restauranteNome,
+                    
+                    ratings: ratings,
+                    mediaGeral: mediaGeral,
+                    comentarios: comentarios,
+                    
+                    dataAvaliacao: new Date(),
+                    ativo: true
+                });
+
+                // Marcar pedido como avaliado
+                await db.collection('pedidos').doc(pedidoAtual.id).update({
+                    avaliado: true,
+                    avaliacaoMedia: mediaGeral,
+                    dataAvaliacao: new Date()
+                });
+
+                // Atualizar média do restaurante
+                await atualizarAvaliacaoRestaurante(pedidoAtual.restauranteId, mediaGeral);
+
+                // Mostrar mensagem de sucesso
+                mostrarSucesso();
+
+            } catch (error) {
+                console.error('Erro ao enviar avaliação:', error);
+                alert('Erro ao enviar avaliação. Tente novamente.');
+                btn.disabled = false;
+                btn.textContent = '🚀 Enviar Avaliação';
+            }
+        }
+
+        // Atualizar avaliação média do restaurante
+        async function atualizarAvaliacaoRestaurante(restauranteId, novaAvaliacao) {
+            try {
+                const restauranteRef = db.collection('restaurantes').doc(restauranteId);
+                
+                // Usar transação para atualizar a média
+                await db.runTransaction(async (transaction) => {
+                    const restauranteDoc = await transaction.get(restauranteRef);
+                    
+                    if (restauranteDoc.exists) {
+                        const dados = restauranteDoc.data();
+                        const totalAvaliacoes = (dados.totalAvaliacoes || 0) + 1;
+                        const mediaAtual = dados.avaliacao || 0;
+                        
+                        // Calcular nova média
+                        const novaMedia = ((mediaAtual * (totalAvaliacoes - 1)) + novaAvaliacao) / totalAvaliacoes;
+                        
+                        transaction.update(restauranteRef, {
+                            avaliacao: novaMedia,
+                            totalAvaliacoes: totalAvaliacoes
+                        });
+                    }
+                });
+            } catch (error) {
+                console.error('Erro ao atualizar avaliação do restaurante:', error);
+            }
+        }
+
+        // Mostrar mensagem de sucesso
+        function mostrarSucesso() {
+            const main = document.querySelector('.main');
+            main.innerHTML = `
+                <div class="success-message">
+                    <div class="success-icon">🎉</div>
+                    <h2>Avaliação Enviada!</h2>
+                    <p>Obrigado por avaliar seu pedido. Sua opinião é muito importante para nós!</p>
+                    <p>Você será redirecionado para a página de pedidos em alguns segundos.</p>
+                </div>
+            `;
+            
+            // Limpar dados do localStorage
+            localStorage.removeItem('pedidoParaAvaliar');
+            
+            // Redirecionar após 3 segundos
+            setTimeout(() => {
+                window.location.href = 'pedido_status.html';
+            }, 3000);
+        }
+
+        // Navegação
+        function navegarPara(pagina) {
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+            
+            switch(pagina) {
+                case 'home':
+                    window.location.href = 'home_cliente.html';
+                    break;
+                case 'pedidos':
+                    window.location.href = 'pedido_status.html';
+                    break;
+                case 'carrinho':
+                    window.location.href = 'carrinho.html';
+                    break;
+                case 'perfil':
+                    window.location.href = 'perfil_cliente.html';
+                    break;
+            }
+        }
+
+        // Voltar para pedidos
+        function voltarParaPedidos() {
+            localStorage.removeItem('pedidoParaAvaliar');
+            window.location.href = 'pedido_status.html';
+        }
+    </script>
+</body>
+</html>

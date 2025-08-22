@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PedidoFácil - Gerenciar Pedidos</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f8f9fa; color: #333; }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white; padding: 20px 0; position: sticky; top: 0; z-index: 100;
+        }
+        .header-content {
+            max-width: 1400px; margin: 0 auto; padding: 0 20px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .back-btn { background: rgba(255,255,255,0.2); border: none; color: white;
+            padding: 10px 15px; border-radius: 25px; cursor: pointer; }
+        .title { font-size: 1.8rem; font-weight: bold; }
+        
+        .main { max-width: 1400px; margin: 0 auto; padding: 20px; }
+        
+        .filtros { background: white; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            padding: 20px; margin-bottom: 20px; }
+        .filtros-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
+        .filtro-item { display: flex; flex-direction: column; }
+        .filtro-label { margin-bottom: 8px; color: #333; font-weight: 600; }
+        .filtro-input { padding: 10px; border: 2px solid #e1e5e9; border-radius: 8px; font-size: 14px; }
+        .aplicar-filtros { background: #667eea; color: white; border: none; padding: 12px 20px;
+            border-radius: 8px; cursor: pointer; font-weight: 600; margin-top: 20px; }
+        
+        .stats-overview { background: white; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            padding: 25px; margin-bottom: 20px; }
+        .overview-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
+        .overview-card { background: #f8f9fa; border-radius: 10px; padding: 20px; text-align: center; }
+        .overview-value { font-size: 1.8rem; font-weight: bold; color: #667eea; margin-bottom: 8px; }
+        
+        .orders-container { background: white; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            padding: 25px; margin-bottom: 20px; }
+        .orders-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        
+        .order-item { border: 1px solid #e1e5e9; border-radius: 10px; padding: 20px; margin-bottom: 15px; }
+        .order-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .order-info h3 { color: #333; margin-bottom: 5px; font-size: 1.1rem; }
+        .order-info p { color: #666; font-size: 0.9rem; margin-bottom: 3px; }
+        .order-status { padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; }
+        .status-pendente { background: #fff3cd; color: #856404; }
+        .status-preparando { background: #d1ecf1; color: #0c5460; }
+        .status-pronto { background: #d4edda; color: #155724; }
+        .status-em-entrega { background: #cce5ff; color: #004085; }
+        .status-entregue { background: #d4edda; color: #155724; }
+        .status-cancelado { background: #f8d7da; color: #721c24; }
+        
+        .order-details { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 15px; }
+        .detail-group h5 { color: #333; margin-bottom: 5px; font-size: 0.9rem; font-weight: 600; }
+        .detail-group p { color: #666; font-size: 0.8rem; }
+        
+        .order-items { background: #f8f9fa; border-radius: 8px; padding: 15px; margin-bottom: 15px; }
+        .order-item-title { font-weight: 600; margin-bottom: 10px; color: #333; }
+        .item-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #e1e5e9; }
+        .item-row:last-child { border-bottom: none; }
+        .item-quantity { background: #667eea; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.8rem; margin-right: 10px; }
+        
+        .order-summary { background: #e3f2fd; border-radius: 8px; padding: 15px; margin-bottom: 15px; }
+        .order-summary > div { display: flex; justify-content: space-between; margin-bottom: 8px; }
+        .order-summary > div:last-child { margin-bottom: 0; font-weight: 600; font-size: 1.1rem; }
+        
+        .order-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+        .action-btn { padding: 8px 15px; border: none; border-radius: 6px; cursor: pointer; font-size: 0.8rem; font-weight: 600; }
+        .btn-view { background: #6c757d; color: white; }
+        .btn-assign { background: #17a2b8; color: white; }
+        .btn-update { background: #28a745; color: white; }
+        .btn-cancel { background: #dc3545; color: white; }
+        
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.5); }
+        .modal-content { background-color: white; margin: 5% auto; padding: 25px; border-radius: 15px;
+            width: 90%; max-width: 800px; max-height: 80vh; overflow-y: auto; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .close { color: #aaa; font-size: 28px; font-weight: bold; cursor: pointer; }
+        
+        .form-group { margin-bottom: 20px; }
+        .form-label { display: block; margin-bottom: 8px; color: #333; font-weight: 600; }
+        .form-input { width: 100%; padding: 12px; border: 2px solid #e1e5e9; border-radius: 8px; font-size: 14px; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        
+        .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+        .btn { padding: 12px 20px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; }
+        .btn-primary { background: #667eea; color: white; }
+        .btn-secondary { background: #6c757d; color: white; }
+        
+        .message { position: fixed; top: 20px; right: 20px; z-index: 1000; padding: 15px 20px;
+            border-radius: 10px; color: white; font-weight: 600; }
+        .message.success { background: #28a745; }
+        .message.error { background: #dc3545; }
+        
+        .pagination { display: flex; justify-content: center; gap: 10px; margin-top: 20px; }
+        .page-btn { padding: 10px 15px; border: 1px solid #e1e5e9; background: white; color: #333;
+            border-radius: 6px; cursor: pointer; }
+        .page-btn.active { background: #667eea; color: white; border-color: #667eea; }
+        
+        @media (max-width: 768px) { .filtros-grid { grid-template-columns: 1fr; }
+            .overview-grid { grid-template-columns: 1fr; } .order-details { grid-template-columns: 1fr; }
+            .form-row { grid-template-columns: 1fr; } .order-actions { flex-direction: column; } }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <button class="back-btn" onclick="voltarParaHome()">← Voltar</button>
+            <div class="title">📦 Gerenciar Pedidos</div>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="filtros">
+            <div class="filtros-grid">
+                <div class="filtro-item">
+                    <label class="filtro-label">Status</label>
+                    <select class="filtro-input" id="filtro-status">
+                        <option value="">Todos os status</option>
+                        <option value="pendente">Pendente</option>
+                        <option value="preparando">Preparando</option>
+                        <option value="pronto">Pronto</option>
+                        <option value="em-entrega">Em Entrega</option>
+                        <option value="entregue">Entregue</option>
+                        <option value="cancelado">Cancelado</option>
+                    </select>
+                </div>
+                
+                <div class="filtro-item">
+                    <label class="filtro-label">Período</label>
+                    <select class="filtro-input" id="filtro-periodo">
+                        <option value="7">Últimos 7 dias</option>
+                        <option value="30">Últimos 30 dias</option>
+                        <option value="90">Últimos 90 dias</option>
+                        <option value="custom">Personalizado</option>
+                    </select>
+                </div>
+                
+                <div class="filtro-item">
+                    <label class="filtro-label">Buscar</label>
+                    <input type="text" class="filtro-input" id="filtro-busca" placeholder="ID do pedido, cliente ou restaurante">
+                </div>
+                
+                <div class="filtro-item">
+                    <label class="filtro-label">Ordenar por</label>
+                    <select class="filtro-input" id="filtro-ordenacao">
+                        <option value="dataPedido">Data do Pedido</option>
+                        <option value="total">Valor Total</option>
+                        <option value="status">Status</option>
+                    </select>
+                </div>
+            </div>
+            
+            <button class="aplicar-filtros" onclick="aplicarFiltros()">🔍 Aplicar Filtros</button>
+        </div>
+
+        <div class="stats-overview">
+            <div class="overview-title">📊 Visão Geral dos Pedidos</div>
+            <div class="overview-grid" id="overview-grid">
+                <div class="loading">Carregando estatísticas...</div>
+            </div>
+        </div>
+
+        <div class="orders-container">
+            <div class="orders-header">
+                <h2 class="orders-title">📦 Lista de Pedidos</h2>
+            </div>
+            
+            <div id="orders-container">
+                <div class="loading">Carregando pedidos...</div>
+            </div>
+            
+            <div class="pagination" id="pagination" style="display: none;"></div>
+        </div>
+    </main>
+
+    <!-- Modal para Visualizar/Atualizar Pedido -->
+    <div id="orderModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">Detalhes do Pedido</h3>
+                <span class="close" onclick="fecharModal()">&times;</span>
+            </div>
+            
+            <div id="modalContent">
+                <div class="loading">Carregando detalhes...</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "sua-api-key", authDomain: "seu-projeto.firebaseapp.com",
+            projectId: "seu-projeto", storageBucket: "seu-projeto.appspot.com",
+            messagingSenderId: "123456789", appId: "seu-app-id"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        let currentUser = null;
+        let pedidos = [];
+        let pedidosFiltrados = [];
+        let paginaAtual = 1;
+        const itensPorPagina = 10;
+        let unsubscribePedidos = null;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            verificarAutenticacao();
+        });
+
+        function verificarAutenticacao() {
+            auth.onAuthStateChanged((user) => {
+                if (user) {
+                    db.collection('usuarios').doc(user.uid).get().then((doc) => {
+                        if (doc.exists && doc.data().tipo === 'admin') {
+                            currentUser = { uid: user.uid, email: user.email, ...doc.data() };
+                            carregarDados();
+                        } else {
+                            window.location.href = 'cadastro_login_admin.html';
+                        }
+                    });
+                } else {
+                    window.location.href = 'cadastro_login_admin.html';
+                }
+            });
+        }
+
+        async function carregarDados() {
+            try {
+                await carregarPedidos();
+                await carregarEstatisticas();
+            } catch (error) {
+                console.error('Erro ao carregar dados:', error);
+            }
+        }
+
+        async function carregarPedidos() {
+            if (unsubscribePedidos) {
+                unsubscribePedidos();
+            }
+
+            unsubscribePedidos = db.collection('pedidos')
+                .orderBy('dataPedido', 'desc')
+                .onSnapshot((snapshot) => {
+                    pedidos = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                    aplicarFiltros();
+                }, (error) => {
+                    console.error('Erro ao carregar pedidos:', error);
+                });
+        }
+
+        async function carregarEstatisticas() {
+            try {
+                const totalPedidos = pedidos.length;
+                const pedidosPendentes = pedidos.filter(p => p.status === 'pendente').length;
+                const pedidosEmPreparo = pedidos.filter(p => p.status === 'preparando').length;
+                const pedidosEmEntrega = pedidos.filter(p => p.status === 'em-entrega').length;
+                const pedidosEntregues = pedidos.filter(p => p.status === 'entregue').length;
+                const pedidosCancelados = pedidos.filter(p => p.status === 'cancelado').length;
+                const receitaTotal = pedidos.filter(p => p.status === 'entregue').reduce((sum, p) => sum + p.total, 0);
+                const receitaPlataforma = pedidos.filter(p => p.status === 'entregue').reduce((sum, p) => sum + (p.taxaPlataforma || 0), 0);
+                
+                const overviewGrid = document.getElementById('overview-grid');
+                overviewGrid.innerHTML = `
+                    <div class="overview-card">
+                        <div class="overview-value">${totalPedidos}</div>
+                        <div class="overview-label">Total de Pedidos</div>
+                    </div>
+                    <div class="overview-card">
+                        <div class="overview-value">${pedidosPendentes}</div>
+                        <div class="overview-label">Pendentes</div>
+                    </div>
+                    <div class="overview-card">
+                        <div class="overview-value">${pedidosEmPreparo}</div>
+                        <div class="overview-label">Em Preparo</div>
+                    </div>
+                    <div class="overview-card">
+                        <div class="overview-value">${pedidosEmEntrega}</div>
+                        <div class="overview-label">Em Entrega</div>
+                    </div>
+                    <div class="overview-card">
+                        <div class="overview-value">${pedidosEntregues}</div>
+                        <div class="overview-label">Entregues</div>
+                    </div>
+                    <div class="overview-card">
+                        <div class="overview-value">R$ ${receitaTotal.toFixed(2)}</div>
+                        <div class="overview-label">Receita Total</div>
+                    </div>
+                    <div class="overview-card">
+                        <div class="overview-value">R$ ${receitaPlataforma.toFixed(2)}</div>
+                        <div class="overview-label">Receita Plataforma</div>
+                    </div>
+                    <div class="overview-card">
+                        <div class="overview-value">${pedidosCancelados}</div>
+                        <div class="overview-label">Cancelados</div>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Erro ao carregar estatísticas:', error);
+            }
+        }
+
+        function aplicarFiltros() {
+            const status = document.getElementById('filtro-status').value;
+            const periodo = document.getElementById('filtro-periodo').value;
+            const busca = document.getElementById('filtro-busca').value.toLowerCase();
+            const ordenacao = document.getElementById('filtro-ordenacao').value;
+            
+            let pedidosFiltradosTemp = pedidos;
+            
+            // Filtrar por status
+            if (status) {
+                pedidosFiltradosTemp = pedidosFiltradosTemp.filter(p => p.status === status);
+            }
+            
+            // Filtrar por período
+            if (periodo && periodo !== 'custom') {
+                const dataLimite = new Date();
+                dataLimite.setDate(dataLimite.getDate() - parseInt(periodo));
+                pedidosFiltradosTemp = pedidosFiltradosTemp.filter(p => 
+                    p.dataPedido && p.dataPedido.toDate() >= dataLimite
+                );
+            }
+            
+            // Filtrar por busca
+            if (busca) {
+                pedidosFiltradosTemp = pedidosFiltradosTemp.filter(p => 
+                    p.id.toLowerCase().includes(busca) ||
+                    p.clienteNome?.toLowerCase().includes(busca) ||
+                    p.restauranteNome?.toLowerCase().includes(busca)
+                );
+            }
+            
+            // Ordenar
+            pedidosFiltradosTemp.sort((a, b) => {
+                switch (ordenacao) {
+                    case 'total':
+                        return (b.total || 0) - (a.total || 0);
+                    case 'status':
+                        return (a.status || '').localeCompare(b.status || '');
+                    default:
+                        return (b.dataPedido || 0) - (a.dataPedido || 0);
+                }
+            });
+            
+            pedidosFiltrados = pedidosFiltradosTemp;
+            paginaAtual = 1;
+            exibirPedidos();
+        }
+
+        function exibirPedidos() {
+            const container = document.getElementById('orders-container');
+            
+            if (pedidosFiltrados.length === 0) {
+                container.innerHTML = '<div class="no-data">Nenhum pedido encontrado</div>';
+                document.getElementById('pagination').style.display = 'none';
+                return;
+            }
+            
+            const totalPaginas = Math.ceil(pedidosFiltrados.length / itensPorPagina);
+            const inicio = (paginaAtual - 1) * itensPorPagina;
+            const fim = inicio + itensPorPagina;
+            const pedidosPagina = pedidosFiltrados.slice(inicio, fim);
+            
+            container.innerHTML = pedidosPagina.map(pedido => `
+                <div class="order-item">
+                    <div class="order-header">
+                        <div class="order-info">
+                            <h3>Pedido <span class="order-number">#${pedido.id.slice(-6)}</span></h3>
+                            <p>👤 ${pedido.clienteNome} • 📱 ${pedido.clienteTelefone}</p>
+                            <p>🏪 ${pedido.restauranteNome} • 📅 ${new Date(pedido.dataPedido.toDate()).toLocaleString('pt-BR')}</p>
+                        </div>
+                        <div class="order-status status-${pedido.status}">
+                            ${getStatusNome(pedido.status)}
+                        </div>
+                    </div>
+                    
+                    <div class="order-details">
+                        <div class="detail-group">
+                            <h5>📍 Endereço de Entrega</h5>
+                            <p>${pedido.clienteEndereco || 'Endereço não informado'}</p>
+                        </div>
+                        
+                        <div class="detail-group">
+                            <h5>💳 Forma de Pagamento</h5>
+                            <p>${pedido.formaPagamento || 'Não informado'}</p>
+                        </div>
+                        
+                        <div class="detail-group">
+                            <h5>🚚 Entregador</h5>
+                            <p>${pedido.entregadorNome || 'Não atribuído'}</p>
+                        </div>
+                        
+                        <div class="detail-group">
+                            <h5>⏱️ Tempo Estimado</h5>
+                            <p>${pedido.tempoEstimado || 'Não informado'}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="order-items">
+                        <div class="order-item-title">Itens do Pedido:</div>
+                        ${pedido.itens.map(item => `
+                            <div class="item-row">
+                                <div class="item-info">
+                                    <span class="item-quantity">${item.quantidade}</span>
+                                    <span class="item-name">${item.nome}</span>
+                                </div>
+                                <div class="item-price">R$ ${(item.preco * item.quantidade).toFixed(2)}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    
+                    <div class="order-summary">
+                        <div><span>Subtotal:</span><span>R$ ${pedido.subtotal.toFixed(2)}</span></div>
+                        <div><span>Taxa de Entrega:</span><span>R$ ${pedido.taxaEntrega.toFixed(2)}</span></div>
+                        <div><span>Taxa Restaurante:</span><span>R$ ${(pedido.taxaRestaurante || 0).toFixed(2)}</span></div>
+                        <div><span>Taxa Entregador:</span><span>R$ ${(pedido.taxaEntregador || 0).toFixed(2)}</span></div>
+                        <div><span>Taxa Plataforma:</span><span>R$ ${(pedido.taxaPlataforma || 0).toFixed(2)}</span></div>
+                        <div><span>Total:</span><span>R$ ${pedido.total.toFixed(2)}</span></div>
+                    </div>
+                    
+                    <div class="order-actions">
+                        <button class="action-btn btn-view" onclick="verPedido('${pedido.id}')">👁️ Ver Detalhes</button>
+                        ${pedido.status === 'pendente' ? 
+                            `<button class="action-btn btn-assign" onclick="atribuirEntregador('${pedido.id}')">🚚 Atribuir Entregador</button>` : ''
+                        }
+                        ${pedido.status !== 'entregue' && pedido.status !== 'cancelado' ? 
+                            `<button class="action-btn btn-update" onclick="atualizarStatus('${pedido.id}')">✏️ Atualizar Status</button>` : ''
+                        }
+                        ${pedido.status === 'pendente' ? 
+                            `<button class="action-btn btn-cancel" onclick="cancelarPedido('${pedido.id}')">❌ Cancelar</button>` : ''
+                        }
+                    </div>
+                </div>
+            `).join('');
+            
+            if (totalPaginas > 1) {
+                exibirPaginacao(totalPaginas);
+            } else {
+                document.getElementById('pagination').style.display = 'none';
+            }
+        }
+
+        function exibirPaginacao(totalPaginas) {
+            const pagination = document.getElementById('pagination');
+            pagination.style.display = 'flex';
+            
+            let paginacaoHTML = '';
+            
+            if (paginaAtual > 1) {
+                paginacaoHTML += `<button class="page-btn" onclick="mudarPagina(${paginaAtual - 1})">← Anterior</button>`;
+            }
+            
+            for (let i = 1; i <= totalPaginas; i++) {
+                if (i === paginaAtual) {
+                    paginacaoHTML += `<button class="page-btn active">${i}</button>`;
+                } else {
+                    paginacaoHTML += `<button class="page-btn" onclick="mudarPagina(${i})">${i}</button>`;
+                }
+            }
+            
+            if (paginaAtual < totalPaginas) {
+                paginacaoHTML += `<button class="page-btn" onclick="mudarPagina(${paginaAtual + 1})">Próxima →</button>`;
+            }
+            
+            pagination.innerHTML = paginacaoHTML;
+        }
+
+        function mudarPagina(pagina) {
+            paginaAtual = pagina;
+            exibirPedidos();
+        }
+
+        function getStatusNome(status) {
+            switch (status) {
+                case 'pendente': return 'Pendente';
+                case 'preparando': return 'Preparando';
+                case 'pronto': return 'Pronto';
+                case 'em-entrega': return 'Em Entrega';
+                case 'entregue': return 'Entregue';
+                case 'cancelado': return 'Cancelado';
+                default: return 'Pendente';
+            }
+        }
+
+        async function verPedido(pedidoId) {
+            const pedido = pedidos.find(p => p.id === pedidoId);
+            if (!pedido) return;
+            
+            document.getElementById('modalTitle').textContent = `Pedido #${pedido.id.slice(-6)}`;
+            document.getElementById('orderModal').style.display = 'block';
+            
+            const modalContent = document.getElementById('modalContent');
+            modalContent.innerHTML = `
+                <div class="order-details">
+                    <div class="detail-group">
+                        <h5>👤 Cliente</h5>
+                        <p>${pedido.clienteNome} (${pedido.clienteEmail})</p>
+                        <p>📱 ${pedido.clienteTelefone}</p>
+                        <p>📍 ${pedido.clienteEndereco}</p>
+                    </div>
+                    
+                    <div class="detail-group">
+                        <h5>🏪 Restaurante</h5>
+                        <p>${pedido.restauranteNome}</p>
+                        <p>📧 ${pedido.restauranteEmail || 'Email não informado'}</p>
+                    </div>
+                    
+                    <div class="detail-group">
+                        <h5>🚚 Entregador</h5>
+                        <p>${pedido.entregadorNome || 'Não atribuído'}</p>
+                        <p>📱 ${pedido.entregadorTelefone || 'Telefone não informado'}</p>
+                    </div>
+                    
+                    <div class="detail-group">
+                        <h5>📊 Status e Tempo</h5>
+                        <p>Status: <span class="order-status status-${pedido.status}">${getStatusNome(pedido.status)}</span></p>
+                        <p>Data do Pedido: ${new Date(pedido.dataPedido.toDate()).toLocaleString('pt-BR')}</p>
+                        <p>Última Atualização: ${pedido.dataAtualizacao ? new Date(pedido.dataAtualizacao.toDate()).toLocaleString('pt-BR') : 'Não informado'}</p>
+                    </div>
+                </div>
+                
+                <div class="order-items">
+                    <div class="order-item-title">Itens do Pedido:</div>
+                    ${pedido.itens.map(item => `
+                        <div class="item-row">
+                            <div class="item-info">
+                                <span class="item-quantity">${item.quantidade}</span>
+                                <span class="item-name">${item.nome}</span>
+                            </div>
+                            <div class="item-price">R$ ${(item.preco * item.quantidade).toFixed(2)}</div>
+                        </div>
+                    `).join('')}
+                </div>
+                
+                <div class="order-summary">
+                    <div><span>Subtotal:</span><span>R$ ${pedido.subtotal.toFixed(2)}</span></div>
+                    <div><span>Taxa de Entrega:</span><span>R$ ${pedido.taxaEntrega.toFixed(2)}</span></div>
+                    <div><span>Taxa Restaurante:</span><span>R$ ${(pedido.taxaRestaurante || 0).toFixed(2)}</span></div>
+                    <div><span>Taxa Entregador:</span><span>R$ ${(pedido.taxaEntregador || 0).toFixed(2)}</span></div>
+                    <div><span>Taxa Plataforma:</span><span>R$ ${(pedido.taxaPlataforma || 0).toFixed(2)}</span></div>
+                    <div><span>Total:</span><span>R$ ${pedido.total.toFixed(2)}</span></div>
+                </div>
+                
+                <div class="modal-actions">
+                    <button class="btn btn-secondary" onclick="fecharModal()">Fechar</button>
+                    ${pedido.status === 'pendente' ? 
+                        `<button class="btn btn-primary" onclick="atribuirEntregador('${pedido.id}')">🚚 Atribuir Entregador</button>` : ''
+                    }
+                </div>
+            `;
+        }
+
+        function fecharModal() {
+            document.getElementById('orderModal').style.display = 'none';
+        }
+
+        async function atribuirEntregador(pedidoId) {
+            // Implementar lógica para atribuir entregador
+            alert('Funcionalidade de atribuição de entregador será implementada em breve!');
+        }
+
+        async function atualizarStatus(pedidoId) {
+            const novoStatus = prompt('Digite o novo status (pendente, preparando, pronto, em-entrega, entregue, cancelado):');
+            if (!novoStatus) return;
+            
+            try {
+                await db.collection('pedidos').doc(pedidoId).update({
+                    status: novoStatus,
+                    dataAtualizacao: new Date()
+                });
+                
+                mostrarMensagem(`Status atualizado para ${getStatusNome(novoStatus)}`, 'success');
+                
+            } catch (error) {
+                console.error('Erro ao atualizar status:', error);
+                mostrarMensagem('Erro ao atualizar status', 'error');
+            }
+        }
+
+        async function cancelarPedido(pedidoId) {
+            if (!confirm('Tem certeza que deseja cancelar este pedido?')) {
+                return;
+            }
+            
+            try {
+                await db.collection('pedidos').doc(pedidoId).update({
+                    status: 'cancelado',
+                    dataAtualizacao: new Date()
+                });
+                
+                mostrarMensagem('Pedido cancelado com sucesso!', 'success');
+                
+            } catch (error) {
+                console.error('Erro ao cancelar pedido:', error);
+                mostrarMensagem('Erro ao cancelar pedido', 'error');
+            }
+        }
+
+        function mostrarMensagem(texto, tipo) {
+            const mensagem = document.createElement('div');
+            mensagem.className = `message ${tipo}`;
+            mensagem.textContent = texto;
+            
+            document.body.appendChild(mensagem);
+            
+            setTimeout(() => {
+                if (mensagem.parentNode) {
+                    mensagem.remove();
+                }
+            }, 3000);
+        }
+
+        function voltarParaHome() {
+            if (unsubscribePedidos) {
+                unsubscribePedidos();
+            }
+            window.location.href = 'home_admin.html';
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('orderModal');
+            if (event.target === modal) {
+                fecharModal();
+            }
+        }
+    </script>
+</body>
+</html>

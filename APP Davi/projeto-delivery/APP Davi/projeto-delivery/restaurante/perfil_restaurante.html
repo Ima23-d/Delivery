@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PedidoFácil - Perfil Restaurante</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f8f9fa; color: #333; }
+        
+        .header {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            color: white; padding: 20px 0; position: sticky; top: 0; z-index: 100;
+        }
+        .header-content {
+            max-width: 800px; margin: 0 auto; padding: 0 20px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .back-btn { background: rgba(255,255,255,0.2); border: none; color: white;
+            padding: 10px 15px; border-radius: 25px; cursor: pointer; }
+        .title { font-size: 1.8rem; font-weight: bold; }
+        .save-btn { background: rgba(39, 174, 96, 0.8); border: none; color: white;
+            padding: 10px 15px; border-radius: 25px; cursor: pointer; font-weight: 600; }
+        
+        .main { max-width: 800px; margin: 0 auto; padding: 20px; }
+        
+        .profile-section {
+            background: white; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 20px; overflow: hidden;
+        }
+        .section-header { background: #27ae60; color: white; padding: 20px; text-align: center; }
+        .section-content { padding: 30px; }
+        
+        .form-group { margin-bottom: 20px; }
+        .form-label { display: block; margin-bottom: 8px; color: #333; font-weight: 600; }
+        .form-input { width: 100%; padding: 15px; border: 2px solid #e1e5e9; border-radius: 10px;
+            font-size: 16px; transition: border-color 0.3s ease; }
+        .form-input:focus { outline: none; border-color: #27ae60; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 20px; }
+        .stat-item { text-align: center; padding: 20px; background: #f8f9fa; border-radius: 10px; }
+        .stat-icon { font-size: 2rem; margin-bottom: 10px; }
+        .stat-value { font-size: 1.5rem; font-weight: bold; color: #27ae60; margin-bottom: 5px; }
+        
+        .message { padding: 15px; border-radius: 10px; margin-bottom: 20px; text-align: center; }
+        .message.success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .message.error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        
+        @media (max-width: 768px) { .form-row { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <button class="back-btn" onclick="voltarParaHome()">← Voltar</button>
+            <div class="title">👤 Perfil do Restaurante</div>
+            <button class="save-btn" onclick="salvarPerfil()" id="save-btn" style="display: none;">💾 Salvar</button>
+        </div>
+    </header>
+
+    <main class="main">
+        <section class="profile-section">
+            <div class="section-header">
+                <h2>📊 Estatísticas</h2>
+                <p>Resumo do seu restaurante</p>
+            </div>
+            <div class="section-content">
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-icon">📋</div>
+                        <div class="stat-value" id="total-pedidos">0</div>
+                        <div class="stat-label">Total de Pedidos</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-icon">💰</div>
+                        <div class="stat-value" id="receita-total">R$ 0</div>
+                        <div class="stat-label">Receita Total</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-icon">⭐</div>
+                        <div class="stat-value" id="avaliacao-media">0.0</div>
+                        <div class="stat-label">Avaliação Média</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-icon">🍽️</div>
+                        <div class="stat-value" id="total-produtos">0</div>
+                        <div class="stat-label">Produtos Ativos</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="profile-section">
+            <div class="section-header">
+                <h2>✏️ Dados do Restaurante</h2>
+                <p>Atualize suas informações</p>
+            </div>
+            <div class="section-content">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="nome">Nome do Restaurante</label>
+                        <input type="text" class="form-input" id="nome" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="telefone">Telefone</label>
+                        <input type="tel" class="form-input" id="telefone" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="email">E-mail</label>
+                    <input type="email" class="form-input" id="email" disabled>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="cnpj">CNPJ</label>
+                        <input type="text" class="form-input" id="cnpj" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="categoria">Categoria</label>
+                        <select class="form-input" id="categoria" required>
+                            <option value="pizza">🍕 Pizza</option>
+                            <option value="hamburguer">🍔 Hambúrguer</option>
+                            <option value="japonesa">🍣 Japonesa</option>
+                            <option value="chinesa">🥢 Chinesa</option>
+                            <option value="brasileira">🥘 Brasileira</option>
+                            <option value="italiana">🍝 Italiana</option>
+                            <option value="doces">🍰 Doces</option>
+                            <option value="bebidas">🥤 Bebidas</option>
+                            <option value="outros">🍽️ Outros</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="endereco">Endereço Completo</label>
+                    <input type="text" class="form-input" id="endereco" required>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="taxa-entrega">Taxa de Entrega (R$)</label>
+                        <input type="number" class="form-input" id="taxa-entrega" step="0.01" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="tempo-preparo">Tempo Médio de Preparo (min)</label>
+                        <input type="number" class="form-input" id="tempo-preparo" min="1" required>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="profile-section">
+            <div class="section-header">
+                <h2>🔒 Segurança</h2>
+                <p>Altere sua senha</p>
+            </div>
+            <div class="section-content">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="senha-atual">Senha Atual</label>
+                        <input type="password" class="form-input" id="senha-atual">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="nova-senha">Nova Senha</label>
+                        <input type="password" class="form-input" id="nova-senha" minlength="6">
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+
+    <script>
+           const firebaseConfig = {
+  apiKey: "AIzaSyDQ6IxIEGg1pYibe8zJ_DQO2bnWa0Beng0",
+  authDomain: "appdelivery-38949.firebaseapp.com",
+  projectId: "appdelivery-38949",
+  storageBucket: "appdelivery-38949.firebasestorage.app",
+  messagingSenderId: "717102909889",
+  appId: "1:717102909889:web:581ee8f19f6f3c68cb4740"
+};
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        let currentUser = null;
+        let dadosOriginais = {};
+
+        document.addEventListener('DOMContentLoaded', function() {
+            verificarAutenticacao();
+            configurarFormulario();
+        });
+
+        function verificarAutenticacao() {
+            auth.onAuthStateChanged((user) => {
+                if (user) {
+                    db.collection('usuarios').doc(user.uid).get().then((doc) => {
+                        if (doc.exists && doc.data().tipo === 'restaurante') {
+                            currentUser = { uid: user.uid, email: user.email, ...doc.data() };
+                            carregarDadosUsuario();
+                            carregarEstatisticas();
+                        } else {
+                            window.location.href = 'cadastro_login_restaurante.html';
+                        }
+                    });
+                } else {
+                    window.location.href = 'cadastro_login_restaurante.html';
+                }
+            });
+        }
+
+        function carregarDadosUsuario() {
+            if (!currentUser) return;
+
+            document.getElementById('nome').value = currentUser.nome || '';
+            document.getElementById('telefone').value = currentUser.telefone || '';
+            document.getElementById('email').value = currentUser.email || '';
+            document.getElementById('cnpj').value = currentUser.cnpj || '';
+            document.getElementById('categoria').value = currentUser.categoria || '';
+            document.getElementById('endereco').value = currentUser.endereco || '';
+            document.getElementById('taxa-entrega').value = currentUser.taxaEntrega || 0;
+            document.getElementById('tempo-preparo').value = currentUser.tempoMedioPreparo || 30;
+
+            dadosOriginais = {
+                nome: currentUser.nome || '', telefone: currentUser.telefone || '',
+                cnpj: currentUser.cnpj || '', categoria: currentUser.categoria || '',
+                endereco: currentUser.endereco || '', taxaEntrega: currentUser.taxaEntrega || 0,
+                tempoMedioPreparo: currentUser.tempoMedioPreparo || 30
+            };
+        }
+
+        async function carregarEstatisticas() {
+            if (!currentUser) return;
+
+            try {
+                const pedidosRef = await db.collection('pedidos')
+                    .where('restauranteId', '==', currentUser.uid).get();
+                
+                document.getElementById('total-pedidos').textContent = pedidosRef.size;
+
+                const receitaTotal = pedidosRef.docs.reduce((total, doc) => {
+                    const data = doc.data();
+                    return data.status !== 'cancelado' ? total + data.total : total;
+                }, 0);
+                document.getElementById('receita-total').textContent = `R$ ${receitaTotal.toFixed(2)}`;
+
+                const restauranteDoc = await db.collection('restaurantes').doc(currentUser.uid).get();
+                if (restauranteDoc.exists) {
+                    const dados = restauranteDoc.data();
+                    document.getElementById('avaliacao-media').textContent = 
+                        dados.avaliacao ? dados.avaliacao.toFixed(1) : '0.0';
+                }
+
+                const produtosRef = await db.collection('produtos')
+                    .where('restauranteId', '==', currentUser.uid)
+                    .where('status', '==', 'ativo').get();
+                document.getElementById('total-produtos').textContent = produtosRef.size;
+
+            } catch (error) {
+                console.error('Erro ao carregar estatísticas:', error);
+            }
+        }
+
+        function configurarFormulario() {
+            const campos = ['nome', 'telefone', 'cnpj', 'categoria', 'endereco', 'taxa-entrega', 'tempo-preparo'];
+            campos.forEach(campo => {
+                document.getElementById(campo).addEventListener('input', verificarAlteracoes);
+            });
+        }
+
+        function verificarAlteracoes() {
+            const nome = document.getElementById('nome').value;
+            const telefone = document.getElementById('telefone').value;
+            const cnpj = document.getElementById('cnpj').value;
+            const categoria = document.getElementById('categoria').value;
+            const endereco = document.getElementById('endereco').value;
+            const taxaEntrega = parseFloat(document.getElementById('taxa-entrega').value);
+            const tempoPreparo = parseInt(document.getElementById('tempo-preparo').value);
+
+            const alteracoes = 
+                nome !== dadosOriginais.nome || telefone !== dadosOriginais.telefone ||
+                cnpj !== dadosOriginais.cnpj || categoria !== dadosOriginais.categoria ||
+                endereco !== dadosOriginais.endereco || taxaEntrega !== dadosOriginais.taxaEntrega ||
+                tempoPreparo !== dadosOriginais.tempoMedioPreparo;
+
+            document.getElementById('save-btn').style.display = alteracoes ? 'block' : 'none';
+        }
+
+        async function salvarPerfil() {
+            const btn = document.getElementById('save-btn');
+            btn.disabled = true;
+            btn.textContent = '🔄 Salvando...';
+
+            try {
+                const dados = {
+                    nome: document.getElementById('nome').value,
+                    telefone: document.getElementById('telefone').value,
+                    cnpj: document.getElementById('cnpj').value,
+                    categoria: document.getElementById('categoria').value,
+                    endereco: document.getElementById('endereco').value,
+                    taxaEntrega: parseFloat(document.getElementById('taxa-entrega').value),
+                    tempoMedioPreparo: parseInt(document.getElementById('tempo-preparo').value),
+                    dataAtualizacao: new Date()
+                };
+
+                await db.collection('usuarios').doc(currentUser.uid).update(dados);
+                await db.collection('restaurantes').doc(currentUser.uid).update(dados);
+
+                currentUser = { ...currentUser, ...dados };
+                dadosOriginais = { ...dados };
+                verificarAlteracoes();
+                mostrarMensagem('Perfil atualizado com sucesso!', 'success');
+
+            } catch (error) {
+                console.error('Erro ao salvar perfil:', error);
+                mostrarMensagem('Erro ao salvar perfil', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '💾 Salvar';
+            }
+        }
+
+        function mostrarMensagem(texto, tipo) {
+            const mensagem = document.createElement('div');
+            mensagem.className = `message ${tipo}`;
+            mensagem.textContent = texto;
+            document.querySelector('.main').insertBefore(mensagem, document.querySelector('.main').firstChild);
+            setTimeout(() => mensagem.remove(), 5000);
+        }
+
+        function voltarParaHome() {
+            window.location.href = 'home_restaurante.html';
+        }
+    </script>
+</body>
+</html>

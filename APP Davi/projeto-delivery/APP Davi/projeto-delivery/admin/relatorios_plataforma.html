@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PedidoFácil - Relatórios da Plataforma</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f8f9fa; color: #333; }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white; padding: 20px 0; position: sticky; top: 0; z-index: 100;
+        }
+        .header-content {
+            max-width: 1400px; margin: 0 auto; padding: 0 20px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .back-btn { background: rgba(255,255,255,0.2); border: none; color: white;
+            padding: 10px 15px; border-radius: 25px; cursor: pointer; }
+        .title { font-size: 1.8rem; font-weight: bold; }
+        
+        .main { max-width: 1400px; margin: 0 auto; padding: 20px; }
+        
+        .filtros { background: white; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            padding: 20px; margin-bottom: 20px; }
+        .filtros-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
+        .filtro-item { display: flex; flex-direction: column; }
+        .filtro-label { margin-bottom: 8px; color: #333; font-weight: 600; }
+        .filtro-input { padding: 10px; border: 2px solid #e1e5e9; border-radius: 8px; font-size: 14px; }
+        .aplicar-filtros { background: #667eea; color: white; border: none; padding: 12px 20px;
+            border-radius: 8px; cursor: pointer; font-weight: 600; margin-top: 20px; }
+        
+        .stats-overview { background: white; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            padding: 25px; margin-bottom: 20px; }
+        .overview-title { font-size: 1.3rem; font-weight: 600; margin-bottom: 20px; color: #333; }
+        .overview-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
+        .overview-card { background: #f8f9fa; border-radius: 10px; padding: 20px; text-align: center; }
+        .overview-value { font-size: 1.8rem; font-weight: bold; color: #667eea; margin-bottom: 8px; }
+        .overview-label { color: #666; font-size: 0.9rem; }
+        .overview-change { font-size: 0.8rem; margin-top: 5px; }
+        .change-up { color: #28a745; }
+        .change-down { color: #dc3545; }
+        
+        .charts-section { background: white; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            padding: 25px; margin-bottom: 20px; }
+        .chart-container { margin-bottom: 30px; }
+        .chart-title { font-size: 1.2rem; font-weight: 600; margin-bottom: 15px; color: #333; }
+        .chart-placeholder { background: #f8f9fa; border: 2px dashed #dee2e6; border-radius: 10px;
+            padding: 40px; text-align: center; color: #6c757d; }
+        
+        .tables-section { background: white; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            padding: 25px; margin-bottom: 20px; }
+        .table-title { font-size: 1.2rem; font-weight: 600; margin-bottom: 15px; color: #333; }
+        .data-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        .data-table th, .data-table td { padding: 12px; text-align: left; border-bottom: 1px solid #e1e5e9; }
+        .data-table th { background: #f8f9fa; font-weight: 600; color: #333; }
+        .data-table tr:hover { background: #f8f9fa; }
+        
+        .export-section { background: white; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            padding: 25px; margin-bottom: 20px; }
+        .export-buttons { display: flex; gap: 15px; flex-wrap: wrap; }
+        .export-btn { background: #28a745; color: white; border: none; padding: 12px 20px;
+            border-radius: 8px; cursor: pointer; font-weight: 600; }
+        .export-btn:hover { background: #218838; }
+        
+        .message { position: fixed; top: 20px; right: 20px; z-index: 1000; padding: 15px 20px;
+            border-radius: 10px; color: white; font-weight: 600; }
+        .message.success { background: #28a745; }
+        .message.error { background: #dc3545; }
+        
+        @media (max-width: 768px) { .filtros-grid { grid-template-columns: 1fr; }
+            .overview-grid { grid-template-columns: 1fr; } .export-buttons { flex-direction: column; } }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <button class="back-btn" onclick="voltarParaHome()">← Voltar</button>
+            <div class="title">📊 Relatórios da Plataforma</div>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="filtros">
+            <div class="filtros-grid">
+                <div class="filtro-item">
+                    <label class="filtro-label">Período</label>
+                    <select class="filtro-input" id="filtro-periodo">
+                        <option value="7">Últimos 7 dias</option>
+                        <option value="30">Últimos 30 dias</option>
+                        <option value="90">Últimos 90 dias</option>
+                        <option value="365">Último ano</option>
+                        <option value="custom">Personalizado</option>
+                    </select>
+                </div>
+                
+                <div class="filtro-item">
+                    <label class="filtro-label">Data Início</label>
+                    <input type="date" class="filtro-input" id="data-inicio">
+                </div>
+                
+                <div class="filtro-item">
+                    <label class="filtro-label">Data Fim</label>
+                    <input type="date" class="filtro-input" id="data-fim">
+                </div>
+                
+                <div class="filtro-item">
+                    <label class="filtro-label">Tipo de Relatório</label>
+                    <select class="filtro-input" id="tipo-relatorio">
+                        <option value="geral">Geral</option>
+                        <option value="financeiro">Financeiro</option>
+                        <option value="operacional">Operacional</option>
+                        <option value="usuarios">Usuários</option>
+                    </select>
+                </div>
+            </div>
+            
+            <button class="aplicar-filtros" onclick="aplicarFiltros()">🔍 Aplicar Filtros</button>
+        </div>
+
+        <div class="stats-overview">
+            <div class="overview-title">📈 Visão Geral da Plataforma</div>
+            <div class="overview-grid" id="overview-grid">
+                <div class="loading">Carregando estatísticas...</div>
+            </div>
+        </div>
+
+        <div class="charts-section">
+            <div class="chart-container">
+                <h3 class="chart-title">📊 Pedidos por Dia</h3>
+                <div class="chart-placeholder" id="chart-pedidos">
+                    <div>📈 Gráfico de Pedidos por Dia</div>
+                    <small>Será implementado com biblioteca de gráficos</small>
+                </div>
+            </div>
+            
+            <div class="chart-container">
+                <h3 class="chart-title">💰 Receita por Período</h3>
+                <div class="chart-placeholder" id="chart-receita">
+                    <div>💰 Gráfico de Receita por Período</div>
+                    <small>Será implementado com biblioteca de gráficos</small>
+                </div>
+            </div>
+            
+            <div class="chart-container">
+                <h3 class="chart-title">🏪 Restaurantes Mais Ativos</h3>
+                <div class="chart-placeholder" id="chart-restaurantes">
+                    <div>🏪 Gráfico de Restaurantes Mais Ativos</div>
+                    <small>Será implementado com biblioteca de gráficos</small>
+                </div>
+            </div>
+            
+            <div class="chart-container">
+                <h3 class="chart-title">🚚 Entregadores com Melhor Performance</h3>
+                <div class="chart-placeholder" id="chart-entregadores">
+                    <div>🚚 Gráfico de Entregadores com Melhor Performance</div>
+                    <small>Será implementado com biblioteca de gráficos</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="tables-section">
+            <h3 class="table-title">📋 Top 10 Restaurantes por Pedidos</h3>
+            <div id="table-restaurantes">
+                <div class="loading">Carregando dados...</div>
+            </div>
+        </div>
+
+        <div class="tables-section">
+            <h3 class="table-title">📋 Top 10 Entregadores por Entregas</h3>
+            <div id="table-entregadores">
+                <div class="loading">Carregando dados...</div>
+            </div>
+        </div>
+
+        <div class="tables-section">
+            <h3 class="table-title">📋 Pedidos por Status</h3>
+            <div id="table-pedidos-status">
+                <div class="loading">Carregando dados...</div>
+            </div>
+        </div>
+
+        <div class="export-section">
+            <h3 class="table-title">📤 Exportar Relatórios</h3>
+            <div class="export-buttons">
+                <button class="export-btn" onclick="exportarRelatorio('excel')">📊 Exportar para Excel</button>
+                <button class="export-btn" onclick="exportarRelatorio('pdf')">📄 Exportar para PDF</button>
+                <button class="export-btn" onclick="exportarRelatorio('csv')">📋 Exportar para CSV</button>
+                <button class="export-btn" onclick="enviarRelatorioEmail()">📧 Enviar por Email</button>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "sua-api-key", authDomain: "seu-projeto.firebaseapp.com",
+            projectId: "seu-projeto", storageBucket: "seu-projeto.appspot.com",
+            messagingSenderId: "123456789", appId: "seu-app-id"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        let currentUser = null;
+        let dadosRelatorio = {};
+        let filtrosAtivos = {};
+
+        document.addEventListener('DOMContentLoaded', function() {
+            verificarAutenticacao();
+            configurarDatas();
+        });
+
+        function verificarAutenticacao() {
+            auth.onAuthStateChanged((user) => {
+                if (user) {
+                    db.collection('usuarios').doc(user.uid).get().then((doc) => {
+                        if (doc.exists && doc.data().tipo === 'admin') {
+                            currentUser = { uid: user.uid, email: user.email, ...doc.data() };
+                            aplicarFiltros();
+                        } else {
+                            window.location.href = 'cadastro_login_admin.html';
+                        }
+                    });
+                } else {
+                    window.location.href = 'cadastro_login_admin.html';
+                }
+            });
+        }
+
+        function configurarDatas() {
+            const hoje = new Date();
+            const dataInicio = new Date();
+            dataInicio.setDate(dataInicio.getDate() - 30);
+            
+            document.getElementById('data-inicio').value = dataInicio.toISOString().split('T')[0];
+            document.getElementById('data-fim').value = hoje.toISOString().split('T')[0];
+        }
+
+        async function aplicarFiltros() {
+            const periodo = document.getElementById('filtro-periodo').value;
+            const dataInicio = document.getElementById('data-inicio').value;
+            const dataFim = document.getElementById('data-fim').value;
+            const tipoRelatorio = document.getElementById('tipo-relatorio').value;
+            
+            filtrosAtivos = { periodo, dataInicio, dataFim, tipoRelatorio };
+            
+            try {
+                await carregarDadosRelatorio();
+                await carregarEstatisticas();
+                await carregarTabelas();
+                simularGraficos();
+            } catch (error) {
+                console.error('Erro ao aplicar filtros:', error);
+                mostrarMensagem('Erro ao carregar relatórios', 'error');
+            }
+        }
+
+        async function carregarDadosRelatorio() {
+            try {
+                const dataInicio = new Date(filtrosAtivos.dataInicio);
+                const dataFim = new Date(filtrosAtivos.dataFim);
+                dataFim.setHours(23, 59, 59);
+                
+                // Carregar pedidos do período
+                const pedidosSnapshot = await db.collection('pedidos')
+                    .where('dataPedido', '>=', dataInicio)
+                    .where('dataPedido', '<=', dataFim)
+                    .get();
+                
+                const pedidos = pedidosSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                
+                // Carregar restaurantes
+                const restaurantesSnapshot = await db.collection('restaurantes').get();
+                const restaurantes = restaurantesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                
+                // Carregar entregadores
+                const entregadoresSnapshot = await db.collection('entregadores').get();
+                const entregadores = entregadoresSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                
+                // Carregar usuários
+                const usuariosSnapshot = await db.collection('usuarios').get();
+                const usuarios = usuariosSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                
+                dadosRelatorio = {
+                    pedidos,
+                    restaurantes,
+                    entregadores,
+                    usuarios,
+                    dataInicio,
+                    dataFim
+                };
+                
+            } catch (error) {
+                console.error('Erro ao carregar dados do relatório:', error);
+                throw error;
+            }
+        }
+
+        async function carregarEstatisticas() {
+            try {
+                const { pedidos, restaurantes, entregadores, usuarios } = dadosRelatorio;
+                
+                const totalPedidos = pedidos.length;
+                const pedidosEntregues = pedidos.filter(p => p.status === 'entregue').length;
+                const pedidosCancelados = pedidos.filter(p => p.status === 'cancelado').length;
+                const receitaTotal = pedidos.filter(p => p.status === 'entregue').reduce((sum, p) => sum + p.total, 0);
+                const receitaPlataforma = pedidos.filter(p => p.status === 'entregue').reduce((sum, p) => sum + (p.taxaPlataforma || 0), 0);
+                const totalUsuarios = usuarios.length;
+                const totalRestaurantes = restaurantes.length;
+                const totalEntregadores = entregadores.length;
+                
+                // Calcular variações (simulado)
+                const variacaoPedidos = 15;
+                const variacaoReceita = 22;
+                const variacaoUsuarios = 8;
+                const variacaoRestaurantes = 12;
+                
+                const overviewGrid = document.getElementById('overview-grid');
+                overviewGrid.innerHTML = `
+                    <div class="overview-card">
+                        <div class="overview-value">${totalPedidos}</div>
+                        <div class="overview-label">Total de Pedidos</div>
+                        <div class="overview-change change-up">+${variacaoPedidos}% vs período anterior</div>
+                    </div>
+                    <div class="overview-card">
+                        <div class="overview-value">${pedidosEntregues}</div>
+                        <div class="overview-label">Pedidos Entregues</div>
+                        <div class="overview-change change-up">+${variacaoPedidos}% vs período anterior</div>
+                    </div>
+                    <div class="overview-card">
+                        <div class="overview-value">${pedidosCancelados}</div>
+                        <div class="overview-label">Pedidos Cancelados</div>
+                        <div class="overview-change change-down">-5% vs período anterior</div>
+                    </div>
+                    <div class="overview-card">
+                        <div class="overview-value">R$ ${receitaTotal.toFixed(2)}</div>
+                        <div class="overview-label">Receita Total</div>
+                        <div class="overview-change change-up">+${variacaoReceita}% vs período anterior</div>
+                    </div>
+                    <div class="overview-card">
+                        <div class="overview-value">R$ ${receitaPlataforma.toFixed(2)}</div>
+                        <div class="overview-label">Receita Plataforma</div>
+                        <div class="overview-change change-up">+${variacaoReceita}% vs período anterior</div>
+                    </div>
+                    <div class="overview-card">
+                        <div class="overview-value">${totalUsuarios}</div>
+                        <div class="overview-label">Total de Usuários</div>
+                        <div class="overview-change change-up">+${variacaoUsuarios}% vs período anterior</div>
+                    </div>
+                    <div class="overview-card">
+                        <div class="overview-value">${totalRestaurantes}</div>
+                        <div class="overview-label">Total de Restaurantes</div>
+                        <div class="overview-change change-up">+${variacaoRestaurantes}% vs período anterior</div>
+                    </div>
+                    <div class="overview-card">
+                        <div class="overview-value">${totalEntregadores}</div>
+                        <div class="overview-label">Total de Entregadores</div>
+                        <div class="overview-change change-up">+10% vs período anterior</div>
+                    </div>
+                `;
+                
+            } catch (error) {
+                console.error('Erro ao carregar estatísticas:', error);
+            }
+        }
+
+        async function carregarTabelas() {
+            try {
+                const { pedidos, restaurantes, entregadores } = dadosRelatorio;
+                
+                // Top 10 Restaurantes por Pedidos
+                const restaurantesPorPedidos = restaurantes.map(rest => {
+                    const pedidosRest = pedidos.filter(p => p.restauranteId === rest.id);
+                    return {
+                        ...rest,
+                        totalPedidos: pedidosRest.length,
+                        receita: pedidosRest.filter(p => p.status === 'entregue').reduce((sum, p) => sum + p.total, 0)
+                    };
+                }).sort((a, b) => b.totalPedidos - a.totalPedidos).slice(0, 10);
+                
+                const tableRestaurantes = document.getElementById('table-restaurantes');
+                tableRestaurantes.innerHTML = `
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Posição</th>
+                                <th>Restaurante</th>
+                                <th>Categoria</th>
+                                <th>Total de Pedidos</th>
+                                <th>Receita</th>
+                                <th>Avaliação</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${restaurantesPorPedidos.map((rest, index) => `
+                                <tr>
+                                    <td>${index + 1}</td>
+                                    <td>${rest.nome}</td>
+                                    <td>${rest.categoria || 'N/A'}</td>
+                                    <td>${rest.totalPedidos}</td>
+                                    <td>R$ ${rest.receita.toFixed(2)}</td>
+                                    <td>${rest.avaliacao ? rest.avaliacao.toFixed(1) : '0.0'} ⭐</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+                
+                // Top 10 Entregadores por Entregas
+                const entregadoresPorEntregas = entregadores.map(ent => {
+                    const pedidosEnt = pedidos.filter(p => p.entregadorId === ent.id && p.status === 'entregue');
+                    return {
+                        ...ent,
+                        totalEntregas: pedidosEnt.length,
+                        receita: pedidosEnt.reduce((sum, p) => sum + (p.taxaEntregador || 0), 0)
+                    };
+                }).sort((a, b) => b.totalEntregas - a.totalEntregas).slice(0, 10);
+                
+                const tableEntregadores = document.getElementById('table-entregadores');
+                tableEntregadores.innerHTML = `
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Posição</th>
+                                <th>Entregador</th>
+                                <th>Veículo</th>
+                                <th>Total de Entregas</th>
+                                <th>Receita</th>
+                                <th>Avaliação</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${entregadoresPorEntregas.map((ent, index) => `
+                                <tr>
+                                    <td>${index + 1}</td>
+                                    <td>${ent.nome}</td>
+                                    <td>${ent.veiculo || 'N/A'}</td>
+                                    <td>${ent.totalEntregas}</td>
+                                    <td>R$ ${ent.receita.toFixed(2)}</td>
+                                    <td>${ent.avaliacao ? ent.avaliacao.toFixed(1) : '0.0'} ⭐</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+                
+                // Pedidos por Status
+                const pedidosPorStatus = {};
+                pedidos.forEach(pedido => {
+                    const status = pedido.status || 'pendente';
+                    pedidosPorStatus[status] = (pedidosPorStatus[status] || 0) + 1;
+                });
+                
+                const tablePedidosStatus = document.getElementById('table-pedidos-status');
+                tablePedidosStatus.innerHTML = `
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Status</th>
+                                <th>Quantidade</th>
+                                <th>Percentual</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${Object.entries(pedidosPorStatus).map(([status, quantidade]) => {
+                                const percentual = ((quantidade / pedidos.length) * 100).toFixed(1);
+                                return `
+                                    <tr>
+                                        <td>${getStatusNome(status)}</td>
+                                        <td>${quantidade}</td>
+                                        <td>${percentual}%</td>
+                                    </tr>
+                                `;
+                            }).join('')}
+                        </tbody>
+                    </table>
+                `;
+                
+            } catch (error) {
+                console.error('Erro ao carregar tabelas:', error);
+            }
+        }
+
+        function simularGraficos() {
+            // Simular dados para os gráficos
+            const dadosSimulados = {
+                pedidos: [45, 52, 38, 67, 89, 76, 54, 43, 65, 78, 82, 91],
+                receita: [1200, 1400, 1100, 1800, 2200, 1900, 1500, 1200, 1700, 2000, 2100, 2400],
+                restaurantes: ['Restaurante A', 'Restaurante B', 'Restaurante C', 'Restaurante D', 'Restaurante E'],
+                entregadores: ['Entregador A', 'Entregador B', 'Entregador C', 'Entregador D', 'Entregador E']
+            };
+            
+            // Atualizar placeholders dos gráficos com dados simulados
+            document.getElementById('chart-pedidos').innerHTML = `
+                <div>📈 Gráfico de Pedidos por Dia</div>
+                <small>Dados simulados: ${dadosSimulados.pedidos.join(', ')}</small>
+            `;
+            
+            document.getElementById('chart-receita').innerHTML = `
+                <div>💰 Gráfico de Receita por Período</div>
+                <small>Dados simulados: R$ ${dadosSimulados.receita.join(', R$ ')}</small>
+            `;
+            
+            document.getElementById('chart-restaurantes').innerHTML = `
+                <div>🏪 Gráfico de Restaurantes Mais Ativos</div>
+                <small>Top 5: ${dadosSimulados.restaurantes.join(', ')}</small>
+            `;
+            
+            document.getElementById('chart-entregadores').innerHTML = `
+                <div>🚚 Gráfico de Entregadores com Melhor Performance</div>
+                <small>Top 5: ${dadosSimulados.entregadores.join(', ')}</small>
+            `;
+        }
+
+        function getStatusNome(status) {
+            switch (status) {
+                case 'pendente': return 'Pendente';
+                case 'preparando': return 'Preparando';
+                case 'pronto': return 'Pronto';
+                case 'em-entrega': return 'Em Entrega';
+                case 'entregue': return 'Entregue';
+                case 'cancelado': return 'Cancelado';
+                default: return 'Pendente';
+            }
+        }
+
+        async function exportarRelatorio(formato) {
+            try {
+                // Simular exportação
+                const mensagem = `Relatório exportado com sucesso no formato ${formato.toUpperCase()}!`;
+                mostrarMensagem(mensagem, 'success');
+                
+                // Aqui você implementaria a lógica real de exportação
+                console.log(`Exportando relatório em ${formato}...`);
+                
+            } catch (error) {
+                console.error('Erro ao exportar relatório:', error);
+                mostrarMensagem('Erro ao exportar relatório', 'error');
+            }
+        }
+
+        async function enviarRelatorioEmail() {
+            try {
+                const email = prompt('Digite o email para envio do relatório:');
+                if (!email) return;
+                
+                // Simular envio por email
+                mostrarMensagem(`Relatório enviado com sucesso para ${email}!`, 'success');
+                
+                // Aqui você implementaria a lógica real de envio por email
+                console.log(`Enviando relatório para ${email}...`);
+                
+            } catch (error) {
+                console.error('Erro ao enviar relatório por email:', error);
+                mostrarMensagem('Erro ao enviar relatório por email', 'error');
+            }
+        }
+
+        function mostrarMensagem(texto, tipo) {
+            const mensagem = document.createElement('div');
+            mensagem.className = `message ${tipo}`;
+            mensagem.textContent = texto;
+            
+            document.body.appendChild(mensagem);
+            
+            setTimeout(() => {
+                if (mensagem.parentNode) {
+                    mensagem.remove();
+                }
+            }, 3000);
+        }
+
+        function voltarParaHome() {
+            window.location.href = 'home_admin.html';
+        }
+    </script>
+</body>
+</html>

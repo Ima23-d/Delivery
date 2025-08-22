@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PedidoFácil - Restaurante</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .header {
+            background: #27ae60;
+            color: white;
+            text-align: center;
+            padding: 30px 20px;
+        }
+
+        .logo {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .title {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            opacity: 0.9;
+            font-size: 1rem;
+        }
+
+        .tabs {
+            display: flex;
+            background: #f8f9fa;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab.active {
+            background: white;
+            border-bottom-color: #27ae60;
+            color: #27ae60;
+            font-weight: 600;
+        }
+
+        .tab:hover:not(.active) {
+            background: #e9ecef;
+        }
+
+        .form-container {
+            padding: 30px;
+        }
+
+        .form {
+            display: none;
+        }
+
+        .form.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #27ae60;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .form-hint {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .submit-btn {
+            width: 100%;
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .submit-btn:hover {
+            background: #229954;
+        }
+
+        .submit-btn:disabled {
+            background: #95a5a6;
+            cursor: not-allowed;
+        }
+
+        .forgot-password {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .forgot-password a {
+            color: #27ae60;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .forgot-password a:hover {
+            text-decoration: underline;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #27ae60;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .message {
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .back-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .back-link a {
+            color: #27ae60;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .back-link a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .header {
+                padding: 20px;
+            }
+            
+            .form-container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">🍽️</div>
+            <div class="title">PedidoFácil</div>
+            <div class="subtitle">Área do Restaurante</div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <div class="tab active" onclick="trocarTab('login')">🔑 Login</div>
+            <div class="tab" onclick="trocarTab('cadastro')">📝 Cadastro</div>
+        </div>
+
+        <!-- Form Container -->
+        <div class="form-container">
+            <!-- Login Form -->
+            <form class="form active" id="login-form">
+                <div class="form-group">
+                    <label class="form-label" for="login-email">E-mail</label>
+                    <input type="email" class="form-input" id="login-email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="login-senha">Senha</label>
+                    <input type="password" class="form-input" id="login-senha" required>
+                </div>
+                
+                <button type="submit" class="submit-btn" id="login-btn">
+                    🚀 Entrar
+                </button>
+                
+                <div class="forgot-password">
+                    <a href="#" onclick="esqueciSenha()">Esqueci minha senha</a>
+                </div>
+            </form>
+
+            <!-- Cadastro Form -->
+            <form class="form" id="cadastro-form">
+                <div class="form-group">
+                    <label class="form-label" for="cadastro-nome">Nome do Restaurante</label>
+                    <input type="text" class="form-input" id="cadastro-nome" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="cadastro-email">E-mail</label>
+                    <input type="email" class="form-input" id="cadastro-email" required>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="cadastro-telefone">Telefone</label>
+                        <input type="tel" class="form-input" id="cadastro-telefone" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="cadastro-cnpj">CNPJ</label>
+                        <input type="text" class="form-input" id="cadastro-cnpj" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="cadastro-endereco">Endereço Completo</label>
+                    <input type="text" class="form-input" id="cadastro-endereco" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="cadastro-categoria">Categoria Principal</label>
+                    <select class="form-input" id="cadastro-categoria" required>
+                        <option value="">Selecione uma categoria</option>
+                        <option value="pizza">🍕 Pizza</option>
+                        <option value="hamburguer">🍔 Hambúrguer</option>
+                        <option value="japonesa">🍣 Japonesa</option>
+                        <option value="chinesa">🥢 Chinesa</option>
+                        <option value="brasileira">🥘 Brasileira</option>
+                        <option value="italiana">🍝 Italiana</option>
+                        <option value="doces">🍰 Doces</option>
+                        <option value="bebidas">🥤 Bebidas</option>
+                        <option value="outros">🍽️ Outros</option>
+                    </select>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="cadastro-senha">Senha</label>
+                        <input type="password" class="form-input" id="cadastro-senha" required minlength="6">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="cadastro-confirmar-senha">Confirmar Senha</label>
+                        <input type="password" class="form-input" id="cadastro-confirmar-senha" required minlength="6">
+                    </div>
+                </div>
+                
+                <div class="form-hint">A senha deve ter pelo menos 6 caracteres</div>
+                
+                <button type="submit" class="submit-btn" id="cadastro-btn">
+                    🚀 Criar Conta
+                </button>
+            </form>
+
+            <!-- Loading -->
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <div>Processando...</div>
+            </div>
+
+            <!-- Back Link -->
+            <div class="back-link">
+                <a href="../index.html">← Voltar para página inicial</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+
+    <script>
+        // Configuração do Firebase
+        const firebaseConfig = {
+  apiKey: "AIzaSyDQ6IxIEGg1pYibe8zJ_DQO2bnWa0Beng0",
+  authDomain: "appdelivery-38949.firebaseapp.com",
+  projectId: "appdelivery-38949",
+  storageBucket: "appdelivery-38949.firebasestorage.app",
+  messagingSenderId: "717102909889",
+  appId: "1:717102909889:web:581ee8f19f6f3c68cb4740"
+};
+        // Inicializar Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // Variáveis globais
+        let currentTab = 'login';
+
+        // Inicializar página
+        document.addEventListener('DOMContentLoaded', function() {
+            configurarFormularios();
+        });
+
+        // Configurar formulários
+        function configurarFormularios() {
+            // Login form
+            document.getElementById('login-form').addEventListener('submit', fazerLogin);
+            
+            // Cadastro form
+            document.getElementById('cadastro-form').addEventListener('submit', fazerCadastro);
+        }
+
+        // Trocar entre tabs
+        function trocarTab(tab) {
+            // Atualizar tabs
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Atualizar formulários
+            document.querySelectorAll('.form').forEach(f => f.classList.remove('active'));
+            document.getElementById(`${tab}-form`).classList.add('active');
+            
+            currentTab = tab;
+            
+            // Limpar mensagens
+            limparMensagens();
+        }
+
+        // Fazer login
+        async function fazerLogin(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('login-email').value;
+            const senha = document.getElementById('login-senha').value;
+            
+            if (!email || !senha) {
+                mostrarMensagem('Preencha todos os campos', 'error');
+                return;
+            }
+            
+            mostrarLoading(true);
+            
+            try {
+                const userCredential = await auth.signInWithEmailAndPassword(email, senha);
+                const user = userCredential.user;
+                
+                // Verificar se é um restaurante
+                const userDoc = await db.collection('usuarios').doc(user.uid).get();
+                
+                if (!userDoc.exists || userDoc.data().tipo !== 'restaurante') {
+                    throw new Error('Esta conta não é de um restaurante');
+                }
+                
+                const userData = userDoc.data();
+                
+                // Salvar dados no localStorage
+                localStorage.setItem('user', JSON.stringify({
+                    uid: user.uid,
+                    email: user.email,
+                    tipo: 'restaurante',
+                    nome: userData.nome,
+                    telefone: userData.telefone,
+                    endereco: userData.endereco,
+                    cnpj: userData.cnpj,
+                    categoria: userData.categoria
+                }));
+                
+                mostrarMensagem('Login realizado com sucesso! Redirecionando...', 'success');
+                
+                // Redirecionar para home do restaurante
+                setTimeout(() => {
+                    window.location.href = 'home_restaurante.html';
+                }, 1500);
+                
+            } catch (error) {
+                console.error('Erro no login:', error);
+                
+                let mensagem = 'Erro ao fazer login';
+                if (error.code === 'auth/user-not-found') {
+                    mensagem = 'Usuário não encontrado';
+                } else if (error.code === 'auth/wrong-password') {
+                    mensagem = 'Senha incorreta';
+                } else if (error.code === 'auth/invalid-email') {
+                    mensagem = 'E-mail inválido';
+                } else if (error.message.includes('restaurante')) {
+                    mensagem = 'Esta conta não é de um restaurante';
+                }
+                
+                mostrarMensagem(mensagem, 'error');
+            } finally {
+                mostrarLoading(false);
+            }
+        }
+
+        // Fazer cadastro
+        async function fazerCadastro(event) {
+            event.preventDefault();
+            
+            const nome = document.getElementById('cadastro-nome').value;
+            const email = document.getElementById('cadastro-email').value;
+            const telefone = document.getElementById('cadastro-telefone').value;
+            const cnpj = document.getElementById('cadastro-cnpj').value;
+            const endereco = document.getElementById('cadastro-endereco').value;
+            const categoria = document.getElementById('cadastro-categoria').value;
+            const senha = document.getElementById('cadastro-senha').value;
+            const confirmarSenha = document.getElementById('cadastro-confirmar-senha').value;
+            
+            // Validações
+            if (!nome || !email || !telefone || !cnpj || !endereco || !categoria || !senha || !confirmarSenha) {
+                mostrarMensagem('Preencha todos os campos', 'error');
+                return;
+            }
+            
+            if (senha !== confirmarSenha) {
+                mostrarMensagem('As senhas não coincidem', 'error');
+                return;
+            }
+            
+            if (senha.length < 6) {
+                mostrarMensagem('A senha deve ter pelo menos 6 caracteres', 'error');
+                return;
+            }
+            
+            mostrarLoading(true);
+            
+            try {
+                // Criar usuário no Firebase Auth
+                const userCredential = await auth.createUserWithEmailAndPassword(email, senha);
+                const user = userCredential.user;
+                
+                // Salvar dados do restaurante no Firestore
+                await db.collection('usuarios').doc(user.uid).set({
+                    nome: nome,
+                    email: email,
+                    telefone: telefone,
+                    cnpj: cnpj,
+                    endereco: endereco,
+                    categoria: categoria,
+                    tipo: 'restaurante',
+                    dataCadastro: new Date(),
+                    ativo: true,
+                    avaliacao: 0,
+                    totalAvaliacoes: 0,
+                    taxaEntrega: 0,
+                    tempoMedioPreparo: 30,
+                    horarioFuncionamento: {
+                        segunda: { aberto: false, inicio: '08:00', fim: '18:00' },
+                        terca: { aberto: false, inicio: '08:00', fim: '18:00' },
+                        quarta: { aberto: false, inicio: '08:00', fim: '18:00' },
+                        quinta: { aberto: false, inicio: '08:00', fim: '18:00' },
+                        sexta: { aberto: false, inicio: '08:00', fim: '18:00' },
+                        sabado: { aberto: false, inicio: '08:00', fim: '18:00' },
+                        domingo: { aberto: false, inicio: '08:00', fim: '18:00' }
+                    }
+                });
+                
+                // Criar documento do restaurante
+                await db.collection('restaurantes').doc(user.uid).set({
+                    id: user.uid,
+                    nome: nome,
+                    email: email,
+                    telefone: telefone,
+                    cnpj: cnpj,
+                    endereco: endereco,
+                    categoria: categoria,
+                    ativo: true,
+                    avaliacao: 0,
+                    totalAvaliacoes: 0,
+                    taxaEntrega: 0,
+                    tempoMedioPreparo: 30,
+                    horarioFuncionamento: {
+                        segunda: { aberto: false, inicio: '08:00', fim: '18:00' },
+                        terca: { aberto: false, inicio: '08:00', fim: '18:00' },
+                        quarta: { aberto: false, inicio: '08:00', fim: '18:00' },
+                        quinta: { aberto: false, inicio: '08:00', fim: '18:00' },
+                        sexta: { aberto: false, inicio: '08:00', fim: '18:00' },
+                        sabado: { aberto: false, inicio: '08:00', fim: '18:00' },
+                        domingo: { aberto: false, inicio: '08:00', fim: '18:00' }
+                    },
+                    dataCadastro: new Date()
+                });
+                
+                // Salvar dados no localStorage
+                localStorage.setItem('user', JSON.stringify({
+                    uid: user.uid,
+                    email: user.email,
+                    tipo: 'restaurante',
+                    nome: nome,
+                    telefone: telefone,
+                    endereco: endereco,
+                    cnpj: cnpj,
+                    categoria: categoria
+                }));
+                
+                mostrarMensagem('Conta criada com sucesso! Redirecionando...', 'success');
+                
+                // Redirecionar para home do restaurante
+                setTimeout(() => {
+                    window.location.href = 'home_restaurante.html';
+                }, 1500);
+                
+            } catch (error) {
+                console.error('Erro no cadastro:', error);
+                
+                let mensagem = 'Erro ao criar conta';
+                if (error.code === 'auth/email-already-in-use') {
+                    mensagem = 'Este e-mail já está em uso';
+                } else if (error.code === 'auth/weak-password') {
+                    mensagem = 'A senha é muito fraca';
+                } else if (error.code === 'auth/invalid-email') {
+                    mensagem = 'E-mail inválido';
+                }
+                
+                mostrarMensagem(mensagem, 'error');
+            } finally {
+                mostrarLoading(false);
+            }
+        }
+
+        // Esqueci minha senha
+        async function esqueciSenha() {
+            const email = document.getElementById('login-email').value;
+            
+            if (!email) {
+                mostrarMensagem('Digite seu e-mail primeiro', 'error');
+                return;
+            }
+            
+            try {
+                await auth.sendPasswordResetEmail(email);
+                mostrarMensagem('E-mail de redefinição enviado! Verifique sua caixa de entrada.', 'success');
+            } catch (error) {
+                console.error('Erro ao enviar e-mail de redefinição:', error);
+                mostrarMensagem('Erro ao enviar e-mail de redefinição', 'error');
+            }
+        }
+
+        // Mostrar/ocultar loading
+        function mostrarLoading(mostrar) {
+            const loading = document.getElementById('loading');
+            const forms = document.querySelectorAll('.form');
+            
+            if (mostrar) {
+                loading.style.display = 'block';
+                forms.forEach(form => form.style.display = 'none');
+            } else {
+                loading.style.display = 'none';
+                if (currentTab === 'login') {
+                    document.getElementById('login-form').classList.add('active');
+                } else {
+                    document.getElementById('cadastro-form').classList.add('active');
+                }
+            }
+        }
+
+        // Mostrar mensagem
+        function mostrarMensagem(texto, tipo) {
+            // Remover mensagens anteriores
+            const mensagensAnteriores = document.querySelectorAll('.message');
+            mensagensAnteriores.forEach(msg => msg.remove());
+            
+            // Criar nova mensagem
+            const mensagem = document.createElement('div');
+            mensagem.className = `message ${tipo}`;
+            mensagem.textContent = texto;
+            
+            // Inserir antes do loading
+            const loading = document.getElementById('loading');
+            loading.parentNode.insertBefore(mensagem, loading);
+            
+            // Remover após 5 segundos
+            setTimeout(() => {
+                mensagem.remove();
+            }, 5000);
+        }
+
+        // Limpar mensagens
+        function limparMensagens() {
+            const mensagens = document.querySelectorAll('.message');
+            mensagens.forEach(msg => msg.remove());
+        }
+    </script>
+</body>
+</html>

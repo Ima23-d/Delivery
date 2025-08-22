@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PedidoFácil - Home</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8f9fa;
+            color: #333;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .logout-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        /* Main Content */
+        .main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Search Section */
+        .search-section {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .search-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 16px;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .search-btn {
+            padding: 15px 30px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .search-btn:hover {
+            background: #5a6fd8;
+        }
+
+        .clear-btn {
+            padding: 15px 20px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .clear-btn:hover {
+            background: #c82333;
+        }
+
+        .filters {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 10px 20px;
+            background: #f8f9fa;
+            border: 2px solid #e1e5e9;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        /* Restaurants Grid */
+        .restaurants-section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .restaurants-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .restaurant-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+
+        .restaurant-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        .restaurant-image {
+            width: 100%;
+            height: 200px;
+            background: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: #ccc;
+        }
+
+        .restaurant-info {
+            padding: 20px;
+        }
+
+        .restaurant-name {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .restaurant-category {
+            color: #667eea;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .restaurant-rating {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 10px;
+        }
+
+        .stars {
+            color: #ffc107;
+        }
+
+        .rating-text {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .restaurant-delivery {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .delivery-time {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .delivery-fee {
+            color: #27ae60;
+            font-weight: 600;
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-top: 1px solid #e1e5e9;
+            padding: 15px 0;
+            z-index: 100;
+        }
+
+        .nav-items {
+            display: flex;
+            justify-content: space-around;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .nav-item.active {
+            color: #667eea;
+        }
+
+        .nav-icon {
+            font-size: 1.5rem;
+        }
+
+        .nav-text {
+            font-size: 12px;
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                padding: 0 15px;
+            }
+            
+            .main {
+                padding: 15px;
+            }
+            
+            .search-section {
+                padding: 20px;
+            }
+            
+            .search-box {
+                flex-direction: column;
+            }
+            
+            .restaurants-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .filters {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">🍔 PedidoFácil</div>
+            <div class="user-info">
+                <div class="user-avatar" id="user-avatar">U</div>
+                <span id="user-name">Usuário</span>
+                <button class="logout-btn" onclick="fazerLogout()">Sair</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <!-- Search Section -->
+        <section class="search-section">
+            <h2 class="search-title">O que você quer comer hoje?</h2>
+            <div class="search-box">
+                <input type="text" class="search-input" id="search-input" placeholder="Buscar restaurantes, pratos...">
+                <button class="search-btn" onclick="buscarRestaurantes()">🔍 Buscar</button>
+                <button class="clear-btn" onclick="limparBusca()" id="clear-btn" style="display: none;">❌ Limpar</button>
+            </div>
+            <div class="filters">
+                <button class="filter-btn active" data-category="todos">Todos</button>
+                <button class="filter-btn" data-category="pizza">🍕 Pizza</button>
+                <button class="filter-btn" data-category="hamburguer">🍔 Hambúrguer</button>
+                <button class="filter-btn" data-category="japones">🍣 Japonês</button>
+                <button class="filter-btn" data-category="brasileira">🥘 Brasileira</button>
+                <button class="filter-btn" data-category="doces">🍰 Doces</button>
+            </div>
+        </section>
+
+        <!-- Restaurants Section -->
+        <section class="restaurants-section">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 class="section-title">Restaurantes Disponíveis</h2>
+                <div id="restaurant-count" style="color: #666; font-size: 14px;"></div>
+            </div>
+            <div id="restaurants-container">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Carregando restaurantes...</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <div class="nav-items">
+            <div class="nav-item active" onclick="navegarPara('home')">
+                <div class="nav-icon">🏠</div>
+                <div class="nav-text">Início</div>
+            </div>
+            <div class="nav-item" onclick="navegarPara('pedidos')">
+                <div class="nav-icon">📋</div>
+                <div class="nav-text">Meus Pedidos</div>
+            </div>
+            <div class="nav-item" onclick="navegarPara('carrinho')">
+                <div class="nav-icon">🛒</div>
+                <div class="nav-text">Carrinho</div>
+            </div>
+            <div class="nav-item" onclick="navegarPara('perfil')">
+                <div class="nav-icon">👤</div>
+                <div class="nav-text">Perfil</div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+
+    <script>
+        // Configuração do Firebase
+        const firebaseConfig = {
+  apiKey: "AIzaSyDQ6IxIEGg1pYibe8zJ_DQO2bnWa0Beng0",
+  authDomain: "appdelivery-38949.firebaseapp.com",
+  projectId: "appdelivery-38949",
+  storageBucket: "appdelivery-38949.firebasestorage.app",
+  messagingSenderId: "717102909889",
+  appId: "1:717102909889:web:581ee8f19f6f3c68cb4740"
+};
+
+        // Inicializar Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // Variáveis globais
+        let currentUser = null;
+        let restaurantes = [];
+        let categoriaAtiva = 'todos';
+
+        // Inicializar página
+        document.addEventListener('DOMContentLoaded', function() {
+            verificarAutenticacao();
+            carregarRestaurantes();
+            configurarFiltros();
+        });
+
+        // Verificar autenticação
+        function verificarAutenticacao() {
+            auth.onAuthStateChanged((user) => {
+                if (user) {
+                    // Verificar se é um cliente
+                    db.collection('usuarios').doc(user.uid).get().then((doc) => {
+                        if (doc.exists && doc.data().tipo === 'cliente') {
+                            currentUser = {
+                                uid: user.uid,
+                                email: user.email,
+                                ...doc.data()
+                            };
+                            atualizarInterfaceUsuario();
+                        } else {
+                            // Redirecionar para login se não for cliente
+                            window.location.href = 'cadastro_login_cliente.html';
+                        }
+                    });
+                } else {
+                    // Redirecionar para login se não estiver autenticado
+                    window.location.href = 'cadastro_login_cliente.html';
+                }
+            });
+        }
+
+        // Atualizar interface do usuário
+        function atualizarInterfaceUsuario() {
+            if (currentUser) {
+                document.getElementById('user-name').textContent = currentUser.nome;
+                document.getElementById('user-avatar').textContent = currentUser.nome.charAt(0).toUpperCase();
+            }
+        }
+
+        // Carregar restaurantes
+        async function carregarRestaurantes() {
+            try {
+                const restaurantesRef = await db.collection('restaurantes')
+                    .where('ativo', '==', true)
+                    .get();
+                
+                if (restaurantesRef.empty) {
+                    // Se não houver restaurantes, criar alguns de exemplo
+                    await criarRestaurantesExemplo();
+                    // Tentar carregar novamente
+                    const restaurantesRef2 = await db.collection('restaurantes')
+                        .where('ativo', '==', true)
+                        .get();
+                    restaurantes = restaurantesRef2.docs.map(doc => ({
+                        id: doc.id,
+                        ...doc.data()
+                    }));
+                } else {
+                    restaurantes = restaurantesRef.docs.map(doc => ({
+                        id: doc.id,
+                        ...doc.data()
+                    }));
+                }
+                
+                exibirRestaurantes(restaurantes);
+            } catch (error) {
+                console.error('Erro ao carregar restaurantes:', error);
+                // Em caso de erro, criar restaurantes de exemplo
+                await criarRestaurantesExemplo();
+                restaurantes = await obterRestaurantesExemplo();
+                exibirRestaurantes(restaurantes);
+            }
+        }
+
+        // Criar restaurantes de exemplo
+        async function criarRestaurantesExemplo() {
+            try {
+                const restaurantesExemplo = [
+                    {
+                        nome: "Pizza Express",
+                        categoria: "pizza",
+                        descricao: "As melhores pizzas da cidade com ingredientes frescos",
+                        avaliacao: 4.5,
+                        totalAvaliacoes: 128,
+                        taxaEntrega: 5.00,
+                        tempoEntrega: "30-45",
+                        endereco: "Rua das Flores, 123 - Centro",
+                        telefone: "(11) 99999-9999",
+                        ativo: true,
+                        imagem: null,
+                        horarioFuncionamento: {
+                            segunda: { aberto: true, inicio: "18:00", fim: "23:00" },
+                            terca: { aberto: true, inicio: "18:00", fim: "23:00" },
+                            quarta: { aberto: true, inicio: "18:00", fim: "23:00" },
+                            quinta: { aberto: true, inicio: "18:00", fim: "23:00" },
+                            sexta: { aberto: true, inicio: "18:00", fim: "00:00" },
+                            sabado: { aberto: true, inicio: "18:00", fim: "00:00" },
+                            domingo: { aberto: true, inicio: "18:00", fim: "22:00" }
+                        }
+                    },
+                    {
+                        nome: "Burger House",
+                        categoria: "hamburguer",
+                        descricao: "Hambúrgueres artesanais com carne premium",
+                        avaliacao: 4.3,
+                        totalAvaliacoes: 95,
+                        taxaEntrega: 4.50,
+                        tempoEntrega: "25-35",
+                        endereco: "Av. Principal, 456 - Jardins",
+                        telefone: "(11) 88888-8888",
+                        ativo: true,
+                        imagem: null,
+                        horarioFuncionamento: {
+                            segunda: { aberto: true, inicio: "11:00", fim: "22:00" },
+                            terca: { aberto: true, inicio: "11:00", fim: "22:00" },
+                            quarta: { aberto: true, inicio: "11:00", fim: "22:00" },
+                            quinta: { aberto: true, inicio: "11:00", fim: "22:00" },
+                            sexta: { aberto: true, inicio: "11:00", fim: "23:00" },
+                            sabado: { aberto: true, inicio: "11:00", fim: "23:00" },
+                            domingo: { aberto: true, inicio: "12:00", fim: "21:00" }
+                        }
+                    },
+                    {
+                        nome: "Sushi Master",
+                        categoria: "japones",
+                        descricao: "Sushi tradicional e contemporâneo com peixe fresco",
+                        avaliacao: 4.7,
+                        totalAvaliacoes: 156,
+                        taxaEntrega: 6.00,
+                        tempoEntrega: "35-50",
+                        endereco: "Rua do Comércio, 789 - Vila Madalena",
+                        telefone: "(11) 77777-7777",
+                        ativo: true,
+                        imagem: null,
+                        horarioFuncionamento: {
+                            segunda: { aberto: false, inicio: "18:00", fim: "22:00" },
+                            terca: { aberto: true, inicio: "18:00", fim: "22:00" },
+                            quarta: { aberto: true, inicio: "18:00", fim: "22:00" },
+                            quinta: { aberto: true, inicio: "18:00", fim: "22:00" },
+                            sexta: { aberto: true, inicio: "18:00", fim: "23:00" },
+                            sabado: { aberto: true, inicio: "18:00", fim: "23:00" },
+                            domingo: { aberto: true, inicio: "18:00", fim: "22:00" }
+                        }
+                    },
+                    {
+                        nome: "Feijoada da Vó",
+                        categoria: "brasileira",
+                        descricao: "Comida brasileira caseira como na casa da vó",
+                        avaliacao: 4.6,
+                        totalAvaliacoes: 89,
+                        taxaEntrega: 3.50,
+                        tempoEntrega: "20-30",
+                        endereco: "Rua da Tradição, 321 - Bairro Antigo",
+                        telefone: "(11) 66666-6666",
+                        ativo: true,
+                        imagem: null,
+                        horarioFuncionamento: {
+                            segunda: { aberto: false, inicio: "11:00", fim: "15:00" },
+                            terca: { aberto: true, inicio: "11:00", fim: "15:00" },
+                            quarta: { aberto: true, inicio: "11:00", fim: "15:00" },
+                            quinta: { aberto: true, inicio: "11:00", fim: "15:00" },
+                            sexta: { aberto: true, inicio: "11:00", fim: "15:00" },
+                            sabado: { aberto: true, inicio: "11:00", fim: "16:00" },
+                            domingo: { aberto: true, inicio: "11:00", fim: "16:00" }
+                        }
+                    },
+                    {
+                        nome: "Doceria Sonho",
+                        categoria: "doces",
+                        descricao: "Doces artesanais que fazem sonhar",
+                        avaliacao: 4.4,
+                        totalAvaliacoes: 67,
+                        taxaEntrega: 4.00,
+                        tempoEntrega: "15-25",
+                        endereco: "Rua dos Doces, 654 - Centro",
+                        telefone: "(11) 55555-5555",
+                        ativo: true,
+                        imagem: null,
+                        horarioFuncionamento: {
+                            segunda: { aberto: false, inicio: "09:00", fim: "18:00" },
+                            terca: { aberto: true, inicio: "09:00", fim: "18:00" },
+                            quarta: { aberto: true, inicio: "09:00", fim: "18:00" },
+                            quinta: { aberto: true, inicio: "09:00", fim: "18:00" },
+                            sexta: { aberto: true, inicio: "09:00", fim: "18:00" },
+                            sabado: { aberto: true, inicio: "09:00", fim: "18:00" },
+                            domingo: { aberto: true, inicio: "10:00", fim: "17:00" }
+                        }
+                    }
+                ];
+
+                // Criar cada restaurante no Firestore
+                for (const restaurante of restaurantesExemplo) {
+                    await db.collection('restaurantes').add({
+                        ...restaurante,
+                        dataCadastro: new Date(),
+                        dataAtualizacao: new Date()
+                    });
+                }
+
+                console.log('Restaurantes de exemplo criados com sucesso!');
+            } catch (error) {
+                console.error('Erro ao criar restaurantes de exemplo:', error);
+            }
+        }
+
+        // Obter restaurantes de exemplo (fallback)
+        function obterRestaurantesExemplo() {
+            return [
+                {
+                    id: "exemplo1",
+                    nome: "Pizza Express",
+                    categoria: "pizza",
+                    descricao: "As melhores pizzas da cidade com ingredientes frescos",
+                    avaliacao: 4.5,
+                    totalAvaliacoes: 128,
+                    taxaEntrega: 5.00,
+                    tempoEntrega: "30-45",
+                    endereco: "Rua das Flores, 123 - Centro",
+                    telefone: "(11) 99999-9999",
+                    ativo: true,
+                    imagem: null
+                },
+                {
+                    id: "exemplo2",
+                    nome: "Burger House",
+                    categoria: "hamburguer",
+                    descricao: "Hambúrgueres artesanais com carne premium",
+                    avaliacao: 4.3,
+                    totalAvaliacoes: 95,
+                    taxaEntrega: 4.50,
+                    tempoEntrega: "25-35",
+                    endereco: "Av. Principal, 456 - Jardins",
+                    telefone: "(11) 88888-8888",
+                    ativo: true,
+                    imagem: null
+                },
+                {
+                    id: "exemplo3",
+                    nome: "Sushi Master",
+                    categoria: "japones",
+                    descricao: "Sushi tradicional e contemporâneo com peixe fresco",
+                    avaliacao: 4.7,
+                    totalAvaliacoes: 156,
+                    taxaEntrega: 6.00,
+                    tempoEntrega: "35-50",
+                    endereco: "Rua do Comércio, 789 - Vila Madalena",
+                    telefone: "(11) 77777-7777",
+                    ativo: true,
+                    imagem: null
+                },
+                {
+                    id: "exemplo4",
+                    nome: "Feijoada da Vó",
+                    categoria: "brasileira",
+                    descricao: "Comida brasileira caseira como na casa da vó",
+                    avaliacao: 4.6,
+                    totalAvaliacoes: 89,
+                    taxaEntrega: 3.50,
+                    tempoEntrega: "20-30",
+                    endereco: "Rua da Tradição, 321 - Bairro Antigo",
+                    telefone: "(11) 66666-6666",
+                    ativo: true,
+                    imagem: null
+                },
+                {
+                    id: "exemplo5",
+                    nome: "Doceria Sonho",
+                    categoria: "doces",
+                    descricao: "Doces artesanais que fazem sonhar",
+                    avaliacao: 4.4,
+                    totalAvaliacoes: 67,
+                    taxaEntrega: 4.00,
+                    tempoEntrega: "15-25",
+                    endereco: "Rua dos Doces, 654 - Centro",
+                    telefone: "(11) 55555-5555",
+                    ativo: true,
+                    imagem: null
+                }
+            ];
+        }
+
+        // Exibir restaurantes
+        function exibirRestaurantes(listaRestaurantes) {
+            const container = document.getElementById('restaurants-container');
+            const restaurantCount = document.getElementById('restaurant-count');
+            
+            if (listaRestaurantes.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #666; padding: 40px;">Nenhum restaurante encontrado.</p>';
+                restaurantCount.textContent = 'Nenhum restaurante encontrado.';
+                return;
+            }
+            
+            const html = listaRestaurantes.map(restaurante => `
+                <div class="restaurant-card" onclick="abrirRestaurante('${restaurante.id}')">
+                    <div class="restaurant-image">
+                        ${restaurante.imagem ? `<img src="${restaurante.imagem}" alt="${restaurante.nome}" style="width: 100%; height: 100%; object-fit: cover;">` : '🍽️'}
+                    </div>
+                    <div class="restaurant-info">
+                        <div class="restaurant-name">${restaurante.nome}</div>
+                        <div class="restaurant-category">${restaurante.categoria}</div>
+                        <div class="restaurant-rating">
+                            <div class="stars">${'⭐'.repeat(Math.floor(restaurante.avaliacao || 0))}</div>
+                            <span class="rating-text">${restaurante.avaliacao ? restaurante.avaliacao.toFixed(1) : 'N/A'}</span>
+                        </div>
+                        <div class="restaurant-delivery">
+                            <div class="delivery-time">
+                                <span>⏱️</span>
+                                <span>${restaurante.tempoEntrega || '30-45'} min</span>
+                            </div>
+                            <div class="delivery-fee">
+                                ${restaurante.taxaEntrega ? `R$ ${restaurante.taxaEntrega.toFixed(2)}` : 'Grátis'}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            
+            container.innerHTML = html;
+            restaurantCount.textContent = `${listaRestaurantes.length} restaurantes encontrados`;
+        }
+
+        // Configurar filtros
+        function configurarFiltros() {
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // Remover classe active de todos os botões
+                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                    
+                    // Adicionar classe active no botão clicado
+                    this.classList.add('active');
+                    
+                    // Filtrar restaurantes
+                    categoriaAtiva = this.dataset.category;
+                    filtrarRestaurantes();
+                });
+            });
+        }
+
+        // Filtrar restaurantes
+        function filtrarRestaurantes() {
+            let restaurantesFiltrados = restaurantes;
+            
+            if (categoriaAtiva !== 'todos') {
+                restaurantesFiltrados = restaurantes.filter(r => 
+                    r.categoria.toLowerCase().includes(categoriaAtiva.toLowerCase())
+                );
+            }
+            
+            exibirRestaurantes(restaurantesFiltrados);
+        }
+
+        // Buscar restaurantes
+        function buscarRestaurantes() {
+            const termo = document.getElementById('search-input').value.toLowerCase().trim();
+            
+            if (!termo) {
+                filtrarRestaurantes();
+                return;
+            }
+            
+            const restaurantesFiltrados = restaurantes.filter(r => 
+                r.nome.toLowerCase().includes(termo) ||
+                r.categoria.toLowerCase().includes(termo) ||
+                (r.descricao && r.descricao.toLowerCase().includes(termo)) ||
+                (r.endereco && r.endereco.toLowerCase().includes(termo))
+            );
+            
+            if (restaurantesFiltrados.length === 0) {
+                document.getElementById('restaurants-container').innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: #666;">
+                        <div style="font-size: 3rem; margin-bottom: 20px;">🔍</div>
+                        <h3>Nenhum restaurante encontrado</h3>
+                        <p>Não encontramos restaurantes para "<strong>${termo}</strong>"</p>
+                        <p>Tente outros termos ou use os filtros de categoria</p>
+                        <button onclick="limparBusca()" style="margin-top: 20px; padding: 10px 20px; background: #667eea; color: white; border: none; border-radius: 8px; cursor: pointer;">Limpar Busca</button>
+                    </div>
+                `;
+                document.getElementById('restaurant-count').textContent = 'Nenhum resultado encontrado';
+            } else {
+                exibirRestaurantes(restaurantesFiltrados);
+            }
+        }
+
+        // Busca em tempo real com debounce
+        let timeoutBusca;
+        function buscaEmTempoReal() {
+            clearTimeout(timeoutBusca);
+            timeoutBusca = setTimeout(() => {
+                const termo = document.getElementById('search-input').value.toLowerCase().trim();
+                const clearBtn = document.getElementById('clear-btn');
+                
+                // Mostrar/esconder botão de limpar
+                if (termo.length > 0) {
+                    clearBtn.style.display = 'block';
+                } else {
+                    clearBtn.style.display = 'none';
+                }
+                
+                if (termo === '') {
+                    filtrarRestaurantes();
+                } else {
+                    buscarRestaurantes();
+                }
+            }, 300); // Aguarda 300ms após o usuário parar de digitar
+        }
+
+        // Configurar busca em tempo real
+        document.getElementById('search-input').addEventListener('input', buscaEmTempoReal);
+
+        // Busca ao pressionar Enter
+        document.getElementById('search-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                buscarRestaurantes();
+            }
+        });
+
+        // Limpar busca
+        function limparBusca() {
+            document.getElementById('search-input').value = '';
+            document.getElementById('clear-btn').style.display = 'none';
+            document.getElementById('search-input').focus();
+            filtrarRestaurantes();
+        }
+
+        // Abrir restaurante
+        function abrirRestaurante(restauranteId) {
+            window.location.href = `restaurante.html?id=${restauranteId}`;
+        }
+
+        // Navegação
+        function navegarPara(pagina) {
+            // Atualizar navegação ativa
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+            
+            // Navegar para a página
+            switch(pagina) {
+                case 'home':
+                    // Já estamos na home
+                    break;
+                case 'pedidos':
+                    window.location.href = 'pedido_status.html';
+                    break;
+                case 'carrinho':
+                    window.location.href = 'carrinho.html';
+                    break;
+                case 'perfil':
+                    window.location.href = 'perfil_cliente.html';
+                    break;
+            }
+        }
+
+        // Fazer logout
+        async function fazerLogout() {
+            try {
+                await auth.signOut();
+                localStorage.removeItem('user');
+                window.location.href = 'cadastro_login_cliente.html';
+            } catch (error) {
+                console.error('Erro ao fazer logout:', error);
+                alert('Erro ao fazer logout. Tente novamente.');
+            }
+        }
+    </script>
+</body>
+</html>
