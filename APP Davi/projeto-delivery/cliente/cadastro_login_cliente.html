@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PedidoFácil - Cliente</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
+            margin: 20px;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo h1 {
+            color: #667eea;
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .logo p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 30px;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 2px solid #f0f0f0;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            background: #f8f9fa;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .tab.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .form-container {
+            display: none;
+        }
+
+        .form-container.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 15px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .btn:hover {
+            background: #5a6fd8;
+        }
+
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .error {
+            color: #e74c3c;
+            background: #fdf2f2;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .success {
+            color: #27ae60;
+            background: #f0f9ff;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .forgot-password {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .forgot-password a {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .forgot-password a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                margin: 10px;
+                padding: 30px 20px;
+            }
+            
+            .logo h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <h1>🍔 PedidoFácil</h1>
+            <p>Delivery simples e justo</p>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('login')">Entrar</button>
+            <button class="tab" onclick="showTab('cadastro')">Cadastrar</button>
+        </div>
+
+        <!-- Formulário de Login -->
+        <div id="login-form" class="form-container active">
+            <div id="login-error" class="error" style="display: none;"></div>
+            <div id="login-success" class="success" style="display: none;"></div>
+            
+            <form onsubmit="fazerLogin(event)">
+                <div class="form-group">
+                    <label for="login-email">E-mail</label>
+                    <input type="email" id="login-email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="login-senha">Senha</label>
+                    <input type="password" id="login-senha" required>
+                </div>
+                
+                <button type="submit" class="btn" id="login-btn">Entrar</button>
+            </form>
+            
+            <div class="forgot-password">
+                <a href="#" onclick="esqueciSenha()">Esqueci minha senha</a>
+            </div>
+        </div>
+
+        <!-- Formulário de Cadastro -->
+        <div id="cadastro-form" class="form-container">
+            <div id="cadastro-error" class="error" style="display: none;"></div>
+            <div id="cadastro-success" class="success" style="display: none;"></div>
+            
+            <form onsubmit="fazerCadastro(event)">
+                <div class="form-group">
+                    <label for="cadastro-nome">Nome Completo</label>
+                    <input type="text" id="cadastro-nome" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="cadastro-email">E-mail</label>
+                    <input type="email" id="cadastro-email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="cadastro-telefone">Telefone</label>
+                    <input type="tel" id="cadastro-telefone" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="cadastro-endereco">Endereço Completo</label>
+                    <input type="text" id="cadastro-endereco" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="cadastro-senha">Senha</label>
+                    <input type="password" id="cadastro-senha" required minlength="6">
+                </div>
+                
+                <div class="form-group">
+                    <label for="cadastro-confirmar-senha">Confirmar Senha</label>
+                    <input type="password" id="cadastro-confirmar-senha" required minlength="6">
+                </div>
+                
+                <button type="submit" class="btn" id="cadastro-btn">Cadastrar</button>
+            </form>
+        </div>
+
+        <div id="loading" class="loading">
+            <div class="spinner"></div>
+            <p>Processando...</p>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+
+    <script>
+        // Configuração do Firebase
+        const firebaseConfig = {
+  apiKey: "AIzaSyDQ6IxIEGg1pYibe8zJ_DQO2bnWa0Beng0",
+  authDomain: "appdelivery-38949.firebaseapp.com",
+  projectId: "appdelivery-38949",
+  storageBucket: "appdelivery-38949.firebasestorage.app",
+  messagingSenderId: "717102909889",
+  appId: "1:717102909889:web:581ee8f19f6f3c68cb4740"
+};
+        // Inicializar Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // Função para alternar entre abas
+        function showTab(tabName) {
+            // Remover classe active de todas as abas
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Remover classe active de todos os formulários
+            document.querySelectorAll('.form-container').forEach(form => {
+                form.classList.remove('active');
+            });
+            
+            // Adicionar classe active na aba clicada
+            event.target.classList.add('active');
+            
+            // Mostrar formulário correspondente
+            if (tabName === 'login') {
+                document.getElementById('login-form').classList.add('active');
+            } else {
+                document.getElementById('cadastro-form').classList.add('active');
+            }
+        }
+
+        // Função para fazer login
+        async function fazerLogin(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('login-email').value;
+            const senha = document.getElementById('login-senha').value;
+            const btn = document.getElementById('login-btn');
+            const errorDiv = document.getElementById('login-error');
+            const successDiv = document.getElementById('login-success');
+            
+            // Limpar mensagens anteriores
+            errorDiv.style.display = 'none';
+            successDiv.style.display = 'none';
+            
+            // Desabilitar botão e mostrar loading
+            btn.disabled = true;
+            document.getElementById('loading').style.display = 'block';
+            
+            try {
+                // Fazer login no Firebase
+                const userCredential = await auth.signInWithEmailAndPassword(email, senha);
+                const user = userCredential.user;
+                
+                // Verificar se é um cliente
+                const userDoc = await db.collection('usuarios').doc(user.uid).get();
+                
+                if (userDoc.exists && userDoc.data().tipo === 'cliente') {
+                    successDiv.textContent = 'Login realizado com sucesso!';
+                    successDiv.style.display = 'block';
+                    
+                    // Salvar dados do usuário no localStorage
+                    localStorage.setItem('user', JSON.stringify({
+                        uid: user.uid,
+                        email: user.email,
+                        tipo: 'cliente',
+                        ...userDoc.data()
+                    }));
+                    
+                    // Redirecionar para home do cliente
+                    setTimeout(() => {
+                        window.location.href = 'home_cliente.html';
+                    }, 1500);
+                } else {
+                    throw new Error('Usuário não é um cliente válido');
+                }
+                
+            } catch (error) {
+                console.error('Erro no login:', error);
+                
+                let mensagem = 'Erro ao fazer login.';
+                if (error.code === 'auth/user-not-found') {
+                    mensagem = 'Usuário não encontrado.';
+                } else if (error.code === 'auth/wrong-password') {
+                    mensagem = 'Senha incorreta.';
+                } else if (error.code === 'auth/invalid-email') {
+                    mensagem = 'E-mail inválido.';
+                }
+                
+                errorDiv.textContent = mensagem;
+                errorDiv.style.display = 'block';
+            } finally {
+                // Reabilitar botão e esconder loading
+                btn.disabled = false;
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+
+        // Função para fazer cadastro
+        async function fazerCadastro(event) {
+            event.preventDefault();
+            
+            const nome = document.getElementById('cadastro-nome').value;
+            const email = document.getElementById('cadastro-email').value;
+            const telefone = document.getElementById('cadastro-telefone').value;
+            const endereco = document.getElementById('cadastro-endereco').value;
+            const senha = document.getElementById('cadastro-senha').value;
+            const confirmarSenha = document.getElementById('cadastro-confirmar-senha').value;
+            const btn = document.getElementById('cadastro-btn');
+            const errorDiv = document.getElementById('cadastro-error');
+            const successDiv = document.getElementById('cadastro-success');
+            
+            // Validações
+            if (senha !== confirmarSenha) {
+                errorDiv.textContent = 'As senhas não coincidem.';
+                errorDiv.style.display = 'block';
+                return;
+            }
+            
+            if (senha.length < 6) {
+                errorDiv.textContent = 'A senha deve ter pelo menos 6 caracteres.';
+                errorDiv.style.display = 'block';
+                return;
+            }
+            
+            // Limpar mensagens anteriores
+            errorDiv.style.display = 'none';
+            successDiv.style.display = 'none';
+            
+            // Desabilitar botão e mostrar loading
+            btn.disabled = true;
+            document.getElementById('loading').style.display = 'block';
+            
+            try {
+                // Criar usuário no Firebase Auth
+                const userCredential = await auth.createUserWithEmailAndPassword(email, senha);
+                const user = userCredential.user;
+                
+                // Salvar dados do cliente no Firestore
+                await db.collection('usuarios').doc(user.uid).set({
+                    nome: nome,
+                    email: email,
+                    telefone: telefone,
+                    endereco: endereco,
+                    tipo: 'cliente',
+                    dataCadastro: new Date(),
+                    ativo: true
+                });
+                
+                successDiv.textContent = 'Cadastro realizado com sucesso!';
+                successDiv.style.display = 'block';
+                
+                // Salvar dados do usuário no localStorage
+                localStorage.setItem('user', JSON.stringify({
+                    uid: user.uid,
+                    email: user.email,
+                    tipo: 'cliente',
+                    nome: nome,
+                    telefone: telefone,
+                    endereco: endereco
+                }));
+                
+                // Redirecionar para home do cliente
+                setTimeout(() => {
+                    window.location.href = 'home_cliente.html';
+                }, 1500);
+                
+            } catch (error) {
+                console.error('Erro no cadastro:', error);
+                
+                let mensagem = 'Erro ao fazer cadastro.';
+                if (error.code === 'auth/email-already-in-use') {
+                    mensagem = 'Este e-mail já está em uso.';
+                } else if (error.code === 'auth/weak-password') {
+                    mensagem = 'A senha é muito fraca.';
+                } else if (error.code === 'auth/invalid-email') {
+                    mensagem = 'E-mail inválido.';
+                }
+                
+                errorDiv.textContent = mensagem;
+                errorDiv.style.display = 'block';
+            } finally {
+                // Reabilitar botão e esconder loading
+                btn.disabled = false;
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+
+        // Função para recuperar senha
+        async function esqueciSenha() {
+            const email = document.getElementById('login-email').value;
+            
+            if (!email) {
+                alert('Digite seu e-mail primeiro para recuperar a senha.');
+                return;
+            }
+            
+            try {
+                await auth.sendPasswordResetEmail(email);
+                alert('E-mail de recuperação enviado! Verifique sua caixa de entrada.');
+            } catch (error) {
+                console.error('Erro ao enviar e-mail de recuperação:', error);
+                alert('Erro ao enviar e-mail de recuperação. Tente novamente.');
+            }
+        }
+
+        // Verificar se usuário já está logado
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                // Usuário já está logado, verificar tipo
+                db.collection('usuarios').doc(user.uid).get().then((doc) => {
+                    if (doc.exists && doc.data().tipo === 'cliente') {
+                        // Redirecionar para home do cliente
+                        window.location.href = 'home_cliente.html';
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

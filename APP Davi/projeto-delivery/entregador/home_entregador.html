@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PedidoFácil - Entregador</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f8f9fa; color: #333; }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white; padding: 20px 0; position: sticky; top: 0; z-index: 100;
+        }
+        .header-content {
+            max-width: 1200px; margin: 0 auto; padding: 0 20px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .user-info { display: flex; align-items: center; gap: 15px; }
+        .user-avatar { width: 40px; height: 40px; background: rgba(255,255,255,0.2); 
+            border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+        .user-details { text-align: right; }
+        .user-name { font-weight: 600; font-size: 1.1rem; }
+        .user-vehicle { font-size: 0.9rem; opacity: 0.9; }
+        .logout-btn { background: rgba(255,255,255,0.2); border: none; color: white;
+            padding: 8px 15px; border-radius: 20px; cursor: pointer; font-size: 0.9rem; }
+        
+        .main { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        
+        .status-toggle { background: white; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            padding: 25px; margin-bottom: 20px; text-align: center; }
+        .status-title { font-size: 1.3rem; font-weight: 600; margin-bottom: 15px; color: #333; }
+        .toggle-switch { position: relative; width: 80px; height: 40px; background: #ccc;
+            border-radius: 40px; cursor: pointer; transition: background 0.3s ease; margin: 0 auto; }
+        .toggle-switch.active { background: #28a745; }
+        .toggle-switch::after { content: ''; position: absolute; top: 4px; left: 4px;
+            width: 32px; height: 32px; background: white; border-radius: 50%;
+            transition: transform 0.3s ease; }
+        .toggle-switch.active::after { transform: translateX(40px); }
+        .status-text { margin-top: 15px; font-weight: 600; }
+        .status-text.online { color: #28a745; }
+        .status-text.offline { color: #dc3545; }
+        
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .stat-card { background: white; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            padding: 25px; text-align: center; }
+        .stat-icon { font-size: 2.5rem; margin-bottom: 15px; }
+        .stat-value { font-size: 2rem; font-weight: bold; color: #667eea; margin-bottom: 10px; }
+        .stat-label { color: #666; font-size: 0.9rem; }
+        
+        .quick-actions { background: white; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            padding: 25px; margin-bottom: 30px; }
+        .actions-title { font-size: 1.3rem; font-weight: 600; margin-bottom: 20px; color: #333; }
+        .actions-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
+        .action-btn { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;
+            border: none; padding: 20px; border-radius: 12px; cursor: pointer; font-weight: 600;
+            text-decoration: none; display: flex; flex-direction: column; align-items: center; gap: 10px;
+            transition: transform 0.2s ease; }
+        .action-btn:hover { transform: translateY(-3px); }
+        .action-icon { font-size: 2rem; }
+        
+        .orders-section { background: white; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            padding: 25px; }
+        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .section-title { font-size: 1.3rem; font-weight: 600; color: #333; }
+        .refresh-btn { background: #667eea; color: white; border: none; padding: 8px 15px;
+            border-radius: 20px; cursor: pointer; font-size: 0.9rem; }
+        
+        .order-item { border: 1px solid #e1e5e9; border-radius: 10px; padding: 20px; margin-bottom: 15px; }
+        .order-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .order-info h3 { color: #333; margin-bottom: 5px; }
+        .order-info p { color: #666; font-size: 0.9rem; }
+        .order-status { padding: 8px 15px; border-radius: 20px; font-size: 0.9rem; font-weight: 600; }
+        .status-pendente { background: #fff3cd; color: #856404; }
+        .status-pronto { background: #d4edda; color: #155724; }
+        .status-entregando { background: #cce5ff; color: #004085; }
+        
+        .order-details { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 15px; }
+        .detail-group h4 { color: #333; margin-bottom: 8px; font-size: 0.9rem; }
+        .detail-group p { color: #666; font-size: 0.9rem; }
+        
+        .order-actions { display: flex; gap: 10px; }
+        .action-btn-small { padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer;
+            font-weight: 600; font-size: 0.9rem; }
+        .btn-aceitar { background: #28a745; color: white; }
+        .btn-rejeitar { background: #dc3545; color: white; }
+        .btn-iniciar { background: #007bff; color: white; }
+        .btn-finalizar { background: #6f42c1; color: white; }
+        
+        .no-orders { text-align: center; padding: 40px; color: #666; }
+        .loading { text-align: center; padding: 40px; color: #666; }
+        
+        @media (max-width: 768px) { .stats-grid { grid-template-columns: 1fr; }
+            .actions-grid { grid-template-columns: 1fr; } .order-details { grid-template-columns: 1fr; }
+            .order-actions { flex-direction: column; } }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="user-info">
+                <div class="user-avatar">🚚</div>
+                <div class="user-details">
+                    <div class="user-name" id="user-name">Carregando...</div>
+                    <div class="user-vehicle" id="user-vehicle">Carregando...</div>
+                </div>
+            </div>
+            <button class="logout-btn" onclick="fazerLogout()">🚪 Sair</button>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="status-toggle">
+            <div class="status-title">Status de Disponibilidade</div>
+            <div class="toggle-switch" id="status-toggle" onclick="toggleStatus()"></div>
+            <div class="status-text" id="status-text">Offline</div>
+        </div>
+
+        <div class="stats-grid" id="stats-grid">
+            <div class="loading">Carregando estatísticas...</div>
+        </div>
+
+        <div class="quick-actions">
+            <div class="actions-title">🚀 Ações Rápidas</div>
+            <div class="actions-grid">
+                <a href="pedidos_disponiveis.html" class="action-btn">
+                    <div class="action-icon">📦</div>
+                    <div>Ver Pedidos Disponíveis</div>
+                </a>
+                <a href="meus_pedidos.html" class="action-btn">
+                    <div class="action-icon">📋</div>
+                    <div>Meus Pedidos</div>
+                </a>
+                <a href="perfil_entregador.html" class="action-btn">
+                    <div class="action-icon">👤</div>
+                    <div>Meu Perfil</div>
+                </a>
+                <a href="relatorios_entregador.html" class="action-btn">
+                    <div class="action-icon">📊</div>
+                    <div>Relatórios</div>
+                </a>
+            </div>
+        </div>
+
+        <div class="orders-section">
+            <div class="section-header">
+                <div class="section-title">📦 Pedidos Recentes</div>
+                <button class="refresh-btn" onclick="carregarPedidos()">🔄 Atualizar</button>
+            </div>
+            <div id="orders-container">
+                <div class="loading">Carregando pedidos...</div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "sua-api-key", authDomain: "seu-projeto.firebaseapp.com",
+            projectId: "seu-projeto", storageBucket: "seu-projeto.appspot.com",
+            messagingSenderId: "123456789", appId: "seu-app-id"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        let currentUser = null;
+        let pedidos = [];
+        let unsubscribePedidos = null;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            verificarAutenticacao();
+        });
+
+        function verificarAutenticacao() {
+            auth.onAuthStateChanged((user) => {
+                if (user) {
+                    db.collection('usuarios').doc(user.uid).get().then((doc) => {
+                        if (doc.exists && doc.data().tipo === 'entregador') {
+                            currentUser = { uid: user.uid, email: user.email, ...doc.data() };
+                            atualizarInterface();
+                            carregarEstatisticas();
+                            carregarPedidos();
+                        } else {
+                            window.location.href = 'cadastro_login_entregador.html';
+                        }
+                    });
+                } else {
+                    window.location.href = 'cadastro_login_entregador.html';
+                }
+            });
+        }
+
+        function atualizarInterface() {
+            document.getElementById('user-name').textContent = currentUser.nome;
+            document.getElementById('user-vehicle').textContent = `${getVeiculoNome(currentUser.veiculo)}${currentUser.placa ? ` - ${currentUser.placa}` : ''}`;
+            
+            const statusToggle = document.getElementById('status-toggle');
+            const statusText = document.getElementById('status-text');
+            
+            if (currentUser.disponivel) {
+                statusToggle.classList.add('active');
+                statusText.textContent = 'Online';
+                statusText.className = 'status-text online';
+            } else {
+                statusToggle.classList.remove('active');
+                statusText.textContent = 'Offline';
+                statusText.className = 'status-text offline';
+            }
+        }
+
+        function getVeiculoNome(veiculo) {
+            const veiculos = {
+                'moto': '🏍️ Moto',
+                'bicicleta': '🚲 Bicicleta',
+                'carro': '🚗 Carro',
+                'patinete': '🛴 Patinete'
+            };
+            return veiculos[veiculo] || veiculo;
+        }
+
+        async function toggleStatus() {
+            if (!currentUser) return;
+            
+            const novoStatus = !currentUser.disponivel;
+            
+            try {
+                await db.collection('usuarios').doc(currentUser.uid).update({
+                    disponivel: novoStatus,
+                    dataAtualizacao: new Date()
+                });
+                
+                await db.collection('entregadores').doc(currentUser.uid).update({
+                    disponivel: novoStatus,
+                    dataAtualizacao: new Date()
+                });
+                
+                currentUser.disponivel = novoStatus;
+                atualizarInterface();
+                
+                const mensagem = novoStatus ? 'Agora você está online!' : 'Você está offline';
+                mostrarMensagem(mensagem, 'success');
+                
+            } catch (error) {
+                console.error('Erro ao alterar status:', error);
+                mostrarMensagem('Erro ao alterar status', 'error');
+            }
+        }
+
+        async function carregarEstatisticas() {
+            if (!currentUser) return;
+            
+            try {
+                const entregadorDoc = await db.collection('entregadores').doc(currentUser.uid).get();
+                if (entregadorDoc.exists) {
+                    const dados = entregadorDoc.data();
+                    exibirEstatisticas(dados);
+                }
+            } catch (error) {
+                console.error('Erro ao carregar estatísticas:', error);
+            }
+        }
+
+        function exibirEstatisticas(dados) {
+            const statsGrid = document.getElementById('stats-grid');
+            statsGrid.innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-icon">📦</div>
+                    <div class="stat-value">${dados.totalEntregas || 0}</div>
+                    <div class="stat-label">Total de Entregas</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">💰</div>
+                    <div class="stat-value">R$ ${(dados.totalGanhos || 0).toFixed(2)}</div>
+                    <div class="stat-label">Total Ganho</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">⭐</div>
+                    <div class="stat-value">${(dados.avaliacao || 0).toFixed(1)}</div>
+                    <div class="stat-label">Avaliação Média</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📊</div>
+                    <div class="stat-value">${dados.totalAvaliacoes || 0}</div>
+                    <div class="stat-label">Total de Avaliações</div>
+                </div>
+            `;
+        }
+
+        async function carregarPedidos() {
+            if (!currentUser) return;
+            
+            if (unsubscribePedidos) {
+                unsubscribePedidos();
+            }
+
+            unsubscribePedidos = db.collection('pedidos')
+                .where('entregadorId', '==', currentUser.uid)
+                .orderBy('dataPedido', 'desc')
+                .limit(5)
+                .onSnapshot((snapshot) => {
+                    pedidos = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                    exibirPedidosRecentes(pedidos);
+                }, (error) => {
+                    console.error('Erro ao carregar pedidos:', error);
+                });
+        }
+
+        function exibirPedidosRecentes(pedidos) {
+            const container = document.getElementById('orders-container');
+            
+            if (pedidos.length === 0) {
+                container.innerHTML = '<div class="no-orders">Nenhum pedido encontrado</div>';
+                return;
+            }
+            
+            container.innerHTML = pedidos.map(pedido => `
+                <div class="order-item">
+                    <div class="order-header">
+                        <div class="order-info">
+                            <h3>Pedido #${pedido.id.slice(-6)}</h3>
+                            <p>${pedido.restauranteNome} • ${pedido.clienteNome}</p>
+                            <p>${new Date(pedido.dataPedido.toDate()).toLocaleString('pt-BR')}</p>
+                        </div>
+                        <div class="order-status status-${pedido.status}">${getStatusNome(pedido.status)}</div>
+                    </div>
+                    
+                    <div class="order-details">
+                        <div class="detail-group">
+                            <h4>Endereço de Entrega:</h4>
+                            <p>${pedido.clienteEndereco}</p>
+                        </div>
+                        <div class="detail-group">
+                            <h4>Valor da Entrega:</h4>
+                            <p>R$ ${pedido.taxaEntrega.toFixed(2)}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="order-actions">
+                        ${getBotoesAcao(pedido.status, pedido.id)}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function getStatusNome(status) {
+            const statusMap = {
+                'pendente': 'Pendente',
+                'preparando': 'Preparando',
+                'pronto': 'Pronto para Entrega',
+                'entregando': 'Em Entrega',
+                'entregue': 'Entregue',
+                'cancelado': 'Cancelado'
+            };
+            return statusMap[status] || status;
+        }
+
+        function getBotoesAcao(status, pedidoId) {
+            switch (status) {
+                case 'pronto':
+                    return `
+                        <button class="action-btn-small btn-aceitar" onclick="aceitarPedido('${pedidoId}')">
+                            ✅ Aceitar Entrega
+                        </button>
+                    `;
+                case 'entregando':
+                    return `
+                        <button class="action-btn-small btn-finalizar" onclick="finalizarEntrega('${pedidoId}')">
+                            🎯 Finalizar Entrega
+                        </button>
+                    `;
+                default:
+                    return `<span style="color: #666; font-style: italic;">Aguardando ação...</span>`;
+            }
+        }
+
+        async function aceitarPedido(pedidoId) {
+            if (!currentUser) return;
+            
+            try {
+                await db.collection('pedidos').doc(pedidoId).update({
+                    entregadorId: currentUser.uid,
+                    entregadorNome: currentUser.nome,
+                    status: 'entregando',
+                    dataAtualizacao: new Date()
+                });
+                
+                mostrarMensagem('Pedido aceito com sucesso!', 'success');
+                
+            } catch (error) {
+                console.error('Erro ao aceitar pedido:', error);
+                mostrarMensagem('Erro ao aceitar pedido', 'error');
+            }
+        }
+
+        async function finalizarEntrega(pedidoId) {
+            if (!currentUser) return;
+            
+            try {
+                const pedidoRef = db.collection('pedidos').doc(pedidoId);
+                
+                await db.runTransaction(async (transaction) => {
+                    const pedidoDoc = await transaction.get(pedidoRef);
+                    if (pedidoDoc.exists) {
+                        const pedido = pedidoDoc.data();
+                        
+                        // Atualizar status do pedido
+                        transaction.update(pedidoRef, {
+                            status: 'entregue',
+                            dataEntrega: new Date(),
+                            dataAtualizacao: new Date()
+                        });
+                        
+                        // Atualizar estatísticas do entregador
+                        const entregadorRef = db.collection('entregadores').doc(currentUser.uid);
+                        const entregadorDoc = await transaction.get(entregadorRef);
+                        if (entregadorDoc.exists) {
+                            const entregador = entregadorDoc.data();
+                            const novoTotalEntregas = (entregador.totalEntregas || 0) + 1;
+                            const novoTotalGanhos = (entregador.totalGanhos || 0) + pedido.taxaEntrega;
+                            
+                            transaction.update(entregadorRef, {
+                                totalEntregas: novoTotalEntregas,
+                                totalGanhos: novoTotalGanhos,
+                                dataAtualizacao: new Date()
+                            });
+                        }
+                    }
+                });
+                
+                mostrarMensagem('Entrega finalizada com sucesso!', 'success');
+                
+            } catch (error) {
+                console.error('Erro ao finalizar entrega:', error);
+                mostrarMensagem('Erro ao finalizar entrega', 'error');
+            }
+        }
+
+        function mostrarMensagem(texto, tipo) {
+            const mensagem = document.createElement('div');
+            mensagem.className = `message ${tipo}`;
+            mensagem.textContent = texto;
+            mensagem.style.cssText = `
+                position: fixed; top: 20px; right: 20px; z-index: 1000;
+                padding: 15px 20px; border-radius: 10px; color: white;
+                font-weight: 600; box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+                ${tipo === 'success' ? 'background: #28a745;' : 'background: #dc3545;'}
+            `;
+            
+            document.body.appendChild(mensagem);
+            
+            setTimeout(() => {
+                if (mensagem.parentNode) {
+                    mensagem.remove();
+                }
+            }, 3000);
+        }
+
+        function fazerLogout() {
+            if (unsubscribePedidos) {
+                unsubscribePedidos();
+            }
+            localStorage.removeItem('user');
+            auth.signOut().then(() => {
+                window.location.href = 'cadastro_login_entregador.html';
+            });
+        }
+    </script>
+</body>
+</html>

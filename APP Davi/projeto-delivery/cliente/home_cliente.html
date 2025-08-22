@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PedidoFácil - Home</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8f9fa;
+            color: #333;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .logout-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        /* Main Content */
+        .main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Search Section */
+        .search-section {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .search-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 16px;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .search-btn {
+            padding: 15px 30px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .search-btn:hover {
+            background: #5a6fd8;
+        }
+
+        .filters {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 10px 20px;
+            background: #f8f9fa;
+            border: 2px solid #e1e5e9;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        /* Restaurants Grid */
+        .restaurants-section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .restaurants-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .restaurant-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+
+        .restaurant-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        .restaurant-image {
+            width: 100%;
+            height: 200px;
+            background: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: #ccc;
+        }
+
+        .restaurant-info {
+            padding: 20px;
+        }
+
+        .restaurant-name {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .restaurant-category {
+            color: #667eea;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .restaurant-rating {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 10px;
+        }
+
+        .stars {
+            color: #ffc107;
+        }
+
+        .rating-text {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .restaurant-delivery {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .delivery-time {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .delivery-fee {
+            color: #27ae60;
+            font-weight: 600;
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-top: 1px solid #e1e5e9;
+            padding: 15px 0;
+            z-index: 100;
+        }
+
+        .nav-items {
+            display: flex;
+            justify-content: space-around;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .nav-item.active {
+            color: #667eea;
+        }
+
+        .nav-icon {
+            font-size: 1.5rem;
+        }
+
+        .nav-text {
+            font-size: 12px;
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                padding: 0 15px;
+            }
+            
+            .main {
+                padding: 15px;
+            }
+            
+            .search-section {
+                padding: 20px;
+            }
+            
+            .search-box {
+                flex-direction: column;
+            }
+            
+            .restaurants-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .filters {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">🍔 PedidoFácil</div>
+            <div class="user-info">
+                <div class="user-avatar" id="user-avatar">U</div>
+                <span id="user-name">Usuário</span>
+                <button class="logout-btn" onclick="fazerLogout()">Sair</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <!-- Search Section -->
+        <section class="search-section">
+            <h2 class="search-title">O que você quer comer hoje?</h2>
+            <div class="search-box">
+                <input type="text" class="search-input" id="search-input" placeholder="Buscar restaurantes, pratos...">
+                <button class="search-btn" onclick="buscarRestaurantes()">Buscar</button>
+            </div>
+            <div class="filters">
+                <button class="filter-btn active" data-category="todos">Todos</button>
+                <button class="filter-btn" data-category="pizza">🍕 Pizza</button>
+                <button class="filter-btn" data-category="hamburguer">🍔 Hambúrguer</button>
+                <button class="filter-btn" data-category="japones">🍣 Japonês</button>
+                <button class="filter-btn" data-category="brasileira">🥘 Brasileira</button>
+                <button class="filter-btn" data-category="doces">🍰 Doces</button>
+            </div>
+        </section>
+
+        <!-- Restaurants Section -->
+        <section class="restaurants-section">
+            <h2 class="section-title">Restaurantes Disponíveis</h2>
+            <div id="restaurants-container">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Carregando restaurantes...</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <div class="nav-items">
+            <div class="nav-item active" onclick="navegarPara('home')">
+                <div class="nav-icon">🏠</div>
+                <div class="nav-text">Início</div>
+            </div>
+            <div class="nav-item" onclick="navegarPara('pedidos')">
+                <div class="nav-icon">📋</div>
+                <div class="nav-text">Meus Pedidos</div>
+            </div>
+            <div class="nav-item" onclick="navegarPara('carrinho')">
+                <div class="nav-icon">🛒</div>
+                <div class="nav-text">Carrinho</div>
+            </div>
+            <div class="nav-item" onclick="navegarPara('perfil')">
+                <div class="nav-icon">👤</div>
+                <div class="nav-text">Perfil</div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+
+    <script>
+        // Configuração do Firebase
+        const firebaseConfig = {
+  apiKey: "AIzaSyDQ6IxIEGg1pYibe8zJ_DQO2bnWa0Beng0",
+  authDomain: "appdelivery-38949.firebaseapp.com",
+  projectId: "appdelivery-38949",
+  storageBucket: "appdelivery-38949.firebasestorage.app",
+  messagingSenderId: "717102909889",
+  appId: "1:717102909889:web:581ee8f19f6f3c68cb4740"
+};
+
+        // Inicializar Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // Variáveis globais
+        let currentUser = null;
+        let restaurantes = [];
+        let categoriaAtiva = 'todos';
+
+        // Inicializar página
+        document.addEventListener('DOMContentLoaded', function() {
+            verificarAutenticacao();
+            carregarRestaurantes();
+            configurarFiltros();
+        });
+
+        // Verificar autenticação
+        function verificarAutenticacao() {
+            auth.onAuthStateChanged((user) => {
+                if (user) {
+                    // Verificar se é um cliente
+                    db.collection('usuarios').doc(user.uid).get().then((doc) => {
+                        if (doc.exists && doc.data().tipo === 'cliente') {
+                            currentUser = {
+                                uid: user.uid,
+                                email: user.email,
+                                ...doc.data()
+                            };
+                            atualizarInterfaceUsuario();
+                        } else {
+                            // Redirecionar para login se não for cliente
+                            window.location.href = 'cadastro_login_cliente.html';
+                        }
+                    });
+                } else {
+                    // Redirecionar para login se não estiver autenticado
+                    window.location.href = 'cadastro_login_cliente.html';
+                }
+            });
+        }
+
+        // Atualizar interface do usuário
+        function atualizarInterfaceUsuario() {
+            if (currentUser) {
+                document.getElementById('user-name').textContent = currentUser.nome;
+                document.getElementById('user-avatar').textContent = currentUser.nome.charAt(0).toUpperCase();
+            }
+        }
+
+        // Carregar restaurantes
+        async function carregarRestaurantes() {
+            try {
+                const restaurantesRef = await db.collection('restaurantes')
+                    .where('ativo', '==', true)
+                    .get();
+                
+                restaurantes = restaurantesRef.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                }));
+                
+                exibirRestaurantes(restaurantes);
+            } catch (error) {
+                console.error('Erro ao carregar restaurantes:', error);
+                document.getElementById('restaurants-container').innerHTML = 
+                    '<p style="text-align: center; color: #666; padding: 40px;">Erro ao carregar restaurantes. Tente novamente.</p>';
+            }
+        }
+
+        // Exibir restaurantes
+        function exibirRestaurantes(listaRestaurantes) {
+            const container = document.getElementById('restaurants-container');
+            
+            if (listaRestaurantes.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #666; padding: 40px;">Nenhum restaurante encontrado.</p>';
+                return;
+            }
+            
+            const html = listaRestaurantes.map(restaurante => `
+                <div class="restaurant-card" onclick="abrirRestaurante('${restaurante.id}')">
+                    <div class="restaurant-image">
+                        ${restaurante.imagem ? `<img src="${restaurante.imagem}" alt="${restaurante.nome}" style="width: 100%; height: 100%; object-fit: cover;">` : '🍽️'}
+                    </div>
+                    <div class="restaurant-info">
+                        <div class="restaurant-name">${restaurante.nome}</div>
+                        <div class="restaurant-category">${restaurante.categoria}</div>
+                        <div class="restaurant-rating">
+                            <div class="stars">${'⭐'.repeat(Math.floor(restaurante.avaliacao || 0))}</div>
+                            <span class="rating-text">${restaurante.avaliacao ? restaurante.avaliacao.toFixed(1) : 'N/A'}</span>
+                        </div>
+                        <div class="restaurant-delivery">
+                            <div class="delivery-time">
+                                <span>⏱️</span>
+                                <span>${restaurante.tempoEntrega || '30-45'} min</span>
+                            </div>
+                            <div class="delivery-fee">
+                                ${restaurante.taxaEntrega ? `R$ ${restaurante.taxaEntrega.toFixed(2)}` : 'Grátis'}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            
+            container.innerHTML = html;
+        }
+
+        // Configurar filtros
+        function configurarFiltros() {
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // Remover classe active de todos os botões
+                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                    
+                    // Adicionar classe active no botão clicado
+                    this.classList.add('active');
+                    
+                    // Filtrar restaurantes
+                    categoriaAtiva = this.dataset.category;
+                    filtrarRestaurantes();
+                });
+            });
+        }
+
+        // Filtrar restaurantes
+        function filtrarRestaurantes() {
+            let restaurantesFiltrados = restaurantes;
+            
+            if (categoriaAtiva !== 'todos') {
+                restaurantesFiltrados = restaurantes.filter(r => 
+                    r.categoria.toLowerCase().includes(categoriaAtiva.toLowerCase())
+                );
+            }
+            
+            exibirRestaurantes(restaurantesFiltrados);
+        }
+
+        // Buscar restaurantes
+        function buscarRestaurantes() {
+            const termo = document.getElementById('search-input').value.toLowerCase().trim();
+            
+            if (!termo) {
+                filtrarRestaurantes();
+                return;
+            }
+            
+            const restaurantesFiltrados = restaurantes.filter(r => 
+                r.nome.toLowerCase().includes(termo) ||
+                r.categoria.toLowerCase().includes(termo) ||
+                (r.descricao && r.descricao.toLowerCase().includes(termo))
+            );
+            
+            exibirRestaurantes(restaurantesFiltrados);
+        }
+
+        // Abrir restaurante
+        function abrirRestaurante(restauranteId) {
+            window.location.href = `restaurante.html?id=${restauranteId}`;
+        }
+
+        // Navegação
+        function navegarPara(pagina) {
+            // Atualizar navegação ativa
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+            
+            // Navegar para a página
+            switch(pagina) {
+                case 'home':
+                    // Já estamos na home
+                    break;
+                case 'pedidos':
+                    window.location.href = 'pedido_status.html';
+                    break;
+                case 'carrinho':
+                    window.location.href = 'carrinho.html';
+                    break;
+                case 'perfil':
+                    window.location.href = 'perfil_cliente.html';
+                    break;
+            }
+        }
+
+        // Fazer logout
+        async function fazerLogout() {
+            try {
+                await auth.signOut();
+                localStorage.removeItem('user');
+                window.location.href = 'cadastro_login_cliente.html';
+            } catch (error) {
+                console.error('Erro ao fazer logout:', error);
+                alert('Erro ao fazer logout. Tente novamente.');
+            }
+        }
+
+        // Busca em tempo real
+        document.getElementById('search-input').addEventListener('input', function() {
+            if (this.value.trim() === '') {
+                filtrarRestaurantes();
+            }
+        });
+
+        // Busca ao pressionar Enter
+        document.getElementById('search-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                buscarRestaurantes();
+            }
+        });
+    </script>
+</body>
+</html>

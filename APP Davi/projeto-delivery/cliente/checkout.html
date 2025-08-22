@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PedidoFácil - Checkout</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8f9fa;
+            color: #333;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .back-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 25px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        /* Main Content */
+        .main {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Order Summary */
+        .order-summary {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .summary-header {
+            background: #667eea;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .summary-header h2 {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+
+        .summary-header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .summary-content {
+            padding: 20px;
+        }
+
+        .restaurant-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .restaurant-icon {
+            width: 50px;
+            height: 50px;
+            background: #667eea;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .restaurant-details h3 {
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .restaurant-details p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .order-items {
+            margin-bottom: 20px;
+        }
+
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .order-item:last-child {
+            border-bottom: none;
+        }
+
+        .item-details {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .item-quantity {
+            background: #667eea;
+            color: white;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .item-name {
+            font-weight: 600;
+        }
+
+        .item-price {
+            color: #27ae60;
+            font-weight: bold;
+        }
+
+        .order-totals {
+            border-top: 2px solid #f0f0f0;
+            padding-top: 15px;
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .total-row.final {
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: #27ae60;
+            border-top: 1px solid #f0f0f0;
+            padding-top: 15px;
+            margin-top: 15px;
+        }
+
+        /* Delivery Info */
+        .delivery-section {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .delivery-header {
+            background: #27ae60;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .delivery-header h2 {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+
+        .delivery-header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .delivery-content {
+            padding: 20px;
+        }
+
+        .address-info {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .address-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .address-text {
+            line-height: 1.6;
+            color: #333;
+        }
+
+        .change-address-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s ease;
+        }
+
+        .change-address-btn:hover {
+            background: #5a6fd8;
+        }
+
+        /* Payment Section */
+        .payment-section {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .payment-header {
+            background: #f39c12;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .payment-header h2 {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+
+        .payment-header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .payment-content {
+            padding: 20px;
+        }
+
+        .payment-methods {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .payment-method {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .payment-method:hover {
+            border-color: #667eea;
+        }
+
+        .payment-method.selected {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+
+        .payment-icon {
+            font-size: 1.5rem;
+        }
+
+        .payment-details h4 {
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .payment-details p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .payment-radio {
+            margin-left: auto;
+            width: 20px;
+            height: 20px;
+            accent-color: #667eea;
+        }
+
+        /* Confirm Order Button */
+        .confirm-section {
+            margin-bottom: 100px; /* Espaço para o bottom nav */
+        }
+
+        .confirm-btn {
+            width: 100%;
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 20px;
+            border-radius: 15px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            box-shadow: 0 5px 15px rgba(39, 174, 96, 0.3);
+        }
+
+        .confirm-btn:hover {
+            background: #229954;
+            transform: translateY(-2px);
+            box-shadow: 0 7px 20px rgba(39, 174, 96, 0.4);
+        }
+
+        .confirm-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Success Message */
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .success-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .main {
+                padding: 15px;
+            }
+            
+            .header-content {
+                padding: 0 15px;
+            }
+            
+            .restaurant-info {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .payment-methods {
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <button class="back-btn" onclick="voltarParaCarrinho()">
+                ← Voltar
+            </button>
+            <div class="logo">🚀 Checkout</div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <!-- Order Summary -->
+        <section class="order-summary" id="order-summary">
+            <div class="summary-header">
+                <h2>📋 Resumo do Pedido</h2>
+                <p>Confirme os detalhes antes de finalizar</p>
+            </div>
+            <div class="summary-content" id="summary-content">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Carregando resumo...</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Delivery Info -->
+        <section class="delivery-section">
+            <div class="delivery-header">
+                <h2>📍 Endereço de Entrega</h2>
+                <p>Confirme onde receber seu pedido</p>
+            </div>
+            <div class="delivery-content">
+                <div class="address-info" id="address-info">
+                    <div class="address-header">
+                        <span>🏠</span>
+                        <span>Endereço de Entrega</span>
+                    </div>
+                    <div class="address-text" id="address-text">
+                        Carregando endereço...
+                    </div>
+                </div>
+                <button class="change-address-btn" onclick="alterarEndereco()">
+                    ✏️ Alterar Endereço
+                </button>
+            </div>
+        </section>
+
+        <!-- Payment Section -->
+        <section class="payment-section">
+            <div class="payment-header">
+                <h2>💳 Forma de Pagamento</h2>
+                <p>Escolha como pagar seu pedido</p>
+            </div>
+            <div class="payment-content">
+                <div class="payment-methods">
+                    <div class="payment-method" onclick="selecionarPagamento('pix')">
+                        <div class="payment-icon">📱</div>
+                        <div class="payment-details">
+                            <h4>PIX</h4>
+                            <p>Pagamento instantâneo</p>
+                        </div>
+                        <input type="radio" name="payment" value="pix" class="payment-radio" checked>
+                    </div>
+                    
+                    <div class="payment-method" onclick="selecionarPagamento('cartao')">
+                        <div class="payment-icon">💳</div>
+                        <div class="payment-details">
+                            <h4>Cartão de Crédito/Débito</h4>
+                            <p>Visa, Mastercard, Elo</p>
+                        </div>
+                        <input type="radio" name="payment" value="cartao" class="payment-radio">
+                    </div>
+                    
+                    <div class="payment-method" onclick="selecionarPagamento('dinheiro')">
+                        <div class="payment-icon">💰</div>
+                        <div class="payment-details">
+                            <h4>Dinheiro</h4>
+                            <p>Pagamento na entrega</p>
+                        </div>
+                        <input type="radio" name="payment" value="dinheiro" class="payment-radio">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Confirm Order -->
+        <section class="confirm-section">
+            <button class="confirm-btn" onclick="confirmarPedido()" id="confirm-btn">
+                🚀 Confirmar Pedido
+            </button>
+        </section>
+    </main>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+
+    <script >
+        // Configuração do Firebase
+        const firebaseConfig = {
+  apiKey: "AIzaSyDQ6IxIEGg1pYibe8zJ_DQO2bnWa0Beng0",
+  authDomain: "appdelivery-38949.firebaseapp.com",
+  projectId: "appdelivery-38949",
+  storageBucket: "appdelivery-38949.firebasestorage.app",
+  messagingSenderId: "717102909889",
+  appId: "1:717102909889:web:581ee8f19f6f3c68cb4740"
+};
+
+        // Inicializar Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // Variáveis globais
+        let currentUser = null;
+        let dadosPedido = null;
+        let formaPagamento = 'pix';
+
+        // Inicializar página
+        document.addEventListener('DOMContentLoaded', function() {
+            verificarAutenticacao();
+            carregarDadosPedido();
+        });
+
+        // Verificar autenticação
+        function verificarAutenticacao() {
+            auth.onAuthStateChanged((user) => {
+                if (user) {
+                    db.collection('usuarios').doc(user.uid).get().then((doc) => {
+                        if (doc.exists && doc.data().tipo === 'cliente') {
+                            currentUser = {
+                                uid: user.uid,
+                                email: user.email,
+                                ...doc.data()
+                            };
+                            atualizarEndereco();
+                        } else {
+                            window.location.href = 'cadastro_login_cliente.html';
+                        }
+                    });
+                } else {
+                    window.location.href = 'cadastro_login_cliente.html';
+                }
+            });
+        }
+
+        // Carregar dados do pedido
+        function carregarDadosPedido() {
+            const dadosSalvos = localStorage.getItem('dadosPedido');
+            if (!dadosSalvos) {
+                alert('Dados do pedido não encontrados. Volte ao carrinho.');
+                window.location.href = 'carrinho.html';
+                return;
+            }
+
+            try {
+                dadosPedido = JSON.parse(dadosSalvos);
+                exibirResumoPedido();
+            } catch (error) {
+                console.error('Erro ao carregar dados do pedido:', error);
+                alert('Erro ao carregar dados do pedido. Volte ao carrinho.');
+                window.location.href = 'carrinho.html';
+            }
+        }
+
+        // Exibir resumo do pedido
+        function exibirResumoPedido() {
+            if (!dadosPedido) return;
+
+            const container = document.getElementById('summary-content');
+            
+            const html = `
+                <div class="restaurant-info">
+                    <div class="restaurant-icon">🍽️</div>
+                    <div class="restaurant-details">
+                        <h3>${dadosPedido.restaurante.nome}</h3>
+                        <p>Restaurante selecionado</p>
+                    </div>
+                </div>
+                
+                <div class="order-items">
+                    ${dadosPedido.itens.map(item => `
+                        <div class="order-item">
+                            <div class="item-details">
+                                <div class="item-quantity">${item.quantidade}</div>
+                                <div class="item-name">${item.nome}</div>
+                            </div>
+                            <div class="item-price">R$ ${(item.preco * item.quantidade).toFixed(2)}</div>
+                        </div>
+                    `).join('')}
+                </div>
+                
+                <div class="order-totals">
+                    <div class="total-row">
+                        <span>Subtotal:</span>
+                        <span>R$ ${dadosPedido.subtotal.toFixed(2)}</span>
+                    </div>
+                    <div class="total-row">
+                        <span>Taxa de entrega:</span>
+                        <span>R$ ${dadosPedido.taxaEntrega.toFixed(2)}</span>
+                    </div>
+                    <div class="total-row final">
+                        <span>Total:</span>
+                        <span>R$ ${dadosPedido.total.toFixed(2)}</span>
+                    </div>
+                </div>
+            `;
+            
+            container.innerHTML = html;
+        }
+
+        // Atualizar endereço
+        function atualizarEndereco() {
+            if (currentUser && currentUser.endereco) {
+                document.getElementById('address-text').textContent = currentUser.endereco;
+            } else {
+                document.getElementById('address-text').textContent = 'Endereço não cadastrado';
+            }
+        }
+
+        // Alterar endereço
+        function alterarEndereco() {
+            window.location.href = 'perfil_cliente.html';
+        }
+
+        // Selecionar forma de pagamento
+        function selecionarPagamento(forma) {
+            formaPagamento = forma;
+            
+            // Atualizar seleção visual
+            document.querySelectorAll('.payment-method').forEach(method => {
+                method.classList.remove('selected');
+            });
+            event.currentTarget.classList.add('selected');
+            
+            // Atualizar radio button
+            document.querySelectorAll('.payment-radio').forEach(radio => {
+                radio.checked = false;
+            });
+            event.currentTarget.querySelector('.payment-radio').checked = true;
+        }
+
+        // Confirmar pedido
+        async function confirmarPedido() {
+            if (!dadosPedido || !currentUser) {
+                alert('Erro: dados do pedido não encontrados');
+                return;
+            }
+
+            const btn = document.getElementById('confirm-btn');
+            btn.disabled = true;
+            btn.textContent = '🔄 Processando...';
+
+            try {
+                // Criar pedido no Firestore
+                const pedidoRef = await db.collection('pedidos').add({
+                    clienteId: currentUser.uid,
+                    clienteNome: currentUser.nome,
+                    clienteEmail: currentUser.email,
+                    clienteTelefone: currentUser.telefone,
+                    clienteEndereco: currentUser.endereco,
+                    
+                    restauranteId: dadosPedido.restaurante.id,
+                    restauranteNome: dadosPedido.restaurante.nome,
+                    
+                    itens: dadosPedido.itens,
+                    subtotal: dadosPedido.subtotal,
+                    taxaEntrega: dadosPedido.taxaEntrega,
+                    total: dadosPedido.total,
+                    
+                    formaPagamento: formaPagamento,
+                    status: 'pendente',
+                    dataPedido: new Date(),
+                    dataAtualizacao: new Date(),
+                    
+                    // Taxas do modelo de negócio
+                    taxaRestaurante: 1.00, // R$1 por pedido
+                    taxaEntregador: 1.00,  // R$1 por entrega
+                    taxaPlataforma: 2.00   // R$2 total por pedido
+                });
+
+                // Limpar carrinho
+                localStorage.removeItem('carrinho');
+                localStorage.removeItem('dadosPedido');
+
+                // Mostrar mensagem de sucesso
+                mostrarSucesso(pedidoRef.id);
+
+            } catch (error) {
+                console.error('Erro ao criar pedido:', error);
+                alert('Erro ao processar pedido. Tente novamente.');
+                btn.disabled = false;
+                btn.textContent = '🚀 Confirmar Pedido';
+            }
+        }
+
+        // Mostrar mensagem de sucesso
+        function mostrarSucesso(pedidoId) {
+            const main = document.querySelector('.main');
+            main.innerHTML = `
+                <div class="success-message">
+                    <div class="success-icon">🎉</div>
+                    <h2>Pedido Confirmado!</h2>
+                    <p>Seu pedido foi recebido e está sendo processado.</p>
+                    <p><strong>Número do pedido:</strong> #${pedidoId}</p>
+                    <p>Você receberá atualizações sobre o status do seu pedido.</p>
+                    <br>
+                    <button class="confirm-btn" onclick="irParaPedidos()">
+                        📋 Acompanhar Pedido
+                    </button>
+                </div>
+            `;
+        }
+
+        // Ir para página de pedidos
+        function irParaPedidos() {
+            window.location.href = 'pedido_status.html';
+        }
+
+        // Voltar para carrinho
+        function voltarParaCarrinho() {
+            window.location.href = 'carrinho.html';
+        }
+
+        // Configurar seleção de pagamento ao carregar
+        document.addEventListener('DOMContentLoaded', function() {
+            // Selecionar PIX por padrão
+            const pixMethod = document.querySelector('.payment-method');
+            if (pixMethod) {
+                pixMethod.classList.add('selected');
+            }
+        });
+    </script>
+</body>
+</html>

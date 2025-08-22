@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PedidoFácil - Admin</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; }
+        
+        .container { max-width: 400px; margin: 50px auto; padding: 20px; }
+        
+        .logo { text-align: center; margin-bottom: 30px; }
+        .logo h1 { color: white; font-size: 2.5rem; margin-bottom: 10px; }
+        .logo p { color: rgba(255,255,255,0.8); font-size: 1.1rem; }
+        
+        .auth-container { background: white; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); overflow: hidden; }
+        
+        .tabs { display: flex; background: #f8f9fa; }
+        .tab { flex: 1; padding: 20px; text-align: center; cursor: pointer; transition: all 0.3s; border-bottom: 3px solid transparent; }
+        .tab.active { background: white; border-bottom-color: #667eea; color: #667eea; font-weight: 600; }
+        .tab:hover:not(.active) { background: #e9ecef; }
+        
+        .form-container { padding: 30px; }
+        .form-group { margin-bottom: 20px; }
+        .form-label { display: block; margin-bottom: 8px; color: #333; font-weight: 600; font-size: 0.9rem; }
+        .form-input { width: 100%; padding: 15px; border: 2px solid #e1e5e9; border-radius: 10px; font-size: 16px; transition: border-color 0.3s; }
+        .form-input:focus { outline: none; border-color: #667eea; box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1); }
+        
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        
+        .submit-btn { width: 100%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 15px; border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer; transition: transform 0.2s; }
+        .submit-btn:hover { transform: translateY(-2px); }
+        .submit-btn:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
+        
+        .loading { display: inline-block; width: 20px; height: 20px; border: 3px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: white; animation: spin 1s ease-in-out infinite; margin-right: 10px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        
+        .message { padding: 15px; border-radius: 10px; margin-bottom: 20px; font-weight: 600; text-align: center; }
+        .message.success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .message.error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        
+        .admin-info { background: #e3f2fd; border: 1px solid #bbdefb; border-radius: 10px; padding: 20px; margin-bottom: 20px; }
+        .admin-info h3 { color: #1976d2; margin-bottom: 10px; font-size: 1.1rem; }
+        .admin-info p { color: #1565c0; font-size: 0.9rem; line-height: 1.5; }
+        
+        .security-note { background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 10px; padding: 15px; margin-top: 20px; }
+        .security-note h4 { color: #856404; margin-bottom: 8px; font-size: 0.9rem; }
+        .security-note p { color: #856404; font-size: 0.8rem; line-height: 1.4; }
+        
+        .form-section { display: none; }
+        .form-section.active { display: block; }
+        
+        @media (max-width: 480px) { .container { margin: 20px auto; padding: 10px; }
+            .form-row { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <h1>🚀 PedidoFácil</h1>
+            <p>Painel Administrativo</p>
+        </div>
+        
+        <div class="auth-container">
+            <div class="tabs">
+                <div class="tab active" onclick="mostrarForm('login')">🔐 Login</div>
+                <div class="tab" onclick="mostrarForm('cadastro')">📝 Cadastro</div>
+            </div>
+            
+            <div class="form-container">
+                <!-- Formulário de Login -->
+                <div id="login-form" class="form-section active">
+                    <div class="admin-info">
+                        <h3>👑 Acesso Administrativo</h3>
+                        <p>Este painel permite gerenciar toda a plataforma PedidoFácil, incluindo usuários, restaurantes, entregadores e configurações do sistema.</p>
+                    </div>
+                    
+                    <form onsubmit="fazerLogin(event)">
+                        <div class="form-group">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-input" id="login-email" required placeholder="admin@pedidofacil.com">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Senha</label>
+                            <input type="password" class="form-input" id="login-senha" required placeholder="Sua senha">
+                        </div>
+                        
+                        <button type="submit" class="submit-btn" id="login-btn">
+                            🔐 Entrar como Admin
+                        </button>
+                    </form>
+                </div>
+                
+                <!-- Formulário de Cadastro -->
+                <div id="cadastro-form" class="form-section">
+                    <div class="admin-info">
+                        <h3>⚡ Criar Conta Administrativa</h3>
+                        <p>Cadastre uma nova conta de administrador para gerenciar a plataforma. Esta conta terá acesso total ao sistema.</p>
+                    </div>
+                    
+                    <form onsubmit="fazerCadastro(event)">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Nome</label>
+                                <input type="text" class="form-input" id="cadastro-nome" required placeholder="Seu nome completo">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-input" id="cadastro-email" required placeholder="admin@pedidofacil.com">
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Telefone</label>
+                                <input type="tel" class="form-input" id="cadastro-telefone" required placeholder="(11) 99999-9999">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">CPF</label>
+                                <input type="text" class="form-input" id="cadastro-cpf" required placeholder="000.000.000-00">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Cargo/Função</label>
+                            <input type="text" class="form-input" id="cadastro-cargo" required placeholder="Gerente, Diretor, etc.">
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Senha</label>
+                                <input type="password" class="form-input" id="cadastro-senha" required placeholder="Mínimo 6 caracteres">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Confirmar Senha</label>
+                                <input type="password" class="form-input" id="cadastro-confirmar-senha" required placeholder="Confirme sua senha">
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="submit-btn" id="cadastro-btn">
+                            📝 Criar Conta Admin
+                        </button>
+                    </form>
+                    
+                    <div class="security-note">
+                        <h4>🔒 Segurança</h4>
+                        <p>Contas administrativas têm acesso total ao sistema. Use senhas fortes e mantenha suas credenciais seguras.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "sua-api-key", authDomain: "seu-projeto.firebaseapp.com",
+            projectId: "seu-projeto", storageBucket: "seu-projeto.appspot.com",
+            messagingSenderId: "123456789", appId: "seu-app-id"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        function mostrarForm(tipo) {
+            // Atualizar tabs
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Mostrar formulário correspondente
+            document.querySelectorAll('.form-section').forEach(section => section.classList.remove('active'));
+            if (tipo === 'login') {
+                document.getElementById('login-form').classList.add('active');
+            } else {
+                document.getElementById('cadastro-form').classList.add('active');
+            }
+        }
+
+        async function fazerLogin(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('login-email').value;
+            const senha = document.getElementById('login-senha').value;
+            const btn = document.getElementById('login-btn');
+            
+            // Validações
+            if (!email || !senha) {
+                mostrarMensagem('Preencha todos os campos', 'error');
+                return;
+            }
+            
+            // UI de loading
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loading"></span>Entrando...';
+            
+            try {
+                const userCredential = await auth.signInWithEmailAndPassword(email, senha);
+                const user = userCredential.user;
+                
+                // Verificar se é admin
+                const userDoc = await db.collection('usuarios').doc(user.uid).get();
+                if (!userDoc.exists || userDoc.data().tipo !== 'admin') {
+                    await auth.signOut();
+                    mostrarMensagem('Acesso negado. Apenas administradores podem acessar este painel.', 'error');
+                    return;
+                }
+                
+                // Salvar dados do usuário
+                const userData = { uid: user.uid, email: user.email, ...userDoc.data() };
+                localStorage.setItem('user', JSON.stringify(userData));
+                
+                mostrarMensagem('Login realizado com sucesso! Redirecionando...', 'success');
+                
+                setTimeout(() => {
+                    window.location.href = 'home_admin.html';
+                }, 1500);
+                
+            } catch (error) {
+                console.error('Erro no login:', error);
+                let mensagem = 'Erro ao fazer login';
+                
+                switch (error.code) {
+                    case 'auth/user-not-found':
+                        mensagem = 'Usuário não encontrado';
+                        break;
+                    case 'auth/wrong-password':
+                        mensagem = 'Senha incorreta';
+                        break;
+                    case 'auth/invalid-email':
+                        mensagem = 'Email inválido';
+                        break;
+                    case 'auth/too-many-requests':
+                        mensagem = 'Muitas tentativas. Tente novamente em alguns minutos';
+                        break;
+                }
+                
+                mostrarMensagem(mensagem, 'error');
+            } finally {
+                // Resetar UI
+                btn.disabled = false;
+                btn.innerHTML = '🔐 Entrar como Admin';
+            }
+        }
+
+        async function fazerCadastro(event) {
+            event.preventDefault();
+            
+            const nome = document.getElementById('cadastro-nome').value;
+            const email = document.getElementById('cadastro-email').value;
+            const telefone = document.getElementById('cadastro-telefone').value;
+            const cpf = document.getElementById('cadastro-cpf').value;
+            const cargo = document.getElementById('cadastro-cargo').value;
+            const senha = document.getElementById('cadastro-senha').value;
+            const confirmarSenha = document.getElementById('cadastro-confirmar-senha').value;
+            
+            // Validações
+            if (!nome || !email || !telefone || !cpf || !cargo || !senha || !confirmarSenha) {
+                mostrarMensagem('Preencha todos os campos', 'error');
+                return;
+            }
+            
+            if (senha.length < 6) {
+                mostrarMensagem('A senha deve ter pelo menos 6 caracteres', 'error');
+                return;
+            }
+            
+            if (senha !== confirmarSenha) {
+                mostrarMensagem('As senhas não coincidem', 'error');
+                return;
+            }
+            
+            // Validar CPF básico
+            if (!validarCPF(cpf)) {
+                mostrarMensagem('CPF inválido', 'error');
+                return;
+            }
+            
+            // Validar telefone básico
+            if (!validarTelefone(telefone)) {
+                mostrarMensagem('Telefone inválido', 'error');
+                return;
+            }
+            
+            const btn = document.getElementById('cadastro-btn');
+            
+            // UI de loading
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loading"></span>Criando conta...';
+            
+            try {
+                // Criar usuário no Firebase Auth
+                const userCredential = await auth.createUserWithEmailAndPassword(email, senha);
+                const user = userCredential.user;
+                
+                // Salvar dados no Firestore
+                await db.collection('usuarios').doc(user.uid).set({
+                    nome: nome,
+                    email: email,
+                    telefone: telefone,
+                    cpf: cpf,
+                    cargo: cargo,
+                    tipo: 'admin',
+                    nivelAcesso: 'admin',
+                    permissoes: [
+                        'gerenciar_usuarios',
+                        'gerenciar_restaurantes',
+                        'gerenciar_entregadores',
+                        'gerenciar_pedidos',
+                        'gerenciar_configuracoes',
+                        'visualizar_relatorios',
+                        'gerenciar_taxas'
+                    ],
+                    dataCadastro: new Date(),
+                    ativo: true,
+                    ultimoAcesso: new Date()
+                });
+                
+                // Salvar dados do usuário no localStorage
+                localStorage.setItem('user', JSON.stringify({
+                    uid: user.uid,
+                    email: user.email,
+                    tipo: 'admin',
+                    nome: nome,
+                    telefone: telefone,
+                    cpf: cpf,
+                    cargo: cargo,
+                    nivelAcesso: 'admin'
+                }));
+                
+                mostrarMensagem('Conta administrativa criada com sucesso! Redirecionando...', 'success');
+                
+                setTimeout(() => {
+                    window.location.href = 'home_admin.html';
+                }, 1500);
+                
+            } catch (error) {
+                console.error('Erro no cadastro:', error);
+                let mensagem = 'Erro ao criar conta';
+                
+                switch (error.code) {
+                    case 'auth/email-already-in-use':
+                        mensagem = 'Este email já está em uso';
+                        break;
+                    case 'auth/invalid-email':
+                        mensagem = 'Email inválido';
+                        break;
+                    case 'auth/weak-password':
+                        mensagem = 'Senha muito fraca';
+                        break;
+                }
+                
+                mostrarMensagem(mensagem, 'error');
+            } finally {
+                // Resetar UI
+                btn.disabled = false;
+                btn.innerHTML = '📝 Criar Conta Admin';
+            }
+        }
+
+        function validarCPF(cpf) {
+            // Remove caracteres não numéricos
+            cpf = cpf.replace(/\D/g, '');
+            
+            // Verifica se tem 11 dígitos
+            if (cpf.length !== 11) return false;
+            
+            // Verifica se todos os dígitos são iguais
+            if (/^(\d)\1+$/.test(cpf)) return false;
+            
+            // Validação básica de CPF (algoritmo simplificado)
+            let soma = 0;
+            for (let i = 0; i < 9; i++) {
+                soma += parseInt(cpf.charAt(i)) * (10 - i);
+            }
+            let resto = 11 - (soma % 11);
+            let digito1 = resto < 2 ? 0 : resto;
+            
+            soma = 0;
+            for (let i = 0; i < 10; i++) {
+                soma += parseInt(cpf.charAt(i)) * (11 - i);
+            }
+            resto = 11 - (soma % 11);
+            let digito2 = resto < 2 ? 0 : resto;
+            
+            return cpf.charAt(9) == digito1 && cpf.charAt(10) == digito2;
+        }
+
+        function validarTelefone(telefone) {
+            // Remove caracteres não numéricos
+            const numeros = telefone.replace(/\D/g, '');
+            
+            // Verifica se tem entre 10 e 11 dígitos
+            return numeros.length >= 10 && numeros.length <= 11;
+        }
+
+        function mostrarMensagem(texto, tipo) {
+            // Remove mensagens anteriores
+            const mensagensAnteriores = document.querySelectorAll('.message');
+            mensagensAnteriores.forEach(msg => msg.remove());
+            
+            // Cria nova mensagem
+            const mensagem = document.createElement('div');
+            mensagem.className = `message ${tipo}`;
+            mensagem.textContent = texto;
+            
+            // Insere no início do formulário ativo
+            const formAtivo = document.querySelector('.form-section.active');
+            formAtivo.insertBefore(mensagem, formAtivo.firstChild);
+            
+            // Remove após 5 segundos
+            setTimeout(() => {
+                if (mensagem.parentNode) {
+                    mensagem.remove();
+                }
+            }, 5000);
+        }
+
+        // Verificar se já está logado
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                db.collection('usuarios').doc(user.uid).get().then((doc) => {
+                    if (doc.exists && doc.data().tipo === 'admin') {
+                        // Já está logado como admin, redirecionar
+                        window.location.href = 'home_admin.html';
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PedidoFácil - Relatórios</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f8f9fa; color: #333; }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white; padding: 20px 0; position: sticky; top: 0; z-index: 100;
+        }
+        .header-content {
+            max-width: 1200px; margin: 0 auto; padding: 0 20px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .back-btn { background: rgba(255,255,255,0.2); border: none; color: white;
+            padding: 10px 15px; border-radius: 25px; cursor: pointer; }
+        .title { font-size: 1.8rem; font-weight: bold; }
+        .export-btn { background: rgba(39, 174, 96, 0.8); border: none; color: white;
+            padding: 10px 15px; border-radius: 25px; cursor: pointer; font-weight: 600; }
+        
+        .main { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        
+        .filtros { background: white; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            padding: 20px; margin-bottom: 20px; }
+        .filtros-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
+        .filtro-item { display: flex; flex-direction: column; }
+        .filtro-label { margin-bottom: 8px; color: #333; font-weight: 600; }
+        .filtro-input { padding: 10px; border: 2px solid #e1e5e9; border-radius: 8px; font-size: 14px; }
+        .filtro-input:focus { outline: none; border-color: #667eea; }
+        .aplicar-filtros { background: #667eea; color: white; border: none; padding: 12px 20px;
+            border-radius: 8px; cursor: pointer; font-weight: 600; margin-top: 20px; }
+        
+        .stats-overview { background: white; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            padding: 25px; margin-bottom: 20px; }
+        .overview-title { font-size: 1.3rem; font-weight: 600; margin-bottom: 20px; color: #333; }
+        .overview-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
+        .overview-card { background: #f8f9fa; border-radius: 10px; padding: 20px; text-align: center; }
+        .overview-value { font-size: 1.8rem; font-weight: bold; color: #667eea; margin-bottom: 8px; }
+        .overview-label { color: #666; font-size: 0.9rem; }
+        
+        .chart-container { background: white; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            padding: 25px; margin-bottom: 20px; }
+        .chart-title { font-size: 1.3rem; font-weight: 600; margin-bottom: 20px; color: #333;
+            display: flex; align-items: center; gap: 10px; }
+        .chart { height: 300px; background: #f8f9fa; border-radius: 10px; display: flex; align-items: end;
+            justify-content: space-around; padding: 20px; }
+        .chart-bar { background: linear-gradient(to top, #667eea, #764ba2); width: 40px; border-radius: 5px 5px 0 0;
+            position: relative; min-height: 20px; }
+        .chart-label { position: absolute; bottom: -25px; left: 50%; transform: translateX(-50%);
+            font-size: 0.8rem; color: #666; white-space: nowrap; }
+        
+        .earnings-breakdown { background: white; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            padding: 25px; margin-bottom: 20px; }
+        .breakdown-title { font-size: 1.3rem; font-weight: 600; margin-bottom: 20px; color: #333; }
+        .breakdown-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+        .breakdown-card { background: #f8f9fa; border-radius: 10px; padding: 20px; }
+        .breakdown-card h4 { color: #333; margin-bottom: 15px; font-size: 1rem; font-weight: 600; }
+        .breakdown-item { display: flex; justify-content: space-between; margin-bottom: 10px; }
+        .breakdown-item:last-child { margin-bottom: 0; border-top: 1px solid #e1e5e9; padding-top: 10px; font-weight: 600; }
+        .breakdown-label { color: #666; }
+        .breakdown-value { color: #333; font-weight: 600; }
+        
+        .performance-metrics { background: white; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            padding: 25px; margin-bottom: 20px; }
+        .metrics-title { font-size: 1.3rem; font-weight: 600; margin-bottom: 20px; color: #333; }
+        .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
+        .metric-card { background: #f8f9fa; border-radius: 10px; padding: 20px; text-align: center; }
+        .metric-icon { font-size: 2rem; margin-bottom: 15px; }
+        .metric-value { font-size: 1.5rem; font-weight: bold; color: #667eea; margin-bottom: 8px; }
+        .metric-label { color: #666; font-size: 0.9rem; }
+        .metric-trend { font-size: 0.8rem; padding: 4px 8px; border-radius: 12px; font-weight: 600; }
+        .trend-up { background: #d4edda; color: #155724; }
+        .trend-down { background: #f8d7da; color: #721c24; }
+        .trend-neutral { background: #e2e3e5; color: #383d41; }
+        
+        .recent-orders { background: white; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            padding: 25px; margin-bottom: 20px; }
+        .orders-title { font-size: 1.3rem; font-weight: 600; margin-bottom: 20px; color: #333; }
+        .order-item { border: 1px solid #e1e5e9; border-radius: 10px; padding: 20px; margin-bottom: 15px; }
+        .order-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .order-info h4 { color: #333; margin-bottom: 5px; }
+        .order-info p { color: #666; font-size: 0.9rem; }
+        .order-earnings { background: #667eea; color: white; padding: 8px 15px; border-radius: 20px;
+            font-weight: 600; font-size: 0.9rem; }
+        
+        .no-data { text-align: center; padding: 40px; color: #666; }
+        .loading { text-align: center; padding: 40px; color: #666; }
+        
+        .message { position: fixed; top: 20px; right: 20px; z-index: 1000; padding: 15px 20px;
+            border-radius: 10px; color: white; font-weight: 600; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        .message.success { background: #28a745; }
+        .message.error { background: #dc3545; }
+        
+        @media (max-width: 768px) { .filtros-grid { grid-template-columns: 1fr; }
+            .overview-grid { grid-template-columns: 1fr; } .breakdown-grid { grid-template-columns: 1fr; }
+            .metrics-grid { grid-template-columns: 1fr; } .chart { height: 200px; } }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <button class="back-btn" onclick="voltarParaHome()">← Voltar</button>
+            <div class="title">📊 Relatórios</div>
+            <button class="export-btn" onclick="exportarRelatorio()">📥 Exportar</button>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="filtros">
+            <div class="filtros-grid">
+                <div class="filtro-item">
+                    <label class="filtro-label">Período</label>
+                    <select class="filtro-input" id="periodo-filtro">
+                        <option value="7">Últimos 7 dias</option>
+                        <option value="30" selected>Últimos 30 dias</option>
+                        <option value="90">Últimos 90 dias</option>
+                        <option value="365">Último ano</option>
+                        <option value="custom">Personalizado</option>
+                    </select>
+                </div>
+                
+                <div class="filtro-item" id="data-inicio-container" style="display: none;">
+                    <label class="filtro-label">Data Início</label>
+                    <input type="date" class="filtro-input" id="data-inicio">
+                </div>
+                
+                <div class="filtro-item" id="data-fim-container" style="display: none;">
+                    <label class="filtro-label">Data Fim</label>
+                    <input type="date" class="filtro-input" id="data-fim">
+                </div>
+                
+                <div class="filtro-item">
+                    <label class="filtro-label">Tipo de Veículo</label>
+                    <select class="filtro-input" id="filtro-veiculo">
+                        <option value="">Todos os veículos</option>
+                        <option value="moto">Moto</option>
+                        <option value="bicicleta">Bicicleta</option>
+                        <option value="carro">Carro</option>
+                        <option value="patinete">Patinete</option>
+                    </select>
+                </div>
+            </div>
+            
+            <button class="aplicar-filtros" onclick="aplicarFiltros()">🔍 Aplicar Filtros</button>
+        </div>
+
+        <div class="stats-overview">
+            <div class="overview-title">📈 Visão Geral</div>
+            <div class="overview-grid" id="overview-grid">
+                <div class="loading">Carregando visão geral...</div>
+            </div>
+        </div>
+
+        <div class="chart-container">
+            <div class="chart-title">📊 Entregas por Dia (Últimos 7 dias)</div>
+            <div class="chart" id="chart-entregas">
+                <div class="loading">Carregando gráfico...</div>
+            </div>
+        </div>
+
+        <div class="earnings-breakdown">
+            <div class="breakdown-title">💰 Análise de Ganhos</div>
+            <div class="breakdown-grid" id="breakdown-grid">
+                <div class="loading">Carregando análise de ganhos...</div>
+            </div>
+        </div>
+
+        <div class="performance-metrics">
+            <div class="metrics-title">🎯 Métricas de Performance</div>
+            <div class="metrics-grid" id="metrics-grid">
+                <div class="loading">Carregando métricas...</div>
+            </div>
+        </div>
+
+        <div class="recent-orders">
+            <div class="orders-title">📦 Entregas Recentes</div>
+            <div id="recent-orders-container">
+                <div class="loading">Carregando entregas recentes...</div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "sua-api-key", authDomain: "seu-projeto.firebaseapp.com",
+            projectId: "seu-projeto", storageBucket: "seu-projeto.appspot.com",
+            messagingSenderId: "123456789", appId: "seu-app-id"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        let currentUser = null;
+        let pedidos = [];
+        let unsubscribePedidos = null;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            verificarAutenticacao();
+            configurarFiltros();
+        });
+
+        function verificarAutenticacao() {
+            auth.onAuthStateChanged((user) => {
+                if (user) {
+                    db.collection('usuarios').doc(user.uid).get().then((doc) => {
+                        if (doc.exists && doc.data().tipo === 'entregador') {
+                            currentUser = { uid: user.uid, email: user.email, ...doc.data() };
+                            carregarDados();
+                        } else {
+                            window.location.href = 'cadastro_login_entregador.html';
+                        }
+                    });
+                } else {
+                    window.location.href = 'cadastro_login_entregador.html';
+                }
+            });
+        }
+
+        function configurarFiltros() {
+            document.getElementById('periodo-filtro').addEventListener('change', function() {
+                const periodo = this.value;
+                const dataInicioContainer = document.getElementById('data-inicio-container');
+                const dataFimContainer = document.getElementById('data-fim-container');
+                
+                if (periodo === 'custom') {
+                    dataInicioContainer.style.display = 'block';
+                    dataFimContainer.style.display = 'block';
+                } else {
+                    dataInicioContainer.style.display = 'none';
+                    dataFimContainer.style.display = 'none';
+                }
+            });
+        }
+
+        async function carregarDados() {
+            if (!currentUser) return;
+            
+            try {
+                await carregarPedidos();
+                aplicarFiltros();
+            } catch (error) {
+                console.error('Erro ao carregar dados:', error);
+            }
+        }
+
+        async function carregarPedidos() {
+            if (unsubscribePedidos) {
+                unsubscribePedidos();
+            }
+
+            unsubscribePedidos = db.collection('pedidos')
+                .where('entregadorId', '==', currentUser.uid)
+                .orderBy('dataPedido', 'desc')
+                .onSnapshot((snapshot) => {
+                    pedidos = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                    aplicarFiltros();
+                }, (error) => {
+                    console.error('Erro ao carregar pedidos:', error);
+                });
+        }
+
+        function aplicarFiltros() {
+            const periodo = document.getElementById('periodo-filtro').value;
+            const veiculo = document.getElementById('filtro-veiculo').value;
+            
+            let dataInicio = new Date();
+            let dataFim = new Date();
+            
+            if (periodo === 'custom') {
+                const dataInicioInput = document.getElementById('data-inicio').value;
+                const dataFimInput = document.getElementById('data-fim').value;
+                if (dataInicioInput && dataFimInput) {
+                    dataInicio = new Date(dataInicioInput);
+                    dataFim = new Date(dataFimInput);
+                    dataFim.setHours(23, 59, 59);
+                }
+            } else {
+                dataInicio.setDate(dataInicio.getDate() - parseInt(periodo));
+            }
+            
+            let pedidosFiltrados = pedidos.filter(pedido => {
+                const dataPedido = pedido.dataPedido.toDate();
+                const dataMatch = dataPedido >= dataInicio && dataPedido <= dataFim;
+                const veiculoMatch = !veiculo || currentUser.veiculo === veiculo;
+                
+                return dataMatch && veiculoMatch;
+            });
+            
+            exibirVisaoGeral(pedidosFiltrados);
+            exibirGraficoEntregas(pedidosFiltrados);
+            exibirAnaliseGanhos(pedidosFiltrados);
+            exibirMetricasPerformance(pedidosFiltrados);
+            exibirEntregasRecentes(pedidosFiltrados);
+        }
+
+        function exibirVisaoGeral(pedidosFiltrados) {
+            const totalEntregas = pedidosFiltrados.filter(p => p.status === 'entregue').length;
+            const totalGanhos = pedidosFiltrados.filter(p => p.status === 'entregue')
+                .reduce((total, p) => total + p.taxaEntrega, 0);
+            const mediaPorEntrega = totalEntregas > 0 ? totalGanhos / totalEntregas : 0;
+            const entregasHoje = pedidosFiltrados.filter(p => {
+                const hoje = new Date();
+                const dataPedido = p.dataPedido.toDate();
+                return dataPedido.toDateString() === hoje.toDateString() && p.status === 'entregue';
+            }).length;
+            
+            const overviewGrid = document.getElementById('overview-grid');
+            overviewGrid.innerHTML = `
+                <div class="overview-card">
+                    <div class="overview-value">${totalEntregas}</div>
+                    <div class="overview-label">Total de Entregas</div>
+                </div>
+                <div class="overview-card">
+                    <div class="overview-value">R$ ${totalGanhos.toFixed(2)}</div>
+                    <div class="overview-label">Total Ganho</div>
+                </div>
+                <div class="overview-card">
+                    <div class="overview-value">R$ ${mediaPorEntrega.toFixed(2)}</div>
+                    <div class="overview-label">Média por Entrega</div>
+                </div>
+                <div class="overview-card">
+                    <div class="overview-value">${entregasHoje}</div>
+                    <div class="overview-label">Entregas Hoje</div>
+                </div>
+            `;
+        }
+
+        function exibirGraficoEntregas(pedidosFiltrados) {
+            const ultimos7Dias = [];
+            for (let i = 6; i >= 0; i--) {
+                const data = new Date();
+                data.setDate(data.getDate() - i);
+                ultimos7Dias.push({
+                    data: data.toISOString().split('T')[0],
+                    count: 0
+                });
+            }
+            
+            pedidosFiltrados.forEach(pedido => {
+                if (pedido.status === 'entregue') {
+                    const dataPedido = pedido.dataPedido.toDate().toISOString().split('T')[0];
+                    const dia = ultimos7Dias.find(d => d.data === dataPedido);
+                    if (dia) dia.count++;
+                }
+            });
+            
+            const maxCount = Math.max(...ultimos7Dias.map(d => d.count));
+            const chart = document.getElementById('chart-entregas');
+            
+            chart.innerHTML = ultimos7Dias.map(dia => {
+                const altura = maxCount > 0 ? (dia.count / maxCount) * 200 + 20 : 20;
+                return `
+                    <div class="chart-bar" style="height: ${altura}px;">
+                        <div class="chart-label">${new Date(dia.data).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function exibirAnaliseGanhos(pedidosFiltrados) {
+            const entregasPorStatus = {
+                entregue: pedidosFiltrados.filter(p => p.status === 'entregue'),
+                entregando: pedidosFiltrados.filter(p => p.status === 'entregando'),
+                cancelado: pedidosFiltrados.filter(p => p.status === 'cancelado')
+            };
+            
+            const ganhosPorStatus = {
+                entregue: entregasPorStatus.entregue.reduce((total, p) => total + p.taxaEntrega, 0),
+                entregando: entregasPorStatus.entregando.reduce((total, p) => total + p.taxaEntrega, 0),
+                cancelado: 0
+            };
+            
+            const totalGanhos = ganhosPorStatus.entregue + ganhosPorStatus.entregando;
+            
+            const breakdownGrid = document.getElementById('breakdown-grid');
+            breakdownGrid.innerHTML = `
+                <div class="breakdown-card">
+                    <h4>💰 Status das Entregas</h4>
+                    <div class="breakdown-item">
+                        <span class="breakdown-label">Entregues:</span>
+                        <span class="breakdown-value">${entregasPorStatus.entregue.length}</span>
+                    </div>
+                    <div class="breakdown-item">
+                        <span class="breakdown-label">Em Entrega:</span>
+                        <span class="breakdown-value">${entregasPorStatus.entregando.length}</span>
+                    </div>
+                    <div class="breakdown-item">
+                        <span class="breakdown-label">Canceladas:</span>
+                        <span class="breakdown-value">${entregasPorStatus.cancelado.length}</span>
+                    </div>
+                    <div class="breakdown-item">
+                        <span class="breakdown-label">Total:</span>
+                        <span class="breakdown-value">${pedidosFiltrados.length}</span>
+                    </div>
+                </div>
+                
+                <div class="breakdown-card">
+                    <h4>💵 Análise Financeira</h4>
+                    <div class="breakdown-item">
+                        <span class="breakdown-label">Ganhos Confirmados:</span>
+                        <span class="breakdown-value">R$ ${ganhosPorStatus.entregue.toFixed(2)}</span>
+                    </div>
+                    <div class="breakdown-item">
+                        <span class="breakdown-label">Ganhos Pendentes:</span>
+                        <span class="breakdown-value">R$ ${ganhosPorStatus.entregando.toFixed(2)}</span>
+                    </div>
+                    <div class="breakdown-item">
+                        <span class="breakdown-label">Total Disponível:</span>
+                        <span class="breakdown-value">R$ ${totalGanhos.toFixed(2)}</span>
+                    </div>
+                </div>
+                
+                <div class="breakdown-card">
+                    <h4>📊 Estatísticas</h4>
+                    <div class="breakdown-item">
+                        <span class="breakdown-label">Taxa Média:</span>
+                        <span class="breakdown-value">R$ ${(totalGanhos / Math.max(pedidosFiltrados.length, 1)).toFixed(2)}</span>
+                    </div>
+                    <div class="breakdown-item">
+                        <span class="breakdown-label">Taxa Mínima:</span>
+                        <span class="breakdown-value">R$ ${Math.min(...pedidosFiltrados.map(p => p.taxaEntrega), 0).toFixed(2)}</span>
+                    </div>
+                    <div class="breakdown-item">
+                        <span class="breakdown-label">Taxa Máxima:</span>
+                        <span class="breakdown-value">R$ ${Math.max(...pedidosFiltrados.map(p => p.taxaEntrega), 0).toFixed(2)}</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        function exibirMetricasPerformance(pedidosFiltrados) {
+            const entregasCompletas = pedidosFiltrados.filter(p => p.status === 'entregue');
+            const totalEntregas = entregasCompletas.length;
+            
+            if (totalEntregas === 0) {
+                document.getElementById('metrics-grid').innerHTML = '<div class="no-data">Nenhuma entrega encontrada no período</div>';
+                return;
+            }
+            
+            // Calcular métricas
+            const tempoMedioEntrega = calcularTempoMedioEntrega(entregasCompletas);
+            const avaliacaoMedia = calcularAvaliacaoMedia(entregasCompletas);
+            const eficiencia = calcularEficiencia(entregasCompletas);
+            const tendencia = calcularTendencia(pedidosFiltrados);
+            
+            const metricsGrid = document.getElementById('metrics-grid');
+            metricsGrid.innerHTML = `
+                <div class="metric-card">
+                    <div class="metric-icon">⏱️</div>
+                    <div class="metric-value">${tempoMedioEntrega}</div>
+                    <div class="metric-label">Tempo Médio de Entrega</div>
+                    <div class="metric-trend ${tendencia.tempo}">${tendencia.tempo === 'trend-up' ? '↗️ Melhorando' : tendencia.tempo === 'trend-down' ? '↘️ Piorando' : '→ Estável'}</div>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-icon">⭐</div>
+                    <div class="metric-value">${avaliacaoMedia.toFixed(1)}</div>
+                    <div class="metric-label">Avaliação Média</div>
+                    <div class="metric-trend ${tendencia.avaliacao}">${tendencia.avaliacao === 'trend-up' ? '↗️ Melhorando' : tendencia.avaliacao === 'trend-down' ? '↘️ Piorando' : '→ Estável'}</div>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-icon">🎯</div>
+                    <div class="metric-value">${eficiencia.toFixed(1)}%</div>
+                    <div class="metric-label">Taxa de Sucesso</div>
+                    <div class="metric-trend ${tendencia.eficiencia}">${tendencia.eficiencia === 'trend-up' ? '↗️ Melhorando' : tendencia.eficiencia === 'trend-down' ? '↘️ Piorando' : '→ Estável'}</div>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-icon">📈</div>
+                    <div class="metric-value">${totalEntregas}</div>
+                    <div class="metric-label">Total de Entregas</div>
+                    <div class="metric-trend ${tendencia.volume}">${tendencia.volume === 'trend-up' ? '↗️ Aumentando' : tendencia.volume === 'trend-down' ? '↘️ Diminuindo' : '→ Estável'}</div>
+                </div>
+            `;
+        }
+
+        function calcularTempoMedioEntrega(entregas) {
+            if (entregas.length === 0) return '0 min';
+            
+            const tempos = entregas.map(entrega => {
+                if (entrega.dataEntrega && entrega.dataPedido) {
+                    const inicio = entrega.dataPedido.toDate();
+                    const fim = entrega.dataEntrega.toDate();
+                    return Math.round((fim - inicio) / (1000 * 60)); // em minutos
+                }
+                return 0;
+            }).filter(tempo => tempo > 0);
+            
+            if (tempos.length === 0) return '0 min';
+            
+            const media = tempos.reduce((total, tempo) => total + tempo, 0) / tempos.length;
+            return `${Math.round(media)} min`;
+        }
+
+        function calcularAvaliacaoMedia(entregas) {
+            const avaliacoes = entregas.map(entrega => entrega.avaliacaoMedia || 0).filter(av => av > 0);
+            if (avaliacoes.length === 0) return 0;
+            
+            return avaliacoes.reduce((total, av) => total + av, 0) / avaliacoes.length;
+        }
+
+        function calcularEficiencia(entregas) {
+            const total = entregas.length;
+            const sucessos = entregas.filter(e => e.status === 'entregue').length;
+            return (sucessos / total) * 100;
+        }
+
+        function calcularTendencia(pedidos) {
+            // Simulação de tendência baseada nos últimos 7 dias vs 7 dias anteriores
+            const hoje = new Date();
+            const ultimos7Dias = pedidos.filter(p => {
+                const data = p.dataPedido.toDate();
+                return data >= new Date(hoje.getTime() - 7 * 24 * 60 * 60 * 1000);
+            });
+            
+            const anteriores7Dias = pedidos.filter(p => {
+                const data = p.dataPedido.toDate();
+                return data >= new Date(hoje.getTime() - 14 * 24 * 60 * 60 * 1000) && 
+                       data < new Date(hoje.getTime() - 7 * 24 * 60 * 60 * 1000);
+            });
+            
+            return {
+                tempo: ultimos7Dias.length > anteriores7Dias.length ? 'trend-up' : 'trend-down',
+                avaliacao: 'trend-neutral',
+                eficiencia: 'trend-up',
+                volume: ultimos7Dias.length > anteriores7Dias.length ? 'trend-up' : 'trend-down'
+            };
+        }
+
+        function exibirEntregasRecentes(pedidosFiltrados) {
+            const container = document.getElementById('recent-orders-container');
+            const entregasRecentes = pedidosFiltrados
+                .filter(p => p.status === 'entregue')
+                .slice(0, 5);
+            
+            if (entregasRecentes.length === 0) {
+                container.innerHTML = '<div class="no-data">Nenhuma entrega encontrada no período</div>';
+                return;
+            }
+            
+            container.innerHTML = entregasRecentes.map(entrega => `
+                <div class="order-item">
+                    <div class="order-header">
+                        <div class="order-info">
+                            <h4>Entrega #${entrega.id.slice(-6)}</h4>
+                            <p>🏪 ${entrega.restauranteNome} → 👤 ${entrega.clienteNome}</p>
+                            <p>📅 ${new Date(entrega.dataEntrega.toDate()).toLocaleDateString('pt-BR')}</p>
+                        </div>
+                        <div class="order-earnings">R$ ${entrega.taxaEntrega.toFixed(2)}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function exportarRelatorio() {
+            const periodo = document.getElementById('periodo-filtro').value;
+            const veiculo = document.getElementById('filtro-veiculo').value;
+            
+            let dataInicio = new Date();
+            if (periodo !== 'custom') {
+                dataInicio.setDate(dataInicio.getDate() - parseInt(periodo));
+            }
+            
+            const dados = {
+                entregador: currentUser.nome,
+                periodo: `${dataInicio.toLocaleDateString('pt-BR')} até ${new Date().toLocaleDateString('pt-BR')}`,
+                filtros: veiculo ? `Veículo: ${veiculo}` : 'Todos os veículos',
+                dataExportacao: new Date().toLocaleString('pt-BR'),
+                estatisticas: {
+                    totalEntregas: pedidos.filter(p => p.status === 'entregue').length,
+                    totalGanhos: pedidos.filter(p => p.status === 'entregue').reduce((total, p) => total + p.taxaEntrega, 0),
+                    avaliacaoMedia: currentUser.avaliacao || 0
+                }
+            };
+            
+            const blob = new Blob([JSON.stringify(dados, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `relatorio_entregador_${currentUser.nome}_${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            mostrarMensagem('Relatório exportado com sucesso!', 'success');
+        }
+
+        function mostrarMensagem(texto, tipo) {
+            const mensagem = document.createElement('div');
+            mensagem.className = `message ${tipo}`;
+            mensagem.textContent = texto;
+            
+            document.body.appendChild(mensagem);
+            
+            setTimeout(() => {
+                if (mensagem.parentNode) {
+                    mensagem.remove();
+                }
+            }, 3000);
+        }
+
+        function voltarParaHome() {
+            if (unsubscribePedidos) {
+                unsubscribePedidos();
+            }
+            window.location.href = 'home_entregador.html';
+        }
+    </script>
+</body>
+</html>

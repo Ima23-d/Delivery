@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PedidoFácil - Restaurante</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8f9fa;
+            color: #333;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .back-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 25px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .cart-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 25px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.3s ease;
+            position: relative;
+        }
+
+        .cart-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #e74c3c;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        /* Restaurant Info */
+        .restaurant-info {
+            background: white;
+            padding: 30px 20px;
+            margin-bottom: 20px;
+        }
+
+        .restaurant-header {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .restaurant-image {
+            width: 120px;
+            height: 120px;
+            background: #f0f0f0;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: #ccc;
+            flex-shrink: 0;
+        }
+
+        .restaurant-details h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .restaurant-category {
+            color: #667eea;
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .restaurant-meta {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 15px;
+            color: #666;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .restaurant-description {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* Main Content */
+        .main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Categories */
+        .categories-section {
+            margin-bottom: 30px;
+        }
+
+        .categories-tabs {
+            display: flex;
+            gap: 15px;
+            overflow-x: auto;
+            padding: 10px 0;
+            margin-bottom: 20px;
+        }
+
+        .category-tab {
+            background: white;
+            border: 2px solid #e1e5e9;
+            border-radius: 25px;
+            padding: 12px 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            font-weight: 600;
+        }
+
+        .category-tab.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        /* Products Grid */
+        .products-section {
+            margin-bottom: 100px; /* Espaço para o bottom nav */
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 200px;
+            background: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: #ccc;
+        }
+
+        .product-info {
+            padding: 20px;
+        }
+
+        .product-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .product-description {
+            color: #666;
+            margin-bottom: 15px;
+            line-height: 1.5;
+            font-size: 14px;
+        }
+
+        .product-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .product-price {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #27ae60;
+        }
+
+        .add-to-cart-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s ease;
+        }
+
+        .add-to-cart-btn:hover {
+            background: #5a6fd8;
+        }
+
+        .add-to-cart-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-top: 1px solid #e1e5e9;
+            padding: 15px 0;
+            z-index: 100;
+        }
+
+        .nav-items {
+            display: flex;
+            justify-content: space-around;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .nav-item.active {
+            color: #667eea;
+        }
+
+        .nav-icon {
+            font-size: 1.5rem;
+        }
+
+        .nav-text {
+            font-size: 12px;
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .restaurant-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 20px;
+            }
+            
+            .restaurant-meta {
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+            
+            .categories-tabs {
+                padding: 10px 5px;
+            }
+            
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .main {
+                padding: 0 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <button class="back-btn" onclick="voltarParaHome()">
+                ← Voltar
+            </button>
+            <div class="logo">🍔 PedidoFácil</div>
+            <button class="cart-btn" onclick="irParaCarrinho()">
+                🛒 Carrinho
+                <span class="cart-count" id="cart-count">0</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Restaurant Info -->
+    <section class="restaurant-info">
+        <div class="restaurant-header">
+            <div class="restaurant-image" id="restaurant-image">
+                🍽️
+            </div>
+            <div class="restaurant-details">
+                <h1 id="restaurant-name">Carregando...</h1>
+                <div class="restaurant-category" id="restaurant-category">-</div>
+                <div class="restaurant-meta">
+                    <div class="meta-item">
+                        <span>⭐</span>
+                        <span id="restaurant-rating">-</span>
+                    </div>
+                    <div class="meta-item">
+                        <span>⏱️</span>
+                        <span id="restaurant-delivery-time">-</span>
+                    </div>
+                    <div class="meta-item">
+                        <span>🚚</span>
+                        <span id="restaurant-delivery-fee">-</span>
+                    </div>
+                </div>
+                <div class="restaurant-description" id="restaurant-description">
+                    Carregando descrição...
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="main">
+        <!-- Categories -->
+        <section class="categories-section">
+            <div class="categories-tabs" id="categories-tabs">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Carregando categorias...</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Products -->
+        <section class="products-section">
+            <div id="products-container">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Carregando produtos...</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <div class="nav-items">
+            <div class="nav-item" onclick="navegarPara('home')">
+                <div class="nav-icon">🏠</div>
+                <div class="nav-text">Início</div>
+            </div>
+            <div class="nav-item" onclick="navegarPara('pedidos')">
+                <div class="nav-icon">📋</div>
+                <div class="nav-text">Meus Pedidos</div>
+            </div>
+            <div class="nav-item active" onclick="navegarPara('carrinho')">
+                <div class="nav-icon">🛒</div>
+                <div class="nav-text">Carrinho</div>
+            </div>
+            <div class="nav-item" onclick="navegarPara('perfil')">
+                <div class="nav-icon">👤</div>
+                <div class="nav-text">Perfil</div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+
+    <script>
+        // Configuração do Firebase
+        const firebaseConfig = {
+  apiKey: "AIzaSyDQ6IxIEGg1pYibe8zJ_DQO2bnWa0Beng0",
+  authDomain: "appdelivery-38949.firebaseapp.com",
+  projectId: "appdelivery-38949",
+  storageBucket: "appdelivery-38949.firebasestorage.app",
+  messagingSenderId: "717102909889",
+  appId: "1:717102909889:web:581ee8f19f6f3c68cb4740"
+};
+
+        // Inicializar Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // Variáveis globais
+        let currentUser = null;
+        let restauranteAtual = null;
+        let categorias = [];
+        let produtos = [];
+        let categoriaAtiva = null;
+        let carrinho = [];
+
+        // Inicializar página
+        document.addEventListener('DOMContentLoaded', function() {
+            verificarAutenticacao();
+            carregarCarrinho();
+            atualizarContadorCarrinho();
+        });
+
+        // Verificar autenticação
+        function verificarAutenticacao() {
+            auth.onAuthStateChanged((user) => {
+                if (user) {
+                    db.collection('usuarios').doc(user.uid).get().then((doc) => {
+                        if (doc.exists && doc.data().tipo === 'cliente') {
+                            currentUser = {
+                                uid: user.uid,
+                                email: user.email,
+                                ...doc.data()
+                            };
+                            carregarRestaurante();
+                        } else {
+                            window.location.href = 'cadastro_login_cliente.html';
+                        }
+                    });
+                } else {
+                    window.location.href = 'cadastro_login_cliente.html';
+                }
+            });
+        }
+
+        // Carregar dados do restaurante
+        async function carregarRestaurante() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const restauranteId = urlParams.get('id');
+            
+            if (!restauranteId) {
+                alert('ID do restaurante não encontrado');
+                window.location.href = 'home_cliente.html';
+                return;
+            }
+
+            try {
+                const restauranteDoc = await db.collection('restaurantes').doc(restauranteId).get();
+                
+                if (restauranteDoc.exists) {
+                    restauranteAtual = {
+                        id: restauranteDoc.id,
+                        ...restauranteDoc.data()
+                    };
+                    
+                    atualizarInterfaceRestaurante();
+                    carregarCategorias();
+                    carregarProdutos();
+                } else {
+                    alert('Restaurante não encontrado');
+                    window.location.href = 'home_cliente.html';
+                }
+            } catch (error) {
+                console.error('Erro ao carregar restaurante:', error);
+                alert('Erro ao carregar dados do restaurante');
+            }
+        }
+
+        // Atualizar interface do restaurante
+        function atualizarInterfaceRestaurante() {
+            if (restauranteAtual) {
+                document.getElementById('restaurant-name').textContent = restauranteAtual.nome;
+                document.getElementById('restaurant-category').textContent = restauranteAtual.categoria;
+                document.getElementById('restaurant-rating').textContent = 
+                    restauranteAtual.avaliacao ? restauranteAtual.avaliacao.toFixed(1) : 'N/A';
+                document.getElementById('restaurant-delivery-time').textContent = 
+                    `${restauranteAtual.tempoEntrega || '30-45'} min`;
+                document.getElementById('restaurant-delivery-fee').textContent = 
+                    restauranteAtual.taxaEntrega ? `R$ ${restauranteAtual.taxaEntrega.toFixed(2)}` : 'Grátis';
+                document.getElementById('restaurant-description').textContent = 
+                    restauranteAtual.descricao || 'Descrição não disponível';
+                
+                if (restauranteAtual.imagem) {
+                    document.getElementById('restaurant-image').innerHTML = 
+                        `<img src="${restauranteAtual.imagem}" alt="${restauranteAtual.nome}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 15px;">`;
+                }
+            }
+        }
+
+        // Carregar categorias
+        async function carregarCategorias() {
+            try {
+                const categoriasRef = await db.collection('categorias')
+                    .where('restauranteId', '==', restauranteAtual.id)
+                    .where('ativo', '==', true)
+                    .orderBy('ordem')
+                    .get();
+                
+                categorias = categoriasRef.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                }));
+                
+                exibirCategorias();
+            } catch (error) {
+                console.error('Erro ao carregar categorias:', error);
+            }
+        }
+
+        // Exibir categorias
+        function exibirCategorias() {
+            const container = document.getElementById('categories-tabs');
+            
+            if (categorias.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #666; padding: 20px;">Nenhuma categoria encontrada.</p>';
+                return;
+            }
+            
+            const html = categorias.map(categoria => `
+                <div class="category-tab ${categoriaAtiva === categoria.id ? 'active' : ''}" 
+                     onclick="selecionarCategoria('${categoria.id}')">
+                    ${categoria.nome}
+                </div>
+            `).join('');
+            
+            container.innerHTML = html;
+            
+            // Selecionar primeira categoria por padrão
+            if (categorias.length > 0 && !categoriaAtiva) {
+                selecionarCategoria(categorias[0].id);
+            }
+        }
+
+        // Selecionar categoria
+        function selecionarCategoria(categoriaId) {
+            categoriaAtiva = categoriaId;
+            
+            // Atualizar interface das categorias
+            document.querySelectorAll('.category-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Filtrar produtos
+            filtrarProdutos();
+        }
+
+        // Carregar produtos
+        async function carregarProdutos() {
+            try {
+                const produtosRef = await db.collection('produtos')
+                    .where('restauranteId', '==', restauranteAtual.id)
+                    .where('ativo', '==', true)
+                    .get();
+                
+                produtos = produtosRef.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                }));
+                
+                filtrarProdutos();
+            } catch (error) {
+                console.error('Erro ao carregar produtos:', error);
+                document.getElementById('products-container').innerHTML = 
+                    '<p style="text-align: center; color: #666; padding: 40px;">Erro ao carregar produtos. Tente novamente.</p>';
+            }
+        }
+
+        // Filtrar produtos por categoria
+        function filtrarProdutos() {
+            if (!categoriaAtiva) return;
+            
+            const produtosFiltrados = produtos.filter(p => p.categoriaId === categoriaAtiva);
+            exibirProdutos(produtosFiltrados);
+        }
+
+        // Exibir produtos
+        function exibirProdutos(listaProdutos) {
+            const container = document.getElementById('products-container');
+            
+            if (listaProdutos.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #666; padding: 40px;">Nenhum produto encontrado nesta categoria.</p>';
+                return;
+            }
+            
+            const html = listaProdutos.map(produto => `
+                <div class="product-card">
+                    <div class="product-image">
+                        ${produto.imagem ? `<img src="${produto.imagem}" alt="${produto.nome}" style="width: 100%; height: 100%; object-fit: cover;">` : '🍽️'}
+                    </div>
+                    <div class="product-info">
+                        <div class="product-name">${produto.nome}</div>
+                        <div class="product-description">${produto.descricao || 'Descrição não disponível'}</div>
+                        <div class="product-footer">
+                            <div class="product-price">R$ ${produto.preco.toFixed(2)}</div>
+                            <button class="add-to-cart-btn" onclick="adicionarAoCarrinho('${produto.id}', '${produto.nome}', ${produto.preco})">
+                                Adicionar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            
+            container.innerHTML = html;
+        }
+
+        // Adicionar ao carrinho
+        function adicionarAoCarrinho(produtoId, nome, preco) {
+            const itemExistente = carrinho.find(item => item.produtoId === produtoId);
+            
+            if (itemExistente) {
+                itemExistente.quantidade += 1;
+            } else {
+                carrinho.push({
+                    produtoId: produtoId,
+                    nome: nome,
+                    preco: preco,
+                    quantidade: 1,
+                    restauranteId: restauranteAtual.id,
+                    restauranteNome: restauranteAtual.nome
+                });
+            }
+            
+            // Salvar no localStorage
+            localStorage.setItem('carrinho', JSON.stringify(carrinho));
+            
+            // Atualizar contador
+            atualizarContadorCarrinho();
+            
+            // Feedback visual
+            const btn = event.target;
+            const textoOriginal = btn.textContent;
+            btn.textContent = '✓ Adicionado';
+            btn.disabled = true;
+            
+            setTimeout(() => {
+                btn.textContent = textoOriginal;
+                btn.disabled = false;
+            }, 1500);
+        }
+
+        // Carregar carrinho do localStorage
+        function carregarCarrinho() {
+            const carrinhoSalvo = localStorage.getItem('carrinho');
+            if (carrinhoSalvo) {
+                carrinho = JSON.parse(carrinhoSalvo);
+            }
+        }
+
+        // Atualizar contador do carrinho
+        function atualizarContadorCarrinho() {
+            const totalItens = carrinho.reduce((total, item) => total + item.quantidade, 0);
+            document.getElementById('cart-count').textContent = totalItens;
+        }
+
+        // Navegação
+        function navegarPara(pagina) {
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+            
+            switch(pagina) {
+                case 'home':
+                    window.location.href = 'home_cliente.html';
+                    break;
+                case 'pedidos':
+                    window.location.href = 'pedido_status.html';
+                    break;
+                case 'carrinho':
+                    window.location.href = 'carrinho.html';
+                    break;
+                case 'perfil':
+                    window.location.href = 'perfil_cliente.html';
+                    break;
+            }
+        }
+
+        // Voltar para home
+        function voltarParaHome() {
+            window.location.href = 'home_cliente.html';
+        }
+
+        // Ir para carrinho
+        function irParaCarrinho() {
+            window.location.href = 'carrinho.html';
+        }
+    </script>
+</body>
+</html>

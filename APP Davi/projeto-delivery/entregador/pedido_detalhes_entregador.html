@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PedidoFácil - Detalhes do Pedido</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f8f9fa; color: #333; }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white; padding: 20px 0; position: sticky; top: 0; z-index: 100;
+        }
+        .header-content {
+            max-width: 1000px; margin: 0 auto; padding: 0 20px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .back-btn { background: rgba(255,255,255,0.2); border: none; color: white;
+            padding: 10px 15px; border-radius: 25px; cursor: pointer; }
+        .title { font-size: 1.8rem; font-weight: bold; }
+        .status-badge { background: rgba(255,255,255,0.2); padding: 8px 15px; border-radius: 20px;
+            font-weight: 600; font-size: 0.9rem; }
+        
+        .main { max-width: 1000px; margin: 0 auto; padding: 20px; }
+        
+        .order-header { background: white; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            padding: 25px; margin-bottom: 20px; }
+        .order-title { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .order-number { font-size: 1.5rem; font-weight: 600; color: #333; }
+        .order-status { padding: 10px 20px; border-radius: 25px; font-weight: 600; font-size: 1rem; }
+        .status-pendente { background: #fff3cd; color: #856404; }
+        .status-preparando { background: #d1ecf1; color: #0c5460; }
+        .status-pronto { background: #d4edda; color: #155724; }
+        .status-entregando { background: #cce5ff; color: #004085; }
+        .status-entregue { background: #d1e7dd; color: #0f5132; }
+        .status-cancelado { background: #f8d7da; color: #721c24; }
+        
+        .order-info { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+        .info-group h4 { color: #333; margin-bottom: 10px; font-size: 1rem; font-weight: 600; }
+        .info-group p { color: #666; font-size: 0.9rem; line-height: 1.4; margin-bottom: 5px; }
+        
+        .section { background: white; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            padding: 25px; margin-bottom: 20px; }
+        .section-title { font-size: 1.2rem; font-weight: 600; margin-bottom: 20px; color: #333;
+            display: flex; align-items: center; gap: 10px; }
+        
+        .items-list { display: flex; flex-direction: column; gap: 15px; }
+        .item { display: flex; justify-content: space-between; align-items: center; padding: 15px;
+            background: #f8f9fa; border-radius: 10px; }
+        .item-info { display: flex; align-items: center; gap: 15px; }
+        .item-quantity { background: #667eea; color: white; width: 30px; height: 30px;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-weight: 600; font-size: 0.9rem; }
+        .item-details h5 { color: #333; margin-bottom: 5px; font-size: 1rem; }
+        .item-details p { color: #666; font-size: 0.9rem; }
+        .item-price { font-weight: 600; color: #333; font-size: 1.1rem; }
+        
+        .summary { background: #f8f9fa; border-radius: 10px; padding: 20px; }
+        .summary-row { display: flex; justify-content: space-between; margin-bottom: 12px; }
+        .summary-row:last-child { margin-bottom: 0; border-top: 1px solid #e1e5e9; padding-top: 12px;
+            font-weight: 600; font-size: 1.1rem; }
+        .summary-label { color: #666; }
+        .summary-value { color: #333; font-weight: 600; }
+        
+        .delivery-info { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+        .delivery-card { background: #f8f9fa; border-radius: 10px; padding: 20px; }
+        .delivery-card h4 { color: #333; margin-bottom: 15px; font-size: 1rem; font-weight: 600;
+            display: flex; align-items: center; gap: 10px; }
+        .delivery-card p { color: #666; font-size: 0.9rem; line-height: 1.4; margin-bottom: 8px; }
+        
+        .actions { display: flex; gap: 15px; justify-content: center; margin-top: 20px; }
+        .action-btn { padding: 15px 30px; border: none; border-radius: 10px; cursor: pointer;
+            font-weight: 600; font-size: 1rem; transition: all 0.3s ease; }
+        .btn-aceitar { background: #28a745; color: white; }
+        .btn-aceitar:hover { background: #218838; transform: translateY(-2px); }
+        .btn-finalizar { background: #007bff; color: white; }
+        .btn-finalizar:hover { background: #0056b3; transform: translateY(-2px); }
+        .btn-voltar { background: #6c757d; color: white; }
+        .btn-voltar:hover { background: #5a6268; transform: translateY(-2px); }
+        
+        .loading { text-align: center; padding: 60px; color: #666; }
+        .loading-icon { font-size: 2rem; margin-bottom: 15px; }
+        
+        .message { position: fixed; top: 20px; right: 20px; z-index: 1000; padding: 15px 20px;
+            border-radius: 10px; color: white; font-weight: 600; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        .message.success { background: #28a745; }
+        .message.error { background: #dc3545; }
+        
+        .progress-timeline { margin: 20px 0; }
+        .timeline-item { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; }
+        .timeline-icon { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center;
+            justify-content: center; font-size: 1.2rem; }
+        .timeline-icon.completed { background: #28a745; color: white; }
+        .timeline-icon.current { background: #007bff; color: white; }
+        .timeline-icon.pending { background: #e1e5e9; color: #666; }
+        .timeline-content h5 { color: #333; margin-bottom: 5px; font-size: 0.9rem; font-weight: 600; }
+        .timeline-content p { color: #666; font-size: 0.8rem; }
+        
+        @media (max-width: 768px) { .order-info { grid-template-columns: 1fr; }
+            .delivery-info { grid-template-columns: 1fr; } .actions { flex-direction: column; }
+            .order-title { flex-direction: column; gap: 15px; align-items: flex-start; } }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <button class="back-btn" onclick="voltarParaHome()">← Voltar</button>
+            <div class="title">📦 Detalhes do Pedido</div>
+            <div class="status-badge" id="status-badge">Carregando...</div>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="order-header" id="order-header">
+            <div class="loading">
+                <div class="loading-icon">🔄</div>
+                <div>Carregando detalhes do pedido...</div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">🍽️ Itens do Pedido</div>
+            <div id="items-container">
+                <div class="loading">Carregando itens...</div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">📋 Resumo do Pedido</div>
+            <div id="summary-container">
+                <div class="loading">Carregando resumo...</div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">🚚 Informações de Entrega</div>
+            <div class="delivery-info" id="delivery-container">
+                <div class="loading">Carregando informações de entrega...</div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">⏱️ Timeline do Pedido</div>
+            <div class="progress-timeline" id="timeline-container">
+                <div class="loading">Carregando timeline...</div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">🎯 Ações Disponíveis</div>
+            <div id="actions-container">
+                <div class="loading">Carregando ações...</div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "sua-api-key", authDomain: "seu-projeto.firebaseapp.com",
+            projectId: "seu-projeto", storageBucket: "seu-projeto.appspot.com",
+            messagingSenderId: "123456789", appId: "seu-app-id"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        let currentUser = null;
+        let pedidoAtual = null;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            verificarAutenticacao();
+        });
+
+        function verificarAutenticacao() {
+            auth.onAuthStateChanged((user) => {
+                if (user) {
+                    db.collection('usuarios').doc(user.uid).get().then((doc) => {
+                        if (doc.exists && doc.data().tipo === 'entregador') {
+                            currentUser = { uid: user.uid, email: user.email, ...doc.data() };
+                            carregarDetalhesPedido();
+                        } else {
+                            window.location.href = 'cadastro_login_entregador.html';
+                        }
+                    });
+                } else {
+                    window.location.href = 'cadastro_login_entregador.html';
+                }
+            });
+        }
+
+        async function carregarDetalhesPedido() {
+            const pedidoId = localStorage.getItem('pedidoId');
+            if (!pedidoId) {
+                mostrarMensagem('ID do pedido não encontrado', 'error');
+                setTimeout(() => voltarParaHome(), 2000);
+                return;
+            }
+
+            try {
+                const pedidoDoc = await db.collection('pedidos').doc(pedidoId).get();
+                if (pedidoDoc.exists) {
+                    pedidoAtual = { id: pedidoDoc.id, ...pedidoDoc.data() };
+                    exibirDetalhesPedido();
+                } else {
+                    mostrarMensagem('Pedido não encontrado', 'error');
+                    setTimeout(() => voltarParaHome(), 2000);
+                }
+            } catch (error) {
+                console.error('Erro ao carregar pedido:', error);
+                mostrarMensagem('Erro ao carregar pedido', 'error');
+            }
+        }
+
+        function exibirDetalhesPedido() {
+            if (!pedidoAtual) return;
+
+            // Atualizar header
+            document.getElementById('status-badge').textContent = getStatusNome(pedidoAtual.status);
+            document.getElementById('status-badge').className = `status-badge status-${pedidoAtual.status}`;
+
+            // Exibir informações do pedido
+            exibirHeaderPedido();
+            exibirItens();
+            exibirResumo();
+            exibirInformacoesEntrega();
+            exibirTimeline();
+            exibirAcoes();
+        }
+
+        function exibirHeaderPedido() {
+            const header = document.getElementById('order-header');
+            header.innerHTML = `
+                <div class="order-title">
+                    <div class="order-number">Pedido #${pedidoAtual.id.slice(-6)}</div>
+                    <div class="order-status status-${pedidoAtual.status}">${getStatusNome(pedidoAtual.status)}</div>
+                </div>
+                
+                <div class="order-info">
+                    <div class="info-group">
+                        <h4>🏪 Restaurante</h4>
+                        <p><strong>Nome:</strong> ${pedidoAtual.restauranteNome}</p>
+                        <p><strong>Telefone:</strong> ${pedidoAtual.restauranteTelefone || 'Não informado'}</p>
+                        <p><strong>Endereço:</strong> ${pedidoAtual.restauranteEndereco || 'Não informado'}</p>
+                    </div>
+                    
+                    <div class="info-group">
+                        <h4>👤 Cliente</h4>
+                        <p><strong>Nome:</strong> ${pedidoAtual.clienteNome}</p>
+                        <p><strong>Telefone:</strong> ${pedidoAtual.clienteTelefone}</p>
+                        <p><strong>E-mail:</strong> ${pedidoAtual.clienteEmail}</p>
+                    </div>
+                    
+                    <div class="info-group">
+                        <h4>📅 Informações</h4>
+                        <p><strong>Data do Pedido:</strong> ${new Date(pedidoAtual.dataPedido.toDate()).toLocaleString('pt-BR')}</p>
+                        <p><strong>Forma de Pagamento:</strong> ${pedidoAtual.formaPagamento}</p>
+                        ${pedidoAtual.dataEntrega ? `<p><strong>Data de Entrega:</strong> ${new Date(pedidoAtual.dataEntrega.toDate()).toLocaleString('pt-BR')}</p>` : ''}
+                    </div>
+                </div>
+            `;
+        }
+
+        function exibirItens() {
+            const container = document.getElementById('items-container');
+            container.innerHTML = `
+                <div class="items-list">
+                    ${pedidoAtual.itens.map(item => `
+                        <div class="item">
+                            <div class="item-info">
+                                <div class="item-quantity">${item.quantidade}</div>
+                                <div class="item-details">
+                                    <h5>${item.nome}</h5>
+                                    <p>Código: ${item.produtoId}</p>
+                                </div>
+                            </div>
+                            <div class="item-price">R$ ${(item.preco * item.quantidade).toFixed(2)}</div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function exibirResumo() {
+            const container = document.getElementById('summary-container');
+            container.innerHTML = `
+                <div class="summary">
+                    <div class="summary-row">
+                        <span class="summary-label">Subtotal dos Itens:</span>
+                        <span class="summary-value">R$ ${pedidoAtual.subtotal.toFixed(2)}</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="summary-label">Taxa de Entrega:</span>
+                        <span class="summary-value">R$ ${pedidoAtual.taxaEntrega.toFixed(2)}</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="summary-label">Total do Pedido:</span>
+                        <span class="summary-value">R$ ${pedidoAtual.total.toFixed(2)}</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        function exibirInformacoesEntrega() {
+            const container = document.getElementById('delivery-container');
+            container.innerHTML = `
+                <div class="delivery-card">
+                    <h4>📍 Endereço de Entrega</h4>
+                    <p><strong>Endereço:</strong> ${pedidoAtual.clienteEndereco}</p>
+                    <p><strong>Cliente:</strong> ${pedidoAtual.clienteNome}</p>
+                    <p><strong>Telefone:</strong> ${pedidoAtual.clienteTelefone}</p>
+                </div>
+                
+                <div class="delivery-card">
+                    <h4>💰 Informações Financeiras</h4>
+                    <p><strong>Taxa de Entrega:</strong> R$ ${pedidoAtual.taxaEntrega.toFixed(2)}</p>
+                    <p><strong>Taxa da Plataforma:</strong> R$ ${pedidoAtual.taxaPlataforma.toFixed(2)}</p>
+                    <p><strong>Seu Ganho:</strong> R$ ${pedidoAtual.taxaEntrega.toFixed(2)}</p>
+                </div>
+                
+                <div class="delivery-card">
+                    <h4>🚚 Status da Entrega</h4>
+                    <p><strong>Status Atual:</strong> ${getStatusNome(pedidoAtual.status)}</p>
+                    <p><strong>Entregador:</strong> ${pedidoAtual.entregadorNome || 'Não atribuído'}</p>
+                    ${pedidoAtual.entregadorId ? `<p><strong>ID do Entregador:</strong> ${pedidoAtual.entregadorId}</p>` : ''}
+                </div>
+            `;
+        }
+
+        function exibirTimeline() {
+            const container = document.getElementById('timeline-container');
+            const timeline = [
+                {
+                    status: 'pendente',
+                    icon: '📝',
+                    title: 'Pedido Realizado',
+                    description: 'Cliente fez o pedido',
+                    completed: true
+                },
+                {
+                    status: 'preparando',
+                    icon: '👨‍🍳',
+                    title: 'Em Preparação',
+                    description: 'Restaurante preparando o pedido',
+                    completed: ['preparando', 'pronto', 'entregando', 'entregue'].includes(pedidoAtual.status)
+                },
+                {
+                    status: 'pronto',
+                    icon: '✅',
+                    title: 'Pronto para Entrega',
+                    description: 'Pedido preparado e aguardando entregador',
+                    completed: ['pronto', 'entregando', 'entregue'].includes(pedidoAtual.status)
+                },
+                {
+                    status: 'entregando',
+                    icon: '🚚',
+                    title: 'Em Entrega',
+                    description: 'Entregador a caminho',
+                    completed: ['entregando', 'entregue'].includes(pedidoAtual.status),
+                    current: pedidoAtual.status === 'entregando'
+                },
+                {
+                    status: 'entregue',
+                    icon: '🎯',
+                    title: 'Entregue',
+                    description: 'Pedido entregue com sucesso',
+                    completed: pedidoAtual.status === 'entregue'
+                }
+            ];
+
+            container.innerHTML = timeline.map(item => `
+                <div class="timeline-item">
+                    <div class="timeline-icon ${item.completed ? (item.current ? 'current' : 'completed') : 'pending'}">
+                        ${item.completed ? (item.current ? '🔄' : '✅') : '⏳'}
+                    </div>
+                    <div class="timeline-content">
+                        <h5>${item.title}</h5>
+                        <p>${item.description}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function exibirAcoes() {
+            const container = document.getElementById('actions-container');
+            let acoesHTML = '';
+
+            switch (pedidoAtual.status) {
+                case 'pronto':
+                    if (!pedidoAtual.entregadorId) {
+                        acoesHTML = `
+                            <div class="actions">
+                                <button class="action-btn btn-aceitar" onclick="aceitarPedido()">
+                                    ✅ Aceitar Entrega
+                                </button>
+                                <button class="action-btn btn-voltar" onclick="voltarParaHome()">
+                                    ← Voltar
+                                </button>
+                            </div>
+                        `;
+                    } else {
+                        acoesHTML = `
+                            <div class="actions">
+                                <p style="text-align: center; color: #666; font-style: italic;">
+                                    Este pedido já foi aceito por outro entregador
+                                </p>
+                                <button class="action-btn btn-voltar" onclick="voltarParaHome()">
+                                    ← Voltar
+                                </button>
+                            </div>
+                        `;
+                    }
+                    break;
+                    
+                case 'entregando':
+                    if (pedidoAtual.entregadorId === currentUser.uid) {
+                        acoesHTML = `
+                            <div class="actions">
+                                <button class="action-btn btn-finalizar" onclick="finalizarEntrega()">
+                                    🎯 Finalizar Entrega
+                                </button>
+                                <button class="action-btn btn-voltar" onclick="voltarParaHome()">
+                                    ← Voltar
+                                </button>
+                            </div>
+                        `;
+                    } else {
+                        acoesHTML = `
+                            <div class="actions">
+                                <p style="text-align: center; color: #666; font-style: italic;">
+                                    Este pedido está sendo entregue por outro entregador
+                                </p>
+                                <button class="action-btn btn-voltar" onclick="voltarParaHome()">
+                                    ← Voltar
+                                </button>
+                            </div>
+                        `;
+                    }
+                    break;
+                    
+                case 'entregue':
+                    acoesHTML = `
+                        <div class="actions">
+                            <p style="text-align: center; color: #28a745; font-weight: 600;">
+                                ✅ Entrega Concluída com Sucesso!
+                            </p>
+                            <button class="action-btn btn-voltar" onclick="voltarParaHome()">
+                                ← Voltar
+                            </button>
+                        </div>
+                    `;
+                    break;
+                    
+                default:
+                    acoesHTML = `
+                        <div class="actions">
+                            <p style="text-align: center; color: #666; font-style: italic;">
+                                Aguardando ação do restaurante
+                            </p>
+                            <button class="action-btn btn-voltar" onclick="voltarParaHome()">
+                                ← Voltar
+                            </button>
+                        </div>
+                    `;
+            }
+
+            container.innerHTML = acoesHTML;
+        }
+
+        function getStatusNome(status) {
+            const statusMap = {
+                'pendente': 'Pendente',
+                'preparando': 'Preparando',
+                'pronto': 'Pronto para Entrega',
+                'entregando': 'Em Entrega',
+                'entregue': 'Entregue',
+                'cancelado': 'Cancelado'
+            };
+            return statusMap[status] || status;
+        }
+
+        async function aceitarPedido() {
+            if (!currentUser || !pedidoAtual) return;
+            
+            try {
+                await db.collection('pedidos').doc(pedidoAtual.id).update({
+                    entregadorId: currentUser.uid,
+                    entregadorNome: currentUser.nome,
+                    status: 'entregando',
+                    dataAtualizacao: new Date()
+                });
+                
+                mostrarMensagem('Pedido aceito com sucesso!', 'success');
+                setTimeout(() => {
+                    voltarParaHome();
+                }, 2000);
+                
+            } catch (error) {
+                console.error('Erro ao aceitar pedido:', error);
+                mostrarMensagem('Erro ao aceitar pedido', 'error');
+            }
+        }
+
+        async function finalizarEntrega() {
+            if (!currentUser || !pedidoAtual) return;
+            
+            try {
+                const pedidoRef = db.collection('pedidos').doc(pedidoAtual.id);
+                
+                await db.runTransaction(async (transaction) => {
+                    const pedidoDoc = await transaction.get(pedidoRef);
+                    if (pedidoDoc.exists) {
+                        const pedido = pedidoDoc.data();
+                        
+                        // Atualizar status do pedido
+                        transaction.update(pedidoRef, {
+                            status: 'entregue',
+                            dataEntrega: new Date(),
+                            dataAtualizacao: new Date()
+                        });
+                        
+                        // Atualizar estatísticas do entregador
+                        const entregadorRef = db.collection('entregadores').doc(currentUser.uid);
+                        const entregadorDoc = await transaction.get(entregadorRef);
+                        if (entregadorDoc.exists) {
+                            const entregador = entregadorDoc.data();
+                            const novoTotalEntregas = (entregador.totalEntregas || 0) + 1;
+                            const novoTotalGanhos = (entregador.totalGanhos || 0) + pedido.taxaEntrega;
+                            
+                            transaction.update(entregadorRef, {
+                                totalEntregas: novoTotalEntregas,
+                                totalGanhos: novoTotalGanhos,
+                                dataAtualizacao: new Date()
+                            });
+                        }
+                    }
+                });
+                
+                mostrarMensagem('Entrega finalizada com sucesso!', 'success');
+                setTimeout(() => {
+                    voltarParaHome();
+                }, 2000);
+                
+            } catch (error) {
+                console.error('Erro ao finalizar entrega:', error);
+                mostrarMensagem('Erro ao finalizar entrega', 'error');
+            }
+        }
+
+        function mostrarMensagem(texto, tipo) {
+            const mensagem = document.createElement('div');
+            mensagem.className = `message ${tipo}`;
+            mensagem.textContent = texto;
+            
+            document.body.appendChild(mensagem);
+            
+            setTimeout(() => {
+                if (mensagem.parentNode) {
+                    mensagem.remove();
+                }
+            }, 3000);
+        }
+
+        function voltarParaHome() {
+            localStorage.removeItem('pedidoId');
+            window.location.href = 'home_entregador.html';
+        }
+    </script>
+</body>
+</html>
