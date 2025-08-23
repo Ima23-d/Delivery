@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JUSTA - Histórico do Motorista</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2196F3, #1976D2);
+            color: white;
+            padding: 1rem 1.5rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        .back-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-subtitle {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .filters {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .filters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .filter-group label {
+            font-weight: 500;
+            color: #333;
+            font-size: 0.9rem;
+        }
+
+        .filter-group select,
+        .filter-group input {
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .filter-group select:focus,
+        .filter-group input:focus {
+            outline: none;
+            border-color: #2196F3;
+        }
+
+        .filter-btn {
+            background: #2196F3;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn:hover {
+            background: #1976D2;
+            transform: translateY(-2px);
+        }
+
+        .stats-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2196F3;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .rides-list {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .rides-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .rides-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .rides-count {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .ride-item {
+            border: 1px solid #e0e0e0;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .ride-item:hover {
+            border-color: #2196F3;
+            box-shadow: 0 5px 15px rgba(33, 150, 243, 0.1);
+        }
+
+        .ride-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .ride-info h3 {
+            color: #333;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .ride-status {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-completed {
+            background: #e8f5e8;
+            color: #2e7d32;
+        }
+
+        .status-cancelled {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .status-in-progress {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        .ride-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .detail-icon {
+            font-size: 1rem;
+            color: #2196F3;
+        }
+
+        .ride-actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .view-btn {
+            background: #2196F3;
+            color: white;
+        }
+
+        .view-btn:hover {
+            background: #1976D2;
+        }
+
+        .rate-btn {
+            background: #FF9800;
+            color: white;
+        }
+
+        .rate-btn:hover {
+            background: #F57C00;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 2rem;
+        }
+
+        .page-btn {
+            padding: 8px 12px;
+            border: 1px solid #e0e0e0;
+            background: white;
+            color: #333;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-radius: 6px;
+            text-decoration: none;
+        }
+
+        .page-btn:hover {
+            background: #f8f9fa;
+        }
+
+        .page-btn.active {
+            background: #2196F3;
+            color: white;
+            border-color: #2196F3;
+        }
+
+        .page-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .no-rides {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+        }
+
+        .no-rides-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 3rem;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #2196F3;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            
+            .filters-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .ride-details {
+                grid-template-columns: 1fr;
+            }
+            
+            .ride-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div class="logo">🚗 JUSTA</div>
+            <a href="home.html" class="back-btn">← Voltar</a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="page-header">
+            <h1 class="page-title">📋 Histórico de Corridas</h1>
+            <p class="page-subtitle">Acompanhe todas as suas viagens e ganhos</p>
+        </div>
+
+        <!-- Filtros -->
+        <div class="filters">
+            <div class="filters-grid">
+                <div class="filter-group">
+                    <label for="statusFilter">Status</label>
+                    <select id="statusFilter">
+                        <option value="">Todos os status</option>
+                        <option value="completed">Finalizadas</option>
+                        <option value="cancelled">Canceladas</option>
+                        <option value="in_progress">Em andamento</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label for="dateFilter">Período</label>
+                    <select id="dateFilter">
+                        <option value="">Todos os períodos</option>
+                        <option value="today">Hoje</option>
+                        <option value="week">Esta semana</option>
+                        <option value="month">Este mês</option>
+                        <option value="year">Este ano</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label for="searchFilter">Buscar</label>
+                    <input type="text" id="searchFilter" placeholder="Origem ou destino">
+                </div>
+            </div>
+            
+            <button class="filter-btn" onclick="applyFilters()">🔍 Aplicar Filtros</button>
+        </div>
+
+        <!-- Estatísticas -->
+        <div class="stats-cards">
+            <div class="stat-card">
+                <div class="stat-icon">🚗</div>
+                <div class="stat-value" id="totalRides">0</div>
+                <div class="stat-label">Total de Corridas</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">✅</div>
+                <div class="stat-value" id="completedRides">0</div>
+                <div class="stat-label">Corridas Finalizadas</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">💰</div>
+                <div class="stat-value" id="totalEarnings">R$ 0</div>
+                <div class="stat-label">Total Ganho</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">⭐</div>
+                <div class="stat-value" id="avgRating">0.0</div>
+                <div class="stat-label">Avaliação Média</div>
+            </div>
+        </div>
+
+        <!-- Lista de Corridas -->
+        <div class="rides-list">
+            <div class="rides-header">
+                <h2 class="rides-title">🚗 Suas Corridas</h2>
+                <span class="rides-count" id="ridesCount">0 corridas</span>
+            </div>
+            
+            <div id="ridesContainer">
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <p>Carregando corridas...</p>
+                </div>
+            </div>
+            
+            <div class="pagination" id="pagination">
+                <button class="page-btn" onclick="previousPage()" id="prevBtn">← Anterior</button>
+                <span class="page-btn active" id="currentPage">1</span>
+                <button class="page-btn" onclick="nextPage()" id="nextBtn">Próxima →</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-storage-compat.js"></script>
+    
+    <!-- Configuração do Firebase -->
+    <script src="../assets/firebase-config.js"></script>
+
+    <script>
+        // Aguardar o Firebase estar pronto
+        async function initializeApp() {
+            await waitForFirebase();
+            
+            // Verificar se está logado
+            if (!utils.isLoggedIn()) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            const userType = localStorage.getItem('userType');
+            if (userType !== 'motorista') {
+                utils.logout();
+                return;
+            }
+            
+            // Carregar dados
+            await loadDriverStats();
+            await loadRidesHistory();
+            
+            // Configurar filtros
+            setupFilters();
+        }
+
+        // Inicializar quando a página carregar
+        document.addEventListener('DOMContentLoaded', initializeApp);
+
+        // Carregar estatísticas do motorista
+        async function loadDriverStats() {
+            try {
+                const userId = localStorage.getItem('userId');
+                
+                // Total de corridas
+                const totalRidesSnapshot = await db.collection('rides')
+                    .where('driverId', '==', userId)
+                    .get();
+                
+                const totalRides = totalRidesSnapshot.size;
+                document.getElementById('totalRides').textContent = totalRides;
+                
+                // Corridas completadas
+                const completedRides = totalRidesSnapshot.docs.filter(doc => {
+                    return doc.data().status === 'completed';
+                }).length;
+                document.getElementById('completedRides').textContent = completedRides;
+                
+                // Ganhos totais
+                const totalEarnings = totalRidesSnapshot.docs
+                    .filter(doc => doc.data().status === 'completed')
+                    .reduce((total, doc) => {
+                        const rideData = doc.data();
+                        const driverEarnings = (rideData.estimatedFare || 0) - 1; // R$ 1 de taxa
+                        return total + driverEarnings;
+                    }, 0);
+                
+                document.getElementById('totalEarnings').textContent = utils.formatCurrency(totalEarnings);
+                
+                // Média de avaliação
+                const ratingsSnapshot = await db.collection('ratings')
+                    .where('toUserId', '==', userId)
+                    .where('toUserType', '==', 'driver')
+                    .get();
+                
+                if (!ratingsSnapshot.empty) {
+                    const totalRating = ratingsSnapshot.docs.reduce((sum, doc) => {
+                        return sum + doc.data().rating;
+                    }, 0);
+                    
+                    const averageRating = totalRating / ratingsSnapshot.size;
+                    document.getElementById('averageRating').textContent = averageRating.toFixed(1);
+                } else {
+                    document.getElementById('averageRating').textContent = '0.0';
+                }
+                
+            } catch (error) {
+                console.error('Erro ao carregar estatísticas:', error);
+                utils.showNotification('Erro ao carregar estatísticas', 'error');
+            }
+        }
+
+        // Carregar histórico de corridas
+        async function loadRidesHistory() {
+            try {
+                const userId = localStorage.getItem('userId');
+                
+                const ridesSnapshot = await db.collection('rides')
+                    .where('driverId', '==', userId)
+                    .orderBy('createdAt', 'desc')
+                    .get();
+                
+                const rides = [];
+                
+                for (const doc of ridesSnapshot.docs) {
+                    const rideData = doc.data();
+                    const ride = {
+                        id: doc.id,
+                        ...rideData
+                    };
+                    
+                    // Buscar avaliação do passageiro se existir
+                    if (rideData.status === 'completed' && rideData.passengerId) {
+                        const ratingDoc = await db.collection('ratings')
+                            .where('rideId', '==', doc.id)
+                            .where('fromUserId', '==', rideData.passengerId)
+                            .where('fromUserType', '==', 'passenger')
+                            .limit(1)
+                            .get();
+                        
+                        if (!ratingDoc.empty) {
+                            ride.passengerRating = ratingDoc.docs[0].data().rating;
+                            ride.passengerComment = ratingDoc.docs[0].data().comment;
+                        }
+                    }
+                    
+                    rides.push(ride);
+                }
+                
+                // Aplicar filtros
+                const filteredRides = applyFilters(rides);
+                
+                // Renderizar lista
+                renderRidesList(filteredRides);
+                
+            } catch (error) {
+                console.error('Erro ao carregar histórico:', error);
+                utils.showNotification('Erro ao carregar histórico', 'error');
+            }
+        }
+
+        // Configurar filtros
+        function setupFilters() {
+            // Filtro de status
+            document.getElementById('statusFilter').addEventListener('change', function() {
+                loadRidesHistory();
+            });
+            
+            // Filtro de data
+            document.getElementById('dateFilter').addEventListener('change', function() {
+                loadRidesHistory();
+            });
+            
+            // Busca
+            document.getElementById('searchFilter').addEventListener('input', function() {
+                loadRidesHistory();
+            });
+        }
+
+        // Aplicar filtros
+        function applyFilters(rides) {
+            let filtered = [...rides];
+            
+            // Filtro de status
+            const statusFilter = document.getElementById('statusFilter').value;
+            if (statusFilter && statusFilter !== 'all') {
+                filtered = filtered.filter(ride => ride.status === statusFilter);
+            }
+            
+            // Filtro de data
+            const dateFilter = document.getElementById('dateFilter').value;
+            if (dateFilter && dateFilter !== 'all') {
+                const today = new Date();
+                const filterDate = new Date();
+                
+                switch (dateFilter) {
+                    case 'today':
+                        filterDate.setHours(0, 0, 0, 0);
+                        filtered = filtered.filter(ride => {
+                            const rideDate = ride.createdAt?.toDate() || new Date(ride.createdAt);
+                            return rideDate >= filterDate;
+                        });
+                        break;
+                    case 'week':
+                        filterDate.setDate(today.getDate() - 7);
+                        filtered = filtered.filter(ride => {
+                            const rideDate = ride.createdAt?.toDate() || new Date(ride.createdAt);
+                            return rideDate >= filterDate;
+                        });
+                        break;
+                    case 'month':
+                        filterDate.setMonth(today.getMonth() - 1);
+                        filtered = filtered.filter(ride => {
+                            const rideDate = ride.createdAt?.toDate() || new Date(ride.createdAt);
+                            return rideDate >= filterDate;
+                        });
+                        break;
+                }
+            }
+            
+            // Busca por texto
+            const searchTerm = document.getElementById('searchFilter').value.toLowerCase();
+            if (searchTerm) {
+                filtered = filtered.filter(ride => {
+                    return (ride.origin && ride.origin.toLowerCase().includes(searchTerm)) ||
+                           (ride.destination && ride.destination.toLowerCase().includes(searchTerm)) ||
+                           (ride.id && ride.id.toLowerCase().includes(searchTerm));
+                });
+            }
+            
+            return filtered;
+        }
+
+        // Renderizar lista de corridas
+        function renderRidesList(rides) {
+            const ridesList = document.getElementById('ridesContainer');
+            
+            if (rides.length === 0) {
+                ridesList.innerHTML = '<p class="text-muted">Nenhuma corrida encontrada.</p>';
+                return;
+            }
+            
+            ridesList.innerHTML = rides.map(ride => createRideItem(ride)).join('');
+        }
+
+        // Criar item de corrida
+        function createRideItem(ride) {
+            const status = getStatusText(ride.status);
+            const statusClass = getStatusClass(ride.status);
+            const date = formatDate(ride.createdAt);
+            const fare = utils.formatCurrency(ride.estimatedFare || 0);
+            const driverEarnings = utils.formatCurrency((ride.estimatedFare || 0) - 1);
+            
+            let ratingHtml = '';
+            if (ride.passengerRating) {
+                ratingHtml = `
+                    <div class="ride-rating">
+                        <span class="stars">
+                            ${'⭐'.repeat(ride.passengerRating)}
+                        </span>
+                        ${ride.passengerComment ? `<p class="comment">"${ride.passengerComment}"</p>` : ''}
+                    </div>
+                `;
+            }
+            
+            return `
+                <div class="ride-item" data-ride-id="${ride.id}">
+                    <div class="ride-header">
+                        <div class="ride-id">#${ride.id.slice(-8)}</div>
+                        <div class="ride-status ${statusClass}">${status}</div>
+                    </div>
+                    
+                    <div class="ride-details">
+                        <div class="ride-location">
+                            <div class="origin">
+                                <strong>Origem:</strong> ${ride.origin || 'N/A'}
+                            </div>
+                            <div class="destination">
+                                <strong>Destino:</strong> ${ride.destination || 'N/A'}
+                            </div>
+                        </div>
+                        
+                        <div class="ride-info">
+                            <span class="date">📅 ${date}</span>
+                            <span class="fare">💰 ${fare}</span>
+                            <span class="earnings">💵 ${driverEarnings}</span>
+                        </div>
+                        
+                        ${ratingHtml}
+                    </div>
+                    
+                    <div class="ride-actions">
+                        <button class="btn btn-sm btn-info" onclick="viewRideDetails('${ride.id}')">
+                            👁️ Ver Detalhes
+                        </button>
+                        ${ride.status === 'completed' && !ride.passengerRating ? 
+                            `<button class="btn btn-sm btn-warning" onclick="ratePassenger('${ride.id}')">
+                                ⭐ Avaliar Passageiro
+                            </button>` : ''
+                        }
+                    </div>
+                </div>
+            `;
+        }
+
+        // Obter texto do status
+        function getStatusText(status) {
+            const statusTexts = {
+                'confirmed': 'Confirmada',
+                'in_progress': 'Em Andamento',
+                'arrived': 'Chegou ao Passageiro',
+                'completed': 'Finalizada',
+                'cancelled': 'Cancelada'
+            };
+            return statusTexts[status] || status;
+        }
+
+        // Obter classe CSS do status
+        function getStatusClass(status) {
+            const statusClasses = {
+                'confirmed': 'status-confirmed',
+                'in_progress': 'status-progress',
+                'arrived': 'status-arrived',
+                'completed': 'status-completed',
+                'cancelled': 'status-cancelled'
+            };
+            return statusClasses[status] || 'status-default';
+        }
+
+        // Formatar data
+        function formatDate(date) {
+            if (!date) return 'N/A';
+            
+            const rideDate = date.toDate ? date.toDate() : new Date(date);
+            const now = new Date();
+            const diffTime = Math.abs(now - rideDate);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            
+            if (diffDays === 1) {
+                return 'Hoje';
+            } else if (diffDays === 2) {
+                return 'Ontem';
+            } else if (diffDays <= 7) {
+                return `${diffDays - 1} dias atrás`;
+            } else {
+                return rideDate.toLocaleDateString('pt-BR');
+            }
+        }
+
+        // Ver detalhes da corrida
+        function viewRideDetails(rideId) {
+            // Implementar modal com detalhes da corrida
+            utils.showNotification('Funcionalidade em desenvolvimento', 'info');
+        }
+
+        // Avaliar passageiro
+        function ratePassenger(rideId) {
+            // Redirecionar para página de avaliação
+            window.location.href = `corrida_finalizada.html?rideId=${rideId}`;
+        }
+
+        // Funções auxiliares
+        function getStatusClass(status) {
+            const classes = {
+                'completed': 'status-completed',
+                'cancelled': 'status-cancelled',
+                'in_progress': 'status-in-progress',
+                'accepted': 'status-in-progress',
+                'started': 'status-in-progress',
+                'arrived': 'status-in-progress'
+            };
+            return classes[status] || 'status-in-progress';
+        }
+
+        function getStatusText(status) {
+            const texts = {
+                'completed': 'Finalizada',
+                'cancelled': 'Cancelada',
+                'in_progress': 'Em andamento',
+                'accepted': 'Aceita',
+                'started': 'Iniciada',
+                'arrived': 'Chegou'
+            };
+            return texts[status] || 'Em andamento';
+        }
+
+        function formatDate(timestamp) {
+            if (!timestamp) return 'N/A';
+            
+            const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+            return date.toLocaleDateString('pt-BR', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        function formatDuration(minutes) {
+            if (!minutes) return 'N/A';
+            
+            if (minutes < 60) {
+                return `${minutes} min`;
+            } else {
+                const hours = Math.floor(minutes / 60);
+                const remainingMinutes = minutes % 60;
+                if (remainingMinutes === 0) {
+                    return `${hours}h`;
+                } else {
+                    return `${hours}h ${remainingMinutes}min`;
+                }
+            }
+        }
+    </script>
+</body>
+</html>

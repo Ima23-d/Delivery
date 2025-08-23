@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JUSTA - Corrida Finalizada</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            padding: 1rem 1.5rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        .home-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .home-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .main-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        .success-card {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            text-align: center;
+            padding: 3rem 2rem;
+            border-radius: 20px;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(76, 175, 80, 0.3);
+        }
+
+        .success-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .success-title {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .success-subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .ride-summary {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .summary-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .summary-item {
+            text-align: center;
+            padding: 1.5rem;
+            background: #f8f9fa;
+            border-radius: 15px;
+            border: 1px solid #e9ecef;
+        }
+
+        .summary-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: #2196F3;
+        }
+
+        .summary-label {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .summary-value {
+            color: #333;
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .financial-summary {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .financial-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .financial-breakdown {
+            display: grid;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .financial-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #e9ecef;
+        }
+
+        .financial-item.total {
+            background: #e8f5e8;
+            border-left-color: #4CAF50;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .financial-label {
+            color: #333;
+            font-weight: 500;
+        }
+
+        .financial-value {
+            color: #333;
+            font-weight: 600;
+        }
+
+        .financial-item.total .financial-value {
+            color: #4CAF50;
+            font-size: 1.2rem;
+        }
+
+        .passenger-info {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .passenger-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .passenger-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .passenger-details h3 {
+            color: #333;
+            margin-bottom: 0.3rem;
+        }
+
+        .passenger-rating {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .rating-section {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .rating-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .rating-stars {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .star {
+            font-size: 2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            opacity: 0.3;
+        }
+
+        .star:hover,
+        .star.active {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
+        .rating-comment {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 1rem;
+            resize: vertical;
+            min-height: 100px;
+            margin-bottom: 1.5rem;
+        }
+
+        .rating-comment:focus {
+            outline: none;
+            border-color: #2196F3;
+        }
+
+        .submit-rating-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #2196F3, #1976D2);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .submit-rating-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(33, 150, 243, 0.3);
+        }
+
+        .submit-rating-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .action-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .action-btn {
+            padding: 14px 24px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            text-decoration: none;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(76, 175, 80, 0.3);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #4CAF50;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #4CAF50;
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.error {
+            background: #f44336;
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .action-buttons {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div class="logo">🚗 JUSTA</div>
+            <a href="home.html" class="home-btn">🏠 Início</a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <!-- Card de Sucesso -->
+        <div class="success-card">
+            <div class="success-icon">🎉</div>
+            <h1 class="success-title">Corrida Finalizada!</h1>
+            <p class="success-subtitle">Parabéns! Você completou mais uma viagem com sucesso</p>
+        </div>
+
+        <!-- Resumo da Corrida -->
+        <div class="ride-summary">
+            <h2 class="summary-title">📋 Resumo da Corrida</h2>
+            <div class="summary-grid">
+                <div class="summary-item">
+                    <div class="summary-icon">📍</div>
+                    <div class="summary-label">Origem</div>
+                    <div class="summary-value" id="origin">Carregando...</div>
+                </div>
+                
+                <div class="summary-item">
+                    <div class="summary-icon">🎯</div>
+                    <div class="summary-label">Destino</div>
+                    <div class="summary-value" id="destination">Carregando...</div>
+                </div>
+                
+                <div class="summary-item">
+                    <div class="summary-icon">📏</div>
+                    <div class="summary-label">Distância</div>
+                    <div class="summary-value" id="distance">Calculando...</div>
+                </div>
+                
+                <div class="summary-item">
+                    <div class="summary-icon">⏱️</div>
+                    <div class="summary-label">Duração</div>
+                    <div class="summary-value" id="duration">Calculando...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Resumo Financeiro -->
+        <div class="financial-summary">
+            <h2 class="financial-title">💰 Resumo Financeiro</h2>
+            <div class="financial-breakdown">
+                <div class="financial-item">
+                    <span class="financial-label">Valor da Corrida</span>
+                    <span class="financial-value" id="rideValue">R$ 0,00</span>
+                </div>
+                
+                <div class="financial-item">
+                    <span class="financial-label">Taxa da Plataforma</span>
+                    <span class="financial-value">- R$ 1,00</span>
+                </div>
+                
+                <div class="financial-item total">
+                    <span class="financial-label">Seus Ganhos</span>
+                    <span class="financial-value" id="driverEarnings">R$ 0,00</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Informações do Passageiro -->
+        <div class="passenger-info">
+            <h2 class="summary-title">👤 Passageiro</h2>
+            <div class="passenger-header">
+                <div class="passenger-avatar" id="passengerAvatar">👤</div>
+                <div class="passenger-details">
+                    <h3 id="passengerName">Passageiro</h3>
+                    <p class="passenger-rating" id="passengerRating">⭐ 0.0 (0 corridas)</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Avaliação do Passageiro -->
+        <div class="rating-section">
+            <h2 class="rating-title">⭐ Avalie o Passageiro</h2>
+            <div class="rating-stars" id="ratingStars">
+                <span class="star" data-rating="1">⭐</span>
+                <span class="star" data-rating="2">⭐</span>
+                <span class="star" data-rating="3">⭐</span>
+                <span class="star" data-rating="4">⭐</span>
+                <span class="star" data-rating="5">⭐</span>
+            </div>
+            
+            <textarea 
+                class="rating-comment" 
+                id="ratingComment" 
+                placeholder="Conte-nos sobre sua experiência com este passageiro (opcional)"
+            ></textarea>
+            
+            <button class="submit-rating-btn" id="submitRatingBtn" onclick="submitRating()">
+                Enviar Avaliação
+            </button>
+        </div>
+
+        <!-- Botões de Ação -->
+        <div class="action-buttons">
+            <a href="historico.html" class="action-btn btn-secondary">
+                📋 Histórico
+            </a>
+            <a href="home.html" class="action-btn btn-primary">
+                🚗 Nova Corrida
+            </a>
+        </div>
+    </div>
+
+    <!-- Notificação -->
+    <div class="notification" id="notification"></div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-storage-compat.js"></script>
+    
+    <!-- Configuração do Firebase -->
+    <script src="../assets/firebase-config.js"></script>
+
+    <script>
+        // Aguardar o Firebase estar pronto
+        async function initializeApp() {
+            await waitForFirebase();
+            
+            // Verificar se está logado
+            if (!utils.isLoggedIn()) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            const userType = localStorage.getItem('userType');
+            if (userType !== 'motorista') {
+                utils.logout();
+                return;
+            }
+            
+            // Carregar dados da corrida
+            await loadRideData();
+        }
+
+        // Inicializar quando a página carregar
+        document.addEventListener('DOMContentLoaded', initializeApp);
+
+        // Carregar dados da corrida
+        async function loadRideData() {
+            try {
+                const urlParams = new URLSearchParams(window.location.search);
+                const rideId = urlParams.get('rideId');
+                
+                if (!rideId) {
+                    utils.showNotification('ID da corrida não encontrado', 'error');
+                    setTimeout(() => {
+                        window.location.href = 'home.html';
+                    }, 2000);
+                    return;
+                }
+                
+                const rideDoc = await db.collection('rides').doc(rideId).get();
+                
+                if (!rideDoc.exists) {
+                    utils.showNotification('Corrida não encontrada', 'error');
+                    setTimeout(() => {
+                        window.location.href = 'home.html';
+                    }, 2000);
+                    return;
+                }
+                
+                const rideData = rideDoc.data();
+                
+                // Verificar se o motorista atual é o responsável pela corrida
+                const currentUserId = localStorage.getItem('userId');
+                if (rideData.driverId !== currentUserId) {
+                    utils.showNotification('Você não é o motorista responsável por esta corrida', 'error');
+                    setTimeout(() => {
+                        window.location.href = 'home.html';
+                    }, 2000);
+                    return;
+                }
+                
+                // Atualizar interface
+                updateRideInterface(rideData);
+                
+            } catch (error) {
+                console.error('Erro ao carregar dados da corrida:', error);
+                utils.showNotification('Erro ao carregar dados da corrida', 'error');
+            }
+        }
+
+        // Atualizar interface da corrida
+        function updateRideInterface(rideData) {
+            // Resumo da corrida
+            document.getElementById('origin').textContent = rideData.origin || 'N/A';
+            document.getElementById('destination').textContent = rideData.destination || 'N/A';
+            document.getElementById('distance').textContent = `${rideData.estimatedDistance || 'N/A'} km`;
+            document.getElementById('duration').textContent = `${rideData.estimatedDuration || 'N/A'} min`;
+            
+            // Resumo financeiro
+            const totalFare = rideData.estimatedFare || 0;
+            const platformFee = 1.00; // Taxa fixa da plataforma
+            const driverEarnings = totalFare - platformFee;
+            
+            document.getElementById('rideValue').textContent = utils.formatCurrency(totalFare);
+            document.getElementById('driverEarnings').textContent = utils.formatCurrency(driverEarnings);
+            
+            // Informações do passageiro
+            if (rideData.passengerId) {
+                loadPassengerInfo(rideData.passengerId);
+            }
+            
+            // Configurar sistema de avaliação
+            setupRatingSystem();
+        }
+
+        // Carregar informações do passageiro
+        async function loadPassengerInfo(passengerId) {
+            try {
+                const passengerDoc = await db.collection('users').doc(passengerId).get();
+                
+                if (passengerDoc.exists) {
+                    const passengerData = passengerDoc.data();
+                    
+                    document.getElementById('passengerName').textContent = passengerData.name || 'N/A';
+                    document.getElementById('passengerPhone').textContent = passengerData.phone || 'N/A';
+                    document.getElementById('passengerRating').textContent = `⭐ ${passengerData.rating?.toFixed(1) || '0.0'}`;
+                    
+                    // Mostrar seção do passageiro
+                    document.getElementById('passengerSection').style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Erro ao carregar dados do passageiro:', error);
+            }
+        }
+
+        // Configurar sistema de avaliação
+        function setupRatingSystem() {
+            const stars = document.querySelectorAll('.star');
+            let selectedRating = 0;
+            
+            // Adicionar eventos de hover
+            stars.forEach((star, index) => {
+                star.addEventListener('mouseenter', () => {
+                    highlightStars(index + 1);
+                });
+                
+                star.addEventListener('mouseleave', () => {
+                    highlightStars(selectedRating);
+                });
+                
+                star.addEventListener('click', () => {
+                    selectedRating = index + 1;
+                    highlightStars(selectedRating);
+                    document.getElementById('selectedRating').textContent = selectedRating;
+                });
+            });
+        }
+
+        // Destacar estrelas
+        function highlightStars(count) {
+            const stars = document.querySelectorAll('.star');
+            stars.forEach((star, index) => {
+                if (index < count) {
+                    star.classList.add('active');
+                } else {
+                    star.classList.remove('active');
+                }
+            });
+        }
+
+        // Enviar avaliação
+        async function submitRating() {
+            try {
+                const rating = parseInt(document.getElementById('selectedRating').textContent);
+                const comment = document.getElementById('comment').value.trim();
+                
+                if (rating === 0) {
+                    utils.showNotification('Por favor, selecione uma avaliação', 'error');
+                    return;
+                }
+                
+                const urlParams = new URLSearchParams(window.location.search);
+                const rideId = urlParams.get('rideId');
+                const passengerId = await getPassengerId(rideId);
+                
+                if (!passengerId) {
+                    utils.showNotification('Erro ao identificar o passageiro', 'error');
+                    return;
+                }
+                
+                // Salvar avaliação
+                await db.collection('ratings').add({
+                    rideId: rideId,
+                    fromUserId: localStorage.getItem('userId'),
+                    fromUserType: 'driver',
+                    toUserId: passengerId,
+                    toUserType: 'passenger',
+                    rating: rating,
+                    comment: comment,
+                    createdAt: new Date()
+                });
+                
+                // Atualizar média de avaliação do passageiro
+                await updatePassengerRating(passengerId);
+                
+                utils.showNotification('Avaliação enviada com sucesso!', 'success');
+                
+                // Desabilitar formulário
+                document.getElementById('ratingForm').style.display = 'none';
+                document.getElementById('ratingSuccess').style.display = 'block';
+                
+            } catch (error) {
+                console.error('Erro ao enviar avaliação:', error);
+                utils.showNotification('Erro ao enviar avaliação', 'error');
+            }
+        }
+
+        // Obter ID do passageiro
+        async function getPassengerId(rideId) {
+            try {
+                const rideDoc = await db.collection('rides').doc(rideId).get();
+                if (rideDoc.exists) {
+                    return rideDoc.data().passengerId;
+                }
+                return null;
+            } catch (error) {
+                console.error('Erro ao obter ID do passageiro:', error);
+                return null;
+            }
+        }
+
+        // Atualizar média de avaliação do passageiro
+        async function updatePassengerRating(passengerId) {
+            try {
+                const ratingsSnapshot = await db.collection('ratings')
+                    .where('toUserId', '==', passengerId)
+                    .where('toUserType', '==', 'passenger')
+                    .get();
+                
+                if (!ratingsSnapshot.empty) {
+                    const totalRating = ratingsSnapshot.docs.reduce((sum, doc) => {
+                        return sum + doc.data().rating;
+                    }, 0);
+                    
+                    const averageRating = totalRating / ratingsSnapshot.size;
+                    
+                    await db.collection('users').doc(passengerId).update({
+                        rating: averageRating,
+                        totalRatings: ratingsSnapshot.size
+                    });
+                }
+            } catch (error) {
+                console.error('Erro ao atualizar avaliação do passageiro:', error);
+            }
+        }
+
+        // Fazer logout
+        function logout() {
+            utils.logout();
+        }
+    </script>
+</body>
+</html>

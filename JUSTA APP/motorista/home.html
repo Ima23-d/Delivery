@@ -1,0 +1,1329 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JUSTA - Home do Motorista</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2196F3, #1976D2);
+            color: white;
+            padding: 1rem 1.5rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        .driver-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .driver-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .driver-details {
+            text-align: right;
+        }
+
+        .driver-name {
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .driver-rating {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .online-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 24px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: #4CAF50;
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(26px);
+        }
+
+        .status-text {
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .logout-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        .stats-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2196F3;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .refresh-btn {
+            background: #2196F3;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .refresh-btn:hover {
+            background: #1976D2;
+            transform: translateY(-2px);
+        }
+
+        .rides-container {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .ride-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid #2196F3;
+            transition: all 0.3s ease;
+        }
+
+        .ride-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .ride-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .ride-info h3 {
+            color: #333;
+            margin-bottom: 0.5rem;
+            font-size: 1.2rem;
+        }
+
+        .ride-price {
+            background: #4CAF50;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .ride-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #666;
+        }
+
+        .detail-icon {
+            font-size: 1.2rem;
+        }
+
+        .ride-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .accept-btn {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .accept-btn:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+        }
+
+        .reject-btn {
+            background: #f44336;
+            color: white;
+        }
+
+        .reject-btn:hover {
+            background: #d32f2f;
+            transform: translateY(-2px);
+        }
+
+        .view-btn {
+            background: #2196F3;
+            color: white;
+        }
+
+        .view-btn:hover {
+            background: #1976D2;
+            transform: translateY(-2px);
+        }
+
+        .no-rides {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+        }
+
+        .no-rides-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .no-rides-text {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .no-rides-hint {
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 3rem;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #2196F3;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #4CAF50;
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.error {
+            background: #f44336;
+        }
+        
+        /* Estilos do Mapa */
+        .map-container {
+            margin-bottom: 20px;
+        }
+        
+        .user-marker {
+            background: #2196F3;
+            border: 3px solid white;
+            border-radius: 50%;
+            color: white;
+            font-size: 20px;
+            text-align: center;
+            line-height: 24px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        }
+        
+        .driver-marker {
+            background: #4CAF50;
+            border: 3px solid white;
+            border-radius: 50%;
+            color: white;
+            font-size: 20px;
+            text-align: center;
+            line-height: 24px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        }
+        
+        .ride-notification {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-left: 4px solid #2196F3;
+        }
+        
+        .ride-notification h3 {
+            margin: 0 0 10px 0;
+            color: #333;
+        }
+        
+        .ride-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 10px 0;
+        }
+        
+        .ride-detail {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .ride-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .ride-action-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .accept-btn {
+            background: #4CAF50;
+            color: white;
+        }
+        
+        .accept-btn:hover {
+            background: #45a049;
+        }
+        
+        .reject-btn {
+            background: #f44336;
+            color: white;
+        }
+        
+        .reject-btn:hover {
+            background: #d32f2f;
+        }
+        
+        /* Estilos para informações da rota */
+        .route-info {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+        
+        .route-info h4 {
+            margin: 0 0 10px 0;
+            color: #333;
+            font-size: 16px;
+        }
+        
+        .route-segments {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+        
+        .route-segment {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px;
+            background: white;
+            border-radius: 8px;
+            border-left: 3px solid #2196F3;
+        }
+        
+        .segment-title {
+            font-weight: 500;
+            color: #333;
+        }
+        
+        .segment-details {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .route-total {
+            text-align: center;
+            padding: 10px;
+            background: #e3f2fd;
+            border-radius: 8px;
+            color: #1976d2;
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            
+            .driver-info {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .ride-details {
+                grid-template-columns: 1fr;
+            }
+            
+            .ride-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div class="logo">🚗 JUSTA</div>
+            
+            <div class="driver-info">
+                <div class="driver-avatar" id="driverAvatar">👤</div>
+                <div class="driver-details">
+                    <div class="driver-name" id="driverName">Motorista</div>
+                    <div class="driver-status" id="driverStatus">Pendente</div>
+                    <div class="driver-rating" id="driverRating">⭐ 0.0</div>
+                </div>
+            </div>
+            
+            <div class="online-toggle">
+                <label class="toggle-switch">
+                    <input type="checkbox" id="onlineToggle" onchange="toggleOnlineStatus()">
+                    <span class="toggle-slider"></span>
+                </label>
+                <span class="status-text" id="statusText">Offline</span>
+            </div>
+            
+            <button class="logout-btn" onclick="logout()">Sair</button>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <!-- Mapa Interativo -->
+        <div class="map-container">
+            <div id="driverMap" style="height: 300px; width: 100%; border-radius: 15px; margin-bottom: 20px;"></div>
+        </div>
+        
+        <!-- Estatísticas -->
+        <div class="stats-cards">
+            <div class="stat-card">
+                <div class="stat-icon">💰</div>
+                <div class="stat-value" id="todayEarnings">R$ 0</div>
+                <div class="stat-label">Ganhos de Hoje</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">🚗</div>
+                <div class="stat-value" id="totalRides">0</div>
+                <div class="stat-label">Total de Corridas</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">📅</div>
+                <div class="stat-value" id="todayRides">0</div>
+                <div class="stat-label">Corridas de Hoje</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">⭐</div>
+                <div class="stat-value" id="avgRating">0.0</div>
+                <div class="stat-label">Avaliação Média</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">⏱️</div>
+                <div class="stat-value" id="onlineTime">0h</div>
+                <div class="stat-label">Tempo Online</div>
+            </div>
+        </div>
+
+        <!-- Notificações de Corrida -->
+        <div id="rideNotifications" style="display: none;">
+            <!-- Notificações de corridas próximas serão inseridas aqui -->
+        </div>
+        
+        <!-- Informações da Rota -->
+        <div id="routeInfo" style="display: none;">
+            <!-- Informações da rota serão inseridas aqui -->
+        </div>
+        
+        <!-- Corridas Disponíveis -->
+        <div class="section-header">
+            <h2 class="section-title">🚗 Corridas Disponíveis</h2>
+            <button class="refresh-btn" onclick="refreshRides()">🔄 Atualizar</button>
+        </div>
+
+        <div class="rides-container" id="ridesContainer">
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Carregando corridas...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notificação -->
+    <div class="notification" id="notification"></div>
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-storage-compat.js"></script>
+    
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <!-- Configuração do Firebase -->
+    <script src="../assets/firebase-config.js"></script>
+    
+    <!-- Configuração de Mapas -->
+    <script src="../assets/map-config.js"></script>
+
+    <script>
+        // Aguardar Firebase carregar
+        function waitForFirebase() {
+            return new Promise((resolve) => {
+                if (typeof firebase !== 'undefined' && firebase.auth) {
+                    resolve();
+                } else {
+                    const checkFirebase = setInterval(() => {
+                        if (typeof firebase !== 'undefined' && firebase.auth) {
+                            clearInterval(checkFirebase);
+                            resolve();
+                        }
+                    }, 100);
+                }
+            });
+        }
+
+        let currentUser = null;
+        let userLocation = null;
+        let notificationListener = null;
+        let currentRide = null;
+
+        // Aguardar o Firebase estar pronto
+        async function initializeApp() {
+            await waitForFirebase();
+            
+            // Verificar se está logado
+            if (!window.utils || !window.utils.isLoggedIn || !utils.isLoggedIn()) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            const userType = localStorage.getItem('userType');
+            if (userType !== 'motorista') {
+                if (window.utils && window.utils.logout) {
+                    utils.logout();
+                } else {
+                    localStorage.clear();
+                    window.location.href = 'login.html';
+                }
+                return;
+            }
+            
+            // Carregar dados do motorista
+            await loadDriverData();
+            
+            // Inicializar mapa
+            await initializeMap();
+            
+            // Iniciar monitoramento de localização
+            startLocationMonitoring();
+            
+            // Carregar estatísticas
+            await loadDriverStats();
+            
+            // Configurar listener para notificações
+            setupNotificationListener();
+            
+            // Configurar listener para corridas disponíveis
+            setupRidesListener();
+        }
+
+        // Inicializar quando a página carregar
+        document.addEventListener('DOMContentLoaded', initializeApp);
+
+        // Carregar dados do motorista
+        async function loadDriverData() {
+            try {
+                const userId = localStorage.getItem('userId');
+                const userDoc = await db.collection('users').doc(userId).get();
+                
+                if (userDoc.exists) {
+                    const userData = userDoc.data();
+                    
+                    const driverNameElement = document.getElementById('driverName');
+                    const driverStatusElement = document.getElementById('driverStatus');
+                    const onlineToggleElement = document.getElementById('onlineToggle');
+                    
+                    if (driverNameElement) {
+                        driverNameElement.textContent = userData.nome || userData.name || 'Motorista';
+                    }
+                    if (driverStatusElement) {
+                        driverStatusElement.textContent = userData.status === 'approved' ? 'Aprovado' : 'Pendente';
+                    }
+                    
+                    if (userData.status !== 'approved' && onlineToggleElement) {
+                        onlineToggleElement.disabled = true;
+                        const statusTextElement = document.getElementById('statusText');
+                        if (statusTextElement) {
+                            statusTextElement.textContent = 'Aguardando Aprovação';
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('Erro ao carregar dados:', error);
+                if (window.utils && window.utils.showNotification) {
+                    utils.showNotification('Erro ao carregar dados do motorista', 'error');
+                }
+            }
+        }
+
+        // Alternar status online/offline
+        async function toggleOnlineStatus() {
+            try {
+                const toggle = document.getElementById('onlineToggle');
+                const statusText = document.getElementById('statusText');
+                const ridesContainer = document.getElementById('ridesContainer');
+                
+                if (!toggle || !statusText || !ridesContainer) {
+                    console.error('Elementos necessários não encontrados');
+                    return;
+                }
+                
+                const isOnline = statusText.textContent.includes('Online');
+                
+                if (isOnline) {
+                    // Desconectar
+                    statusText.textContent = 'Offline';
+                    toggle.checked = false;
+                    ridesContainer.innerHTML = '<p class="text-muted">Você está offline. Ative o modo online para receber corridas.</p>';
+                } else {
+                    // Conectar
+                    statusText.textContent = 'Online';
+                    toggle.checked = true;
+                    await loadAvailableRides();
+                }
+            } catch (error) {
+                console.error('Erro ao alterar status:', error);
+                if (window.utils && window.utils.showNotification) {
+                    utils.showNotification('Erro ao alterar status', 'error');
+                }
+            }
+        }
+
+        // Inicializar mapa
+        async function initializeMap() {
+            try {
+                // Aguardar um pouco para garantir que o DOM está pronto
+                await new Promise(resolve => setTimeout(resolve, 100));
+                
+                // Inicializar mapa
+                MapSystem.initMap('driverMap');
+                
+                console.log('Mapa do motorista inicializado com sucesso');
+            } catch (error) {
+                console.error('Erro ao inicializar mapa:', error);
+            }
+        }
+        
+        // Iniciar monitoramento de localização
+        function startLocationMonitoring() {
+            if ('geolocation' in navigator) {
+                navigator.geolocation.watchPosition(
+                    async (position) => {
+                        const { latitude, longitude } = position.coords;
+                        userLocation = { lat: latitude, lng: longitude };
+                        
+                        try {
+                            const userId = localStorage.getItem('userId');
+                            await db.collection('users').doc(userId).update({
+                                currentLocation: new firebase.firestore.GeoPoint(latitude, longitude),
+                                lastLocationUpdate: new Date()
+                            });
+                            
+                            // Atualizar posição no mapa
+                            MapSystem.updateDriverPosition(latitude, longitude);
+                        } catch (error) {
+                            console.error('Erro ao atualizar localização:', error);
+                        }
+                    },
+                    (error) => {
+                        console.error('Erro de geolocalização:', error);
+                        if (window.utils && window.utils.showNotification) {
+                            utils.showNotification('Erro ao obter localização', 'error');
+                        }
+                    },
+                    {
+                        enableHighAccuracy: true,
+                        timeout: 10000,
+                        maximumAge: 30000
+                    }
+                );
+            }
+        }
+        
+        // Configurar listener para notificações
+        function setupNotificationListener() {
+            try {
+                const userId = localStorage.getItem('userId');
+                
+                notificationListener = db.collection('notifications')
+                    .where('driverId', '==', userId)
+                    .where('read', '==', false)
+                    .onSnapshot((snapshot) => {
+                        snapshot.docChanges().forEach((change) => {
+                            if (change.type === 'added') {
+                                handleNewNotification(change.doc.data());
+                            }
+                        });
+                    }, (error) => {
+                        console.error('Erro no listener de notificações:', error);
+                    });
+                    
+                console.log('Listener de notificações configurado');
+            } catch (error) {
+                console.error('Erro ao configurar listener de notificações:', error);
+            }
+        }
+        
+        // Lidar com nova notificação
+        async function handleNewNotification(notification) {
+            try {
+                if (notification.type === 'new_ride') {
+                    // Buscar dados da corrida
+                    const rideDoc = await db.collection('rides').doc(notification.rideId).get();
+                    if (rideDoc.exists) {
+                        const rideData = rideDoc.data();
+                        showRideNotification(rideData, notification.id);
+                    }
+                }
+            } catch (error) {
+                console.error('Erro ao processar notificação:', error);
+            }
+        }
+        
+        // Mostrar notificação de corrida
+        function showRideNotification(rideData, notificationId) {
+            const notificationsDiv = document.getElementById('rideNotifications');
+            
+            if (notificationsDiv) {
+                notificationsDiv.style.display = 'block';
+                
+                const notificationHTML = `
+                    <div class="ride-notification" id="notification-${notificationId}">
+                        <h3>🚗 Nova Corrida Disponível</h3>
+                        <div class="ride-details">
+                            <div class="ride-detail">
+                                <span>📍 Origem:</span>
+                                <strong>${rideData.origin}</strong>
+                            </div>
+                            <div class="ride-detail">
+                                <span>🎯 Destino:</span>
+                                <strong>${rideData.destination}</strong>
+                            </div>
+                            <div class="ride-detail">
+                                <span>💰 Valor:</span>
+                                <strong>R$ ${(rideData.estimatedPrice || 0).toFixed(2)}</strong>
+                            </div>
+                            <div class="ride-detail">
+                                <span>📏 Distância:</span>
+                                <strong>${(rideData.estimatedDistance || 0).toFixed(1)} km</strong>
+                            </div>
+                            <div class="ride-detail">
+                                <span>⏱️ Tempo:</span>
+                                <strong>${rideData.estimatedDuration || 0} min</strong>
+                            </div>
+                        </div>
+                        <div class="ride-actions">
+                            <button class="ride-action-btn accept-btn" onclick="acceptRide('${rideData.id}', '${notificationId}')">
+                                ✅ Aceitar
+                            </button>
+                            <button class="ride-action-btn reject-btn" onclick="rejectRide('${rideData.id}', '${notificationId}')">
+                                ❌ Recusar
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                notificationsDiv.innerHTML = notificationHTML + notificationsDiv.innerHTML;
+                
+                // Mostrar no mapa
+                if (rideData.userLocation) {
+                    MapSystem.addUserMarker(
+                        rideData.userLocation.latitude,
+                        rideData.userLocation.longitude,
+                        'Passageiro'
+                    );
+                }
+                
+                // Mostrar destino no mapa
+                if (rideData.destinationCoords) {
+                    MapSystem.addDestinationMarker(
+                        rideData.destinationCoords.latitude,
+                        rideData.destinationCoords.longitude,
+                        'Destino'
+                    );
+                }
+            }
+        }
+        
+        // Aceitar corrida
+        async function acceptRide(rideId, notificationId) {
+            try {
+                const userId = localStorage.getItem('userId');
+                
+                // Buscar dados da corrida
+                const rideDoc = await db.collection('rides').doc(rideId).get();
+                if (!rideDoc.exists) {
+                    throw new Error('Corrida não encontrada');
+                }
+                
+                const rideData = rideDoc.data();
+                
+                // Atualizar status da corrida
+                await db.collection('rides').doc(rideId).update({
+                    status: 'accepted',
+                    driverId: userId,
+                    acceptedAt: new Date()
+                });
+                
+                // Marcar notificação como lida
+                await db.collection('notifications').doc(notificationId).update({
+                    read: true
+                });
+                
+                // Remover notificação da tela
+                const notificationElement = document.getElementById(`notification-${notificationId}`);
+                if (notificationElement) {
+                    notificationElement.remove();
+                }
+                
+                // Calcular rota completa (motorista -> passageiro -> destino)
+                if (userLocation && rideData.userLocation && rideData.destinationCoords) {
+                    const completeRoute = await MapSystem.calculateCompleteRoute(
+                        { lat: userLocation.lat, lng: userLocation.lng },
+                        { lat: rideData.userLocation.latitude, lng: rideData.userLocation.longitude },
+                        { lat: rideData.destinationCoords.latitude, lng: rideData.destinationCoords.longitude }
+                    );
+                    
+                    if (completeRoute) {
+                        // Mostrar informações da rota
+                        showRouteInfo(completeRoute, rideData);
+                    }
+                }
+                
+                if (window.utils && window.utils.showNotification) {
+                    utils.showNotification('Corrida aceita! A caminho do passageiro.', 'success');
+                }
+                
+                // Redirecionar para página da corrida
+                window.location.href = `corrida_andamento.html?rideId=${rideId}`;
+                
+            } catch (error) {
+                console.error('Erro ao aceitar corrida:', error);
+                if (window.utils && window.utils.showNotification) {
+                    utils.showNotification('Erro ao aceitar corrida', 'error');
+                }
+            }
+        }
+        
+        // Mostrar informações da rota
+        function showRouteInfo(routeData, rideData) {
+            const routeInfoDiv = document.getElementById('routeInfo');
+            if (routeInfoDiv) {
+                routeInfoDiv.style.display = 'block';
+                routeInfoDiv.innerHTML = `
+                    <div class="route-info">
+                        <h4>🗺️ Rota da Corrida</h4>
+                        <div class="route-segments">
+                            <div class="route-segment">
+                                <span class="segment-title">🚗 Para o passageiro:</span>
+                                <span class="segment-details">
+                                    ${routeData.toPassenger.distance.toFixed(1)} km • ${Math.round(routeData.toPassenger.duration)} min
+                                </span>
+                            </div>
+                            <div class="route-segment">
+                                <span class="segment-title">🎯 Para o destino:</span>
+                                <span class="segment-details">
+                                    ${routeData.toDestination.distance.toFixed(1)} km • ${Math.round(routeData.toDestination.duration)} min
+                                </span>
+                            </div>
+                        </div>
+                        <div class="route-total">
+                            <strong>Total: ${routeData.totalDistance.toFixed(1)} km • ${Math.round(routeData.totalDuration)} min</strong>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+        
+        // Recusar corrida
+        async function rejectRide(rideId, notificationId) {
+            try {
+                // Marcar notificação como lida
+                await db.collection('notifications').doc(notificationId).update({
+                    read: true
+                });
+                
+                // Remover notificação da tela
+                const notificationElement = document.getElementById(`notification-${notificationId}`);
+                if (notificationElement) {
+                    notificationElement.remove();
+                }
+                
+                if (window.utils && window.utils.showNotification) {
+                    utils.showNotification('Corrida recusada', 'info');
+                }
+                
+            } catch (error) {
+                console.error('Erro ao recusar corrida:', error);
+                if (window.utils && window.utils.showNotification) {
+                    utils.showNotification('Erro ao recusar corrida', 'error');
+                }
+            }
+        }
+
+        // Carregar estatísticas do motorista
+        async function loadDriverStats() {
+            try {
+                const userId = localStorage.getItem('userId');
+                
+                // Total de corridas
+                const ridesSnapshot = await db.collection('rides')
+                    .where('driverId', '==', userId)
+                    .get();
+                
+                const totalRides = ridesSnapshot.size;
+                const totalRidesElement = document.getElementById('totalRides');
+                if (totalRidesElement) {
+                    totalRidesElement.textContent = totalRides;
+                }
+                
+                // Corridas hoje
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                
+                const todayRides = ridesSnapshot.docs.filter(doc => {
+                    const rideData = doc.data();
+                    return rideData.createdAt && rideData.createdAt.toDate() >= today;
+                }).length;
+                
+                const todayRidesElement = document.getElementById('todayRides');
+                if (todayRidesElement) {
+                    todayRidesElement.textContent = todayRides;
+                }
+                
+                // Ganhos hoje
+                const todayEarnings = ridesSnapshot.docs
+                    .filter(doc => {
+                        const rideData = doc.data();
+                        return rideData.createdAt && rideData.createdAt.toDate() >= today && rideData.status === 'completed';
+                    })
+                    .reduce((total, doc) => {
+                        const rideData = doc.data();
+                        return total + (rideData.driverEarnings || 0);
+                    }, 0);
+                
+                const todayEarningsElement = document.getElementById('todayEarnings');
+                if (todayEarningsElement) {
+                    if (window.utils && window.utils.formatCurrency) {
+                        todayEarningsElement.textContent = utils.formatCurrency(todayEarnings);
+                    } else {
+                        todayEarningsElement.textContent = `R$ ${todayEarnings.toFixed(2)}`;
+                    }
+                }
+                
+            } catch (error) {
+                console.error('Erro ao carregar estatísticas:', error);
+                if (window.utils && window.utils.showNotification) {
+                    utils.showNotification('Erro ao carregar estatísticas', 'error');
+                }
+            }
+        }
+
+        // Configurar listener para corridas disponíveis
+        function setupRidesListener() {
+            try {
+                const ridesRef = db.collection('rides')
+                    .where('status', '==', 'requested')
+                    .orderBy('createdAt', 'desc');
+                
+                ridesRef.onSnapshot((snapshot) => {
+                    snapshot.docChanges().forEach((change) => {
+                        if (change.type === 'added') {
+                            addRideToList(change.doc);
+                        } else if (change.type === 'removed') {
+                            removeRideFromList(change.doc.id);
+                        }
+                    });
+                }, (error) => {
+                    console.error('Erro no listener de corridas:', error);
+                    if (window.utils && window.utils.showNotification) {
+                        utils.showNotification('Erro ao monitorar corridas', 'error');
+                    }
+                });
+            } catch (error) {
+                console.error('Erro ao configurar listener de corridas:', error);
+                if (window.utils && window.utils.showNotification) {
+                    utils.showNotification('Erro ao configurar monitoramento', 'error');
+                }
+            }
+        }
+
+        // Adicionar corrida à lista
+        function addRideToList(rideDoc) {
+            try {
+                const rideData = rideDoc.data();
+                const ridesContainer = document.getElementById('ridesContainer');
+                
+                if (!ridesContainer) {
+                    console.error('Elemento ridesContainer não encontrado');
+                    return;
+                }
+                
+                // Verificar se já existe
+                if (document.getElementById(`ride-${rideDoc.id}`)) {
+                    return;
+                }
+                
+                const rideElement = document.createElement('div');
+                rideElement.className = 'ride-item';
+                rideElement.id = `ride-${rideDoc.id}`;
+                
+                const distance = rideData.estimatedDistance || 'N/A';
+                const duration = rideData.estimatedDuration || 'N/A';
+                const fare = rideData.estimatedFare || 0;
+                
+                rideElement.innerHTML = `
+                    <div class="ride-info">
+                        <div class="ride-location">
+                            <div class="origin">
+                                <strong>Origem:</strong> ${rideData.origin || 'N/A'}
+                            </div>
+                            <div class="destination">
+                                <strong>Destino:</strong> ${rideData.destination || 'N/A'}
+                            </div>
+                        </div>
+                        <div class="ride-details">
+                            <span class="distance">📏 ${distance} km</span>
+                            <span class="duration">⏱️ ${duration} min</span>
+                            <span class="fare">💰 ${window.utils && window.utils.showNotification ? utils.formatCurrency(fare) : `R$ ${fare.toFixed(2)}`}</span>
+                        </div>
+                    </div>
+                    <div class="ride-actions">
+                        <button class="btn btn-success btn-sm" onclick="acceptRide('${rideDoc.id}')">
+                            ✅ Aceitar
+                        </button>
+                        <button class="btn btn-danger btn-sm" onclick="rejectRide('${rideDoc.id}')">
+                            ❌ Recusar
+                        </button>
+                    </div>
+                `;
+                
+                ridesContainer.appendChild(rideElement);
+            } catch (error) {
+                console.error('Erro ao adicionar corrida à lista:', error);
+            }
+        }
+
+        // Remover corrida da lista
+        function removeRideFromList(rideId) {
+            try {
+                const rideElement = document.getElementById(`ride-${rideId}`);
+                if (rideElement) {
+                    rideElement.remove();
+                }
+            } catch (error) {
+                console.error('Erro ao remover corrida da lista:', error);
+            }
+        }
+
+        // Aceitar corrida
+        async function acceptRide(rideId) {
+            try {
+                const userId = localStorage.getItem('userId');
+                
+                if (!userId) {
+                    if (window.utils && window.utils.showNotification) {
+                        utils.showNotification('Usuário não autenticado', 'error');
+                    }
+                    return;
+                }
+                
+                // Atualizar status da corrida
+                await db.collection('rides').doc(rideId).update({
+                    status: 'confirmed',
+                    driverId: userId,
+                    confirmedAt: new Date()
+                });
+                
+                // Redirecionar para página da corrida
+                window.location.href = `corrida_andamento.html?rideId=${rideId}`;
+                
+            } catch (error) {
+                console.error('Erro ao aceitar corrida:', error);
+                if (window.utils && window.utils.showNotification) {
+                    utils.showNotification('Erro ao aceitar corrida', 'error');
+                }
+            }
+        }
+
+        // Recusar corrida
+        async function rejectRide(rideId) {
+            try {
+                // Remover da lista
+                removeRideFromList(rideId);
+                
+                // Opcional: marcar como recusada
+                await db.collection('rides').doc(rideId).update({
+                    status: 'rejected',
+                    rejectedAt: new Date()
+                });
+                
+                if (window.utils && window.utils.showNotification) {
+                    utils.showNotification('Corrida recusada', 'info');
+                }
+                
+            } catch (error) {
+                console.error('Erro ao recusar corrida:', error);
+                if (window.utils && window.utils.showNotification) {
+                    utils.showNotification('Erro ao recusar corrida', 'error');
+                }
+            }
+        }
+
+        // Recarregar corridas disponíveis
+        async function refreshRides() {
+            try {
+                await loadAvailableRides();
+                if (window.utils && window.utils.showNotification) {
+                    utils.showNotification('Lista atualizada', 'success');
+                }
+            } catch (error) {
+                console.error('Erro ao atualizar:', error);
+                if (window.utils && window.utils.showNotification) {
+                    utils.showNotification('Erro ao atualizar lista', 'error');
+                }
+            }
+        }
+
+        // Carregar corridas disponíveis
+        async function loadAvailableRides() {
+            try {
+                const ridesSnapshot = await db.collection('rides')
+                    .where('status', '==', 'requested')
+                    .orderBy('createdAt', 'desc')
+                    .limit(10)
+                    .get();
+                
+                const ridesContainer = document.getElementById('ridesContainer');
+                if (!ridesContainer) {
+                    console.error('Elemento ridesContainer não encontrado');
+                    return;
+                }
+                
+                ridesContainer.innerHTML = '';
+                
+                if (ridesSnapshot.empty) {
+                    ridesContainer.innerHTML = '<p class="text-muted">Nenhuma corrida disponível no momento.</p>';
+                    return;
+                }
+                
+                ridesSnapshot.forEach(doc => {
+                    addRideToList(doc);
+                });
+                
+            } catch (error) {
+                console.error('Erro ao carregar corridas:', error);
+                if (window.utils && window.utils.showNotification) {
+                    utils.showNotification('Erro ao carregar corridas', 'error');
+                }
+            }
+        }
+
+        // Fazer logout
+        function logout() {
+            if (window.utils && window.utils.logout) {
+                utils.logout();
+            } else {
+                // Fallback se utils não estiver disponível
+                localStorage.clear();
+                window.location.href = 'login.html';
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JUSTA - Perfil do Motorista</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2196F3, #1976D2);
+            color: white;
+            padding: 1rem 1.5rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        .back-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .main-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-subtitle {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .profile-section {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #2196F3, #1976D2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: white;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .profile-avatar:hover {
+            transform: scale(1.05);
+        }
+
+        .profile-info h2 {
+            font-size: 1.8rem;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .profile-status {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-approved {
+            background: #e8f5e8;
+            color: #2e7d32;
+        }
+
+        .status-pending {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        .status-rejected {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            font-weight: 500;
+            color: #333;
+            font-size: 0.9rem;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #2196F3;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .stats-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 1rem;
+            text-align: center;
+            border: 1px solid #e9ecef;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2196F3;
+            margin-bottom: 0.3rem;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.8rem;
+        }
+
+        .save-btn {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        .save-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(76, 175, 80, 0.3);
+        }
+
+        .save-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .documents-section {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .documents-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .document-item {
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .document-item:hover {
+            border-color: #2196F3;
+            transform: translateY(-2px);
+        }
+
+        .document-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #2196F3;
+        }
+
+        .document-name {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .document-status {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-verified {
+            background: #e8f5e8;
+            color: #2e7d32;
+        }
+
+        .status-pending {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        .status-rejected {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .document-actions {
+            margin-top: 1rem;
+        }
+
+        .document-btn {
+            background: #2196F3;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            margin: 0 0.5rem;
+        }
+
+        .document-btn:hover {
+            background: #1976D2;
+            transform: translateY(-2px);
+        }
+
+        .document-btn.secondary {
+            background: #6c757d;
+        }
+
+        .document-btn.secondary:hover {
+            background: #5a6268;
+        }
+
+        .security-section {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .security-options {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .security-option {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            transition: border-color 0.3s ease;
+        }
+
+        .security-option:hover {
+            border-color: #2196F3;
+        }
+
+        .security-info h4 {
+            color: #333;
+            margin-bottom: 0.3rem;
+        }
+
+        .security-info p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .security-action {
+            background: #2196F3;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .security-action:hover {
+            background: #1976D2;
+            transform: translateY(-2px);
+        }
+
+        .security-action.danger {
+            background: #f44336;
+        }
+
+        .security-action.danger:hover {
+            background: #d32f2f;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #4CAF50;
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.error {
+            background: #f44336;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #4CAF50;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .documents-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div class="logo">🚗 JUSTA</div>
+            <a href="home.html" class="back-btn">← Voltar</a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="page-header">
+            <h1 class="page-title">👤 Perfil do Motorista</h1>
+            <p class="page-subtitle">Gerencie suas informações pessoais e configurações</p>
+        </div>
+
+        <!-- Informações Pessoais -->
+        <div class="profile-section">
+            <h2 class="section-title">👤 Informações Pessoais</h2>
+            
+            <div class="profile-header">
+                <div class="profile-avatar" onclick="changeAvatar()">
+                    👤
+                </div>
+                <div class="profile-info">
+                    <h2 id="driverName">Carregando...</h2>
+                    <div class="profile-status" id="driverStatus">Carregando...</div>
+                </div>
+            </div>
+
+            <!-- Estatísticas -->
+            <div class="stats-cards">
+                <div class="stat-card">
+                    <div class="stat-value" id="totalRides">0</div>
+                    <div class="stat-label">Total de Corridas</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="totalEarnings">R$ 0</div>
+                    <div class="stat-label">Total Ganho</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="avgRating">0.0</div>
+                    <div class="stat-label">Avaliação Média</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="daysActive">0</div>
+                    <div class="stat-label">Dias Ativo</div>
+                </div>
+            </div>
+
+            <form id="profileForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="firstName">Nome</label>
+                        <input type="text" id="firstName" name="firstName" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="lastName">Sobrenome</label>
+                        <input type="text" id="lastName" name="lastName" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">E-mail</label>
+                        <input type="email" id="email" name="email" required readonly>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="phone">Telefone</label>
+                        <input type="tel" id="phone" name="phone" placeholder="(11) 99999-9999" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="cpf">CPF</label>
+                        <input type="text" id="cpf" name="cpf" placeholder="123.456.789-00" readonly>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="birthDate">Data de Nascimento</label>
+                        <input type="date" id="birthDate" name="birthDate" required>
+                    </div>
+                    
+                    <div class="form-group full-width">
+                        <label for="address">Endereço Completo</label>
+                        <textarea id="address" name="address" rows="3" placeholder="Rua, número, bairro, cidade, estado e CEP" required></textarea>
+                    </div>
+                    
+                    <div class="form-group full-width">
+                        <label for="bio">Biografia</label>
+                        <textarea id="bio" name="bio" rows="3" placeholder="Conte um pouco sobre você e sua experiência como motorista..."></textarea>
+                    </div>
+                </div>
+                
+                <button type="submit" class="save-btn" id="saveProfileBtn">
+                    💾 Salvar Alterações
+                </button>
+            </form>
+        </div>
+
+        <!-- Informações do Veículo -->
+        <div class="profile-section">
+            <h2 class="section-title">🚗 Informações do Veículo</h2>
+            
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="carBrand">Marca</label>
+                    <input type="text" id="carBrand" name="carBrand" placeholder="Ex: Toyota" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="carModel">Modelo</label>
+                    <input type="text" id="carModel" name="carModel" placeholder="Ex: Corolla" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="carYear">Ano</label>
+                    <input type="number" id="carYear" name="carYear" min="1990" max="2025" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="carColor">Cor</label>
+                    <input type="text" id="carColor" name="carColor" placeholder="Ex: Prata" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="carPlate">Placa</label>
+                    <input type="text" id="carPlate" name="carPlate" placeholder="ABC-1234" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="carType">Tipo de Veículo</label>
+                    <select id="carType" name="carType" required>
+                        <option value="">Selecione...</option>
+                        <option value="sedan">Sedan</option>
+                        <option value="hatch">Hatch</option>
+                        <option value="suv">SUV</option>
+                        <option value="van">Van</option>
+                        <option value="pickup">Pickup</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Documentos -->
+        <div class="documents-section">
+            <h2 class="section-title">📋 Documentos</h2>
+            
+            <div class="documents-grid">
+                <div class="document-item">
+                    <div class="document-icon">📄</div>
+                    <div class="document-name">CNH</div>
+                    <div class="document-status" id="cnhStatus">Verificando...</div>
+                    <div class="document-actions">
+                        <button class="document-btn" onclick="viewDocument('cnh')">👁️ Visualizar</button>
+                        <button class="document-btn secondary" onclick="updateDocument('cnh')">📝 Atualizar</button>
+                    </div>
+                </div>
+                
+                <div class="document-item">
+                    <div class="document-icon">📄</div>
+                    <div class="document-name">CRLV</div>
+                    <div class="document-status" id="crlvStatus">Verificando...</div>
+                    <div class="document-actions">
+                        <button class="document-btn" onclick="viewDocument('crlv')">👁️ Visualizar</button>
+                        <button class="document-btn secondary" onclick="updateDocument('crlv')">📝 Atualizar</button>
+                    </div>
+                </div>
+                
+                <div class="document-item">
+                    <div class="document-icon">📷</div>
+                    <div class="document-name">Foto do Veículo</div>
+                    <div class="document-status" id="carPhotoStatus">Verificando...</div>
+                    <div class="document-actions">
+                        <button class="document-btn" onclick="viewDocument('carPhoto')">👁️ Visualizar</button>
+                        <button class="document-btn secondary" onclick="updateDocument('carPhoto')">📝 Atualizar</button>
+                    </div>
+                </div>
+                
+                <div class="document-item">
+                    <div class="document-icon">📄</div>
+                    <div class="document-name">Seguro</div>
+                    <div class="document-status" id="insuranceStatus">Verificando...</div>
+                    <div class="document-actions">
+                        <button class="document-btn" onclick="viewDocument('insurance')">👁️ Visualizar</button>
+                        <button class="document-btn secondary" onclick="updateDocument('insurance')">📝 Atualizar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Segurança -->
+        <div class="security-section">
+            <h2 class="section-title">🔒 Segurança</h2>
+            
+            <div class="security-options">
+                <div class="security-option">
+                    <div class="security-info">
+                        <h4>Alterar Senha</h4>
+                        <p>Atualize sua senha de acesso</p>
+                    </div>
+                    <button class="security-action" onclick="changePassword()">🔑 Alterar</button>
+                </div>
+                
+                <div class="security-option">
+                    <div class="security-info">
+                        <h4>Excluir Conta</h4>
+                        <p>Remova permanentemente sua conta da plataforma</p>
+                    </div>
+                    <button class="security-action danger" onclick="deleteAccount()">🗑️ Excluir</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notificação -->
+    <div class="notification" id="notification"></div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-storage-compat.js"></script>
+    
+    <!-- Configuração do Firebase -->
+    <script src="../assets/firebase-config.js"></script>
+
+    <script>
+        // Aguardar o Firebase estar pronto
+        async function initializeApp() {
+            await waitForFirebase();
+            
+            // Verificar se está logado
+            if (!utils.isLoggedIn()) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            const userType = localStorage.getItem('userType');
+            if (userType !== 'motorista') {
+                utils.logout();
+                return;
+            }
+            
+            // Carregar dados
+            await loadDriverData();
+            
+            // Configurar máscaras
+            setupPhoneMask();
+            setupCpfMask();
+        }
+
+        // Inicializar quando a página carregar
+        document.addEventListener('DOMContentLoaded', initializeApp);
+
+        // Carregar dados do motorista
+        async function loadDriverData() {
+            try {
+                const userId = localStorage.getItem('userId');
+                const userDoc = await db.collection('users').doc(userId).get();
+                
+                if (userDoc.exists) {
+                    const userData = userDoc.data();
+                    
+                    // Preencher informações pessoais
+                    document.getElementById('firstName').value = userData.firstName || '';
+                    document.getElementById('lastName').value = userData.lastName || '';
+                    document.getElementById('email').value = userData.email || '';
+                    document.getElementById('phone').value = userData.phone || '';
+                    document.getElementById('cpf').value = userData.cpf || '';
+                    document.getElementById('birthDate').value = userData.birthDate || '';
+                    document.getElementById('address').value = userData.address || '';
+                    document.getElementById('bio').value = userData.bio || '';
+                    
+                    // Preencher informações do veículo
+                    document.getElementById('carBrand').value = userData.carBrand || '';
+                    document.getElementById('carModel').value = userData.carModel || '';
+                    document.getElementById('carYear').value = userData.carYear || '';
+                    document.getElementById('carColor').value = userData.carColor || '';
+                    document.getElementById('carPlate').value = userData.carPlate || '';
+                    document.getElementById('carType').value = userData.carType || '';
+                    
+                    // Atualizar estatísticas
+                    await updateDriverStats();
+                    
+                    // Atualizar interface
+                    updateProfileInterface(userData);
+                }
+            } catch (error) {
+                console.error('Erro ao carregar dados do motorista:', error);
+                utils.showNotification('Erro ao carregar dados', 'error');
+            }
+        }
+
+        // Atualizar estatísticas do motorista
+        async function updateDriverStats() {
+            try {
+                const userId = localStorage.getItem('userId');
+                
+                // Total de corridas
+                const totalRidesSnapshot = await db.collection('rides')
+                    .where('driverId', '==', userId)
+                    .get();
+                
+                const totalRides = totalRidesSnapshot.size;
+                document.getElementById('totalRides').textContent = totalRides;
+                
+                // Corridas completadas
+                const completedRides = totalRidesSnapshot.docs.filter(doc => {
+                    return doc.data().status === 'completed';
+                }).length;
+                document.getElementById('completedRides').textContent = completedRides;
+                
+                // Ganhos totais
+                const totalEarnings = totalRidesSnapshot.docs
+                    .filter(doc => doc.data().status === 'completed')
+                    .reduce((total, doc) => {
+                        const rideData = doc.data();
+                        const driverEarnings = (rideData.estimatedFare || 0) - 1; // R$ 1 de taxa
+                        return total + driverEarnings;
+                    }, 0);
+                
+                document.getElementById('totalEarnings').textContent = utils.formatCurrency(totalEarnings);
+                
+                // Média de avaliação
+                const ratingsSnapshot = await db.collection('ratings')
+                    .where('toUserId', '==', userId)
+                    .where('toUserType', '==', 'driver')
+                    .get();
+                
+                if (!ratingsSnapshot.empty) {
+                    const totalRating = ratingsSnapshot.docs.reduce((sum, doc) => {
+                        return sum + doc.data().rating;
+                    }, 0);
+                    
+                    const averageRating = totalRating / ratingsSnapshot.size;
+                    document.getElementById('averageRating').textContent = averageRating.toFixed(1);
+                    document.getElementById('totalRatings').textContent = ratingsSnapshot.size;
+                } else {
+                    document.getElementById('averageRating').textContent = '0.0';
+                    document.getElementById('totalRatings').textContent = '0';
+                }
+                
+                // Dias desde o cadastro
+                const userDoc = await db.collection('users').doc(userId).get();
+                if (userDoc.exists) {
+                    const userData = userDoc.data();
+                    const createdAt = userData.createdAt?.toDate() || new Date(userData.createdAt);
+                    const now = new Date();
+                    const diffTime = Math.abs(now - createdAt);
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                    document.getElementById('daysSinceSignup').textContent = diffDays;
+                }
+                
+            } catch (error) {
+                console.error('Erro ao atualizar estatísticas:', error);
+            }
+        }
+
+        // Atualizar interface do perfil
+        function updateProfileInterface(userData) {
+            // Nome completo
+            document.getElementById('driverName').textContent = userData.name || 'Motorista';
+            
+            // Status
+            const statusElement = document.getElementById('driverStatus');
+            const status = userData.status || 'pending';
+            
+            statusElement.textContent = getStatusText(status);
+            statusElement.className = `status-badge ${getStatusClass(status)}`;
+            
+            // Avatar (se existir)
+            if (userData.photoURL) {
+                const avatar = document.getElementById('driverAvatar');
+                avatar.style.backgroundImage = `url(${userData.photoURL})`;
+                avatar.textContent = '';
+            }
+        }
+
+        // Obter texto do status
+        function getStatusText(status) {
+            const statusTexts = {
+                'pending': 'Em Análise',
+                'approved': 'Aprovado',
+                'rejected': 'Rejeitado',
+                'suspended': 'Suspenso'
+            };
+            return statusTexts[status] || status;
+        }
+
+        // Obter classe CSS do status
+        function getStatusClass(status) {
+            const statusClasses = {
+                'pending': 'status-pending',
+                'approved': 'status-approved',
+                'rejected': 'status-rejected',
+                'suspended': 'status-suspended'
+            };
+            return statusClasses[status] || 'status-default';
+        }
+
+        // Configurar máscara de telefone
+        function setupPhoneMask() {
+            const phoneInput = document.getElementById('phone');
+            phoneInput.addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\D/g, '');
+                if (value.length > 0) {
+                    value = `(${value}`;
+                    if (value.length > 3) {
+                        value = `${value.slice(0, 3)}) ${value.slice(3)}`;
+                    }
+                    if (value.length > 9) {
+                        value = `${value.slice(0, 9)}-${value.slice(9)}`;
+                    }
+                    if (value.length > 14) {
+                        value = value.slice(0, 14);
+                    }
+                }
+                e.target.value = value;
+            });
+        }
+
+        // Configurar máscara de CPF
+        function setupCpfMask() {
+            const cpfInput = document.getElementById('cpf');
+            cpfInput.addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\D/g, '');
+                if (value.length > 0) {
+                    if (value.length <= 3) {
+                        value = value;
+                    } else if (value.length <= 6) {
+                        value = `${value.slice(0, 3)}.${value.slice(3)}`;
+                    } else if (value.length <= 9) {
+                        value = `${value.slice(0, 3)}.${value.slice(3, 6)}.${value.slice(6)}`;
+                    } else {
+                        value = `${value.slice(0, 3)}.${value.slice(3, 6)}.${value.slice(6, 9)}-${value.slice(9, 11)}`;
+                    }
+                }
+                e.target.value = value;
+            });
+        }
+
+        // Salvar alterações do perfil
+        async function saveProfile() {
+            try {
+                const userId = localStorage.getItem('userId');
+                
+                // Obter valores dos campos
+                const updateData = {
+                    firstName: document.getElementById('firstName').value.trim(),
+                    lastName: document.getElementById('lastName').value.trim(),
+                    phone: document.getElementById('phone').value.trim(),
+                    cpf: document.getElementById('cpf').value.trim(),
+                    birthDate: document.getElementById('birthDate').value,
+                    address: document.getElementById('address').value.trim(),
+                    bio: document.getElementById('bio').value.trim(),
+                    carBrand: document.getElementById('carBrand').value.trim(),
+                    carModel: document.getElementById('carModel').value.trim(),
+                    carYear: document.getElementById('carYear').value,
+                    carColor: document.getElementById('carColor').value.trim(),
+                    carPlate: document.getElementById('carPlate').value.trim(),
+                    carType: document.getElementById('carType').value.trim(),
+                    updatedAt: new Date()
+                };
+                
+                // Validações
+                if (!updateData.firstName || !updateData.lastName) {
+                    utils.showNotification('Nome e sobrenome são obrigatórios', 'error');
+                    return;
+                }
+                
+                if (!updateData.phone) {
+                    utils.showNotification('Telefone é obrigatório', 'error');
+                    return;
+                }
+                
+                if (!updateData.cpf) {
+                    utils.showNotification('CPF é obrigatório', 'error');
+                    return;
+                }
+                
+                // Atualizar nome completo
+                updateData.name = `${updateData.firstName} ${updateData.lastName}`;
+                
+                // Salvar no Firestore
+                await db.collection('users').doc(userId).update(updateData);
+                
+                // Atualizar localStorage
+                const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+                const updatedUserData = { ...userData, ...updateData };
+                localStorage.setItem('userData', JSON.stringify(updatedUserData));
+                
+                utils.showNotification('Perfil atualizado com sucesso!', 'success');
+                
+                // Recarregar dados
+                await loadDriverData();
+                
+            } catch (error) {
+                console.error('Erro ao salvar perfil:', error);
+                utils.showNotification('Erro ao salvar perfil', 'error');
+            }
+        }
+
+        // Alterar senha
+        async function changePassword() {
+            try {
+                const currentPassword = document.getElementById('currentPassword').value;
+                const newPassword = document.getElementById('newPassword').value;
+                const confirmPassword = document.getElementById('confirmPassword').value;
+                
+                if (!currentPassword || !newPassword || !confirmPassword) {
+                    utils.showNotification('Por favor, preencha todos os campos', 'error');
+                    return;
+                }
+                
+                if (newPassword.length < 6) {
+                    utils.showNotification('A nova senha deve ter pelo menos 6 caracteres', 'error');
+                    return;
+                }
+                
+                if (newPassword !== confirmPassword) {
+                    utils.showNotification('As senhas não coincidem', 'error');
+                    return;
+                }
+                
+                // Reautenticar usuário
+                const user = auth.currentUser;
+                const credential = firebase.auth.EmailAuthProvider.credential(user.email, currentPassword);
+                await user.reauthenticateWithCredential(credential);
+                
+                // Alterar senha
+                await user.updatePassword(newPassword);
+                
+                utils.showNotification('Senha alterada com sucesso!', 'success');
+                
+                // Limpar campos
+                document.getElementById('currentPassword').value = '';
+                document.getElementById('newPassword').value = '';
+                document.getElementById('confirmPassword').value = '';
+                
+            } catch (error) {
+                console.error('Erro ao alterar senha:', error);
+                
+                if (error.code === 'auth/wrong-password') {
+                    utils.showNotification('Senha atual incorreta', 'error');
+                } else if (error.code === 'auth/weak-password') {
+                    utils.showNotification('A nova senha é muito fraca', 'error');
+                } else {
+                    utils.showNotification('Erro ao alterar senha', 'error');
+                }
+            }
+        }
+
+        // Excluir conta
+        async function deleteAccount() {
+            if (!confirm('Tem certeza que deseja excluir sua conta? Esta ação não pode ser desfeita.')) {
+                return;
+            }
+            
+            try {
+                const userId = localStorage.getItem('userId');
+                
+                // Excluir dados do Firestore
+                await db.collection('users').doc(userId).delete();
+                
+                // Excluir usuário do Firebase Auth
+                const user = auth.currentUser;
+                await user.delete();
+                
+                utils.showNotification('Conta excluída com sucesso', 'success');
+                
+                // Fazer logout e redirecionar
+                setTimeout(() => {
+                    utils.logout();
+                }, 2000);
+                
+            } catch (error) {
+                console.error('Erro ao excluir conta:', error);
+                utils.showNotification('Erro ao excluir conta', 'error');
+            }
+        }
+
+        // Fazer logout
+        function logout() {
+            utils.logout();
+        }
+    </script>
+</body>
+</html>

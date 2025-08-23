@@ -1,0 +1,1408 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JUSTA - Corrida em Andamento</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2196F3, #1976D2);
+            color: white;
+            padding: 1rem 1.5rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        .ride-status {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .back-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        .ride-progress {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .progress-steps {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .progress-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            flex: 1;
+            position: relative;
+        }
+
+        .progress-step:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            width: 100%;
+            height: 2px;
+            background: #e0e0e0;
+            z-index: 1;
+        }
+
+        .progress-step.active:not(:last-child)::after {
+            background: #4CAF50;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #e0e0e0;
+            color: #666;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            z-index: 2;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .progress-step.active .step-number {
+            background: #4CAF50;
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .progress-step.completed .step-number {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .step-label {
+            font-size: 0.9rem;
+            color: #666;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .progress-step.active .step-label {
+            color: #4CAF50;
+            font-weight: 600;
+        }
+
+        .progress-step.completed .step-label {
+            color: #4CAF50;
+        }
+
+        .ride-details {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .detail-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .detail-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .ride-price {
+            background: #4CAF50;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #2196F3;
+        }
+
+        .detail-icon {
+            font-size: 1.5rem;
+            color: #2196F3;
+        }
+
+        .detail-content h4 {
+            color: #333;
+            margin-bottom: 0.3rem;
+            font-size: 1rem;
+        }
+
+        .detail-content p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .ride-info {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .info-item {
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 15px;
+            border-left: 4px solid #2196F3;
+        }
+
+        .info-item h4 {
+            color: #333;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-item p {
+            color: #666;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .ride-status-section {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .status-display {
+            text-align: center;
+            padding: 1rem;
+            background: #e3f2fd;
+            border-radius: 15px;
+            border: 2px solid #2196F3;
+        }
+
+        .status-display p {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #1976D2;
+            margin: 0;
+        }
+
+        .passenger-section {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .passenger-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .passenger-avatar {
+            width: 60px;
+            height: 60px;
+            background: #e3f2fd;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            border: 3px solid #2196F3;
+        }
+
+        .passenger-details h4 {
+            color: #333;
+            margin-bottom: 0.5rem;
+            font-size: 1.2rem;
+        }
+
+        .passenger-phone {
+            color: #666;
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .passenger-rating {
+            color: #ff9800;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .passenger-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .action-btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .call-btn {
+            background: #4caf50;
+            color: white;
+        }
+
+        .call-btn:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+        }
+
+        .message-btn {
+            background: #2196F3;
+            color: white;
+        }
+
+        .message-btn:hover {
+            background: #1976D2;
+            transform: translateY(-2px);
+        }
+
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            margin: 0.5rem;
+        }
+
+        .btn-primary {
+            background: #2196F3;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1976D2;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: #4caf50;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+        }
+
+        .btn-info {
+            background: #00bcd4;
+            color: white;
+        }
+
+        .btn-info:hover {
+            background: #0097a7;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #757575;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #616161;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: #f44336;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #d32f2f;
+            transform: translateY(-2px);
+        }
+
+        .map-container {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .map-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .map-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .map-placeholder {
+            background: #f8f9fa;
+            border: 2px dashed #e0e0e0;
+            border-radius: 15px;
+            padding: 4rem 2rem;
+            text-align: center;
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .ride-actions {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .action-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .main-action-btn {
+            padding: 16px 32px;
+            border: none;
+            border-radius: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .start-ride-btn {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .start-ride-btn:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+        }
+
+        .complete-ride-btn {
+            background: #FF9800;
+            color: white;
+        }
+
+        .complete-ride-btn:hover {
+            background: #F57C00;
+            transform: translateY(-2px);
+        }
+
+        .cancel-ride-btn {
+            background: #f44336;
+            color: white;
+        }
+
+        .cancel-ride-btn:hover {
+            background: #d32f2f;
+            transform: translateY(-2px);
+        }
+
+        .status-updates {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .status-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 1.5rem;
+        }
+
+        .status-list {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #2196F3;
+        }
+
+        .status-time {
+            color: #666;
+            font-size: 0.9rem;
+            min-width: 80px;
+        }
+
+        .status-text {
+            color: #333;
+            font-weight: 500;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 3rem;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #2196F3;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #4CAF50;
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.error {
+            background: #f44336;
+        }
+
+        .notification.warning {
+            background: #ff9800;
+        }
+
+        .notification.info {
+            background: #2196F3;
+        }
+
+        .notification.success {
+            background: #4CAF50;
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            
+            .progress-steps {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .progress-step:not(:last-child)::after {
+                display: none;
+            }
+            
+            .detail-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .passenger-actions {
+                flex-direction: column;
+            }
+            
+            .action-buttons {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div class="logo">🚗 JUSTA</div>
+            <div class="ride-status" id="rideStatus">Carregando...</div>
+            <a href="home.html" class="back-btn">← Voltar</a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <!-- Progresso da Corrida -->
+        <div class="ride-progress">
+            <div class="progress-steps">
+                <div class="progress-step active" id="step1">
+                    <div class="step-number">1</div>
+                    <div class="step-label">Aceita</div>
+                </div>
+                <div class="progress-step" id="step2">
+                    <div class="step-number">2</div>
+                    <div class="step-label">A caminho</div>
+                </div>
+                <div class="progress-step" id="step3">
+                    <div class="step-number">3</div>
+                    <div class="step-label">Chegou</div>
+                </div>
+                <div class="progress-step" id="step4">
+                    <div class="step-number">4</div>
+                    <div class="step-label">Em viagem</div>
+                </div>
+                <div class="progress-step" id="step5">
+                    <div class="step-number">5</div>
+                    <div class="step-label">Finalizada</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Informações da Corrida -->
+        <div class="ride-info">
+            <div class="info-grid">
+                <div class="info-item">
+                    <h4>🚗 ID da Corrida</h4>
+                    <p id="rideId">Carregando...</p>
+                </div>
+                <div class="info-item">
+                    <h4>📍 Origem</h4>
+                    <p id="origin">Carregando...</p>
+                </div>
+                <div class="info-item">
+                    <h4>🎯 Destino</h4>
+                    <p id="destination">Carregando...</p>
+                </div>
+                <div class="info-item">
+                    <h4>📏 Distância Estimada</h4>
+                    <p id="estimatedDistance">Calculando...</p>
+                </div>
+                <div class="info-item">
+                    <h4>⏱️ Tempo Estimado</h4>
+                    <p id="estimatedDuration">Calculando...</p>
+                </div>
+                <div class="info-item">
+                    <h4>💰 Tarifa Estimada</h4>
+                    <p id="estimatedFare">Calculando...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Status da Corrida -->
+        <div class="ride-status-section">
+            <h3>📊 Status da Corrida</h3>
+            <div class="status-display">
+                <p id="currentStatus">Carregando...</p>
+            </div>
+        </div>
+
+        <!-- Informações do Passageiro -->
+        <div class="passenger-section" id="passengerSection" style="display: none;">
+            <h3>👤 Informações do Passageiro</h3>
+            <div class="passenger-info">
+                <div class="passenger-avatar" id="passengerAvatar">👤</div>
+                <div class="passenger-details">
+                    <h4 id="passengerName">Passageiro</h4>
+                    <p class="passenger-phone" id="passengerPhone">📞 Telefone não disponível</p>
+                    <p class="passenger-rating" id="passengerRating">⭐ 0.0 (0 corridas)</p>
+                </div>
+            </div>
+            
+            <div class="passenger-actions">
+                <button class="action-btn call-btn" onclick="callPassenger()">
+                    📞 Ligar
+                </button>
+                <button class="action-btn message-btn" onclick="messagePassenger()">
+                    💬 Mensagem
+                </button>
+            </div>
+        </div>
+
+        <!-- Mapa -->
+        <div class="map-container">
+            <div class="map-header">
+                <h3 class="map-title">🗺️ Navegação</h3>
+            </div>
+            <div class="map-placeholder" id="mapPlaceholder">
+                🗺️ Mapa de navegação em tempo real
+                <br><br>
+                <small>Integração com Google Maps ou Waze</small>
+            </div>
+        </div>
+
+        <!-- Atualizações de Status -->
+        <div class="status-updates">
+            <h3 class="status-title">📝 Atualizações de Status</h3>
+            <div class="status-list" id="statusList">
+                <div class="status-item">
+                    <div class="status-time">Agora</div>
+                    <div class="status-text">Corrida iniciada</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ações da Corrida -->
+        <div class="ride-actions">
+            <h3>🚗 Ações da Corrida</h3>
+            <div class="action-buttons" id="actionButtons">
+                <button class="main-action-btn start-ride-btn" onclick="startRide()" id="startRideBtn">
+                    🚗 Iniciar Corrida
+                </button>
+            </div>
+            
+            <!-- Botão de Teste (apenas para desenvolvimento) -->
+            <div style="margin-top: 1rem; padding: 1rem; background: #f8f9fa; border-radius: 10px; border: 2px dashed #ccc;">
+                <h4 style="color: #666; margin-bottom: 0.5rem;">🧪 Debug (Desenvolvimento)</h4>
+                <button onclick="testPage()" style="background: #ff9800; color: white; border: none; padding: 0.5rem 1rem; border-radius: 5px; cursor: pointer;">
+                    🔍 Testar Página
+                </button>
+                <small style="display: block; margin-top: 0.5rem; color: #999;">
+                    Abra o console (F12) para ver os resultados do teste
+                </small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notificação -->
+    <div class="notification" id="notification"></div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-storage-compat.js"></script>
+    
+    <!-- Configuração do Firebase -->
+    <script src="../assets/firebase-config.js"></script>
+
+    <script>
+        // Variáveis globais
+        let currentRide = null;
+        let rideStatus = 'pending';
+        let db = null;
+        let auth = null;
+
+        // Aguardar o Firebase estar pronto
+        async function initializeApp() {
+            try {
+                console.log('🚀 Iniciando aplicação...');
+                
+                await waitForFirebase();
+                console.log('✅ Firebase configurado, verificando autenticação...');
+                
+                // Verificar se está logado
+                if (window.utils && window.utils.isLoggedIn) {
+                    if (!window.utils.isLoggedIn()) {
+                        console.log('⚠️ Usuário não está logado, redirecionando...');
+                        window.location.href = 'login.html';
+                        return;
+                    }
+                } else {
+                    // Fallback se utils não estiver disponível
+                    const userId = localStorage.getItem('userId');
+                    if (!userId) {
+                        console.log('⚠️ Usuário não está logado (fallback), redirecionando...');
+                        window.location.href = 'login.html';
+                        return;
+                    }
+                }
+                
+                console.log('✅ Usuário autenticado, verificando tipo...');
+                const userType = localStorage.getItem('userType');
+                console.log('👤 Tipo de usuário:', userType);
+                
+                if (userType !== 'motorista') {
+                    console.log('⚠️ Usuário não é motorista, fazendo logout...');
+                    if (window.utils && window.utils.logout) {
+                        window.utils.logout();
+                    } else {
+                        // Fallback se utils não estiver disponível
+                        localStorage.clear();
+                        window.location.href = 'login.html';
+                    }
+                    return;
+                }
+                
+                console.log('✅ Usuário é motorista, carregando dados da corrida...');
+                
+                // Carregar dados da corrida
+                await loadRideData();
+                
+                // Configurar listener em tempo real
+                setupRideListener();
+                
+                console.log('✅ Aplicação inicializada com sucesso!');
+                
+            } catch (error) {
+                console.error('❌ Erro ao inicializar aplicação:', error);
+                alert('Erro ao carregar a aplicação. Tente recarregar a página.');
+            }
+        }
+
+        // Inicializar quando a página carregar
+        document.addEventListener('DOMContentLoaded', initializeApp);
+
+        // Carregar dados da corrida
+        async function loadRideData() {
+            try {
+                console.log('🔍 Iniciando carregamento dos dados da corrida...');
+                
+                // Verificar se o Firestore está disponível
+                if (!db) {
+                    throw new Error('Firestore não está disponível');
+                }
+                
+                const urlParams = new URLSearchParams(window.location.search);
+                const rideId = urlParams.get('rideId');
+                
+                console.log('🔍 ID da corrida da URL:', rideId);
+                
+                if (!rideId) {
+                                    showNotification('ID da corrida não encontrado', 'error');
+                    setTimeout(() => {
+                        window.location.href = 'home.html';
+                    }, 2000);
+                    return;
+                }
+                
+                console.log('🔍 Buscando dados da corrida no Firestore...');
+                const rideDoc = await db.collection('rides').doc(rideId).get();
+                
+                if (rideDoc.exists) {
+                    const rideData = rideDoc.data();
+                    rideData.id = rideId; // Adicionar ID ao objeto
+                    
+                    console.log('✅ Dados da corrida carregados:', rideData);
+                    
+                    // Atualizar interface
+                    updateRideInterface(rideData);
+                    
+                } else {
+                    console.error('❌ Corrida não encontrada no Firestore');
+                    showNotification('Corrida não encontrada', 'error');
+                    setTimeout(() => {
+                        window.location.href = 'home.html';
+                    }, 2000);
+                }
+                
+            } catch (error) {
+                console.error('❌ Erro ao carregar dados da corrida:', error);
+                showNotification('Erro ao carregar dados da corrida', 'error');
+            }
+        }
+
+        // Atualizar interface da corrida
+        function updateRideInterface(rideData) {
+            console.log('🔄 Atualizando interface da corrida:', rideData);
+            
+            // Atualizar currentRide
+            currentRide = rideData;
+            
+            // Atualizar rideStatus global
+            if (rideData.status) {
+                rideStatus = rideData.status;
+                console.log('📊 Status da corrida atualizado para:', rideStatus);
+            }
+            
+            // Informações básicas
+            const rideIdElement = document.getElementById('rideId');
+            const originElement = document.getElementById('origin');
+            const destinationElement = document.getElementById('destination');
+            const estimatedDistanceElement = document.getElementById('estimatedDistance');
+            const estimatedDurationElement = document.getElementById('estimatedDuration');
+            const estimatedFareElement = document.getElementById('estimatedFare');
+            
+            if (rideIdElement) rideIdElement.textContent = rideData.id || 'N/A';
+            if (originElement) originElement.textContent = rideData.origin || 'N/A';
+            if (destinationElement) destinationElement.textContent = rideData.destination || 'N/A';
+            if (estimatedDistanceElement) estimatedDistanceElement.textContent = `${rideData.estimatedDistance || 'N/A'} km`;
+            if (estimatedDurationElement) estimatedDurationElement.textContent = `${rideData.estimatedDuration || 'N/A'} min`;
+            if (estimatedFareElement) {
+                if (window.utils && window.utils.formatCurrency) {
+                    estimatedFareElement.textContent = window.utils.formatCurrency(rideData.estimatedFare || 0);
+                } else {
+                    estimatedFareElement.textContent = `R$ ${(rideData.estimatedFare || 0).toFixed(2)}`;
+                }
+            }
+            
+            console.log('✅ Informações básicas atualizadas');
+            
+            // Status da corrida
+            updateRideStatus(rideData.status || 'pending');
+            
+            // Informações do passageiro
+            if (rideData.passengerId) {
+                console.log('👤 Carregando informações do passageiro...');
+                loadPassengerInfo(rideData.passengerId);
+            } else {
+                console.log('⚠️ Nenhum passageiro associado à corrida');
+            }
+            
+            // Atualizar botões de ação
+            updateActionButtons(rideData.status || 'pending');
+            
+            console.log('✅ Interface da corrida atualizada com sucesso');
+        }
+
+        // Atualizar status da corrida
+        function updateRideStatus(status) {
+            // Atualizar variável global
+            rideStatus = status;
+            
+            const statusSteps = document.querySelectorAll('.progress-step');
+            const currentStep = getCurrentStepIndex(status);
+            
+            statusSteps.forEach((step, index) => {
+                if (index < currentStep) {
+                    step.classList.add('completed');
+                    step.classList.remove('active');
+                } else if (index === currentStep) {
+                    step.classList.add('active');
+                    step.classList.remove('completed');
+                } else {
+                    step.classList.remove('completed', 'active');
+                }
+            });
+            
+            // Atualizar texto do status
+            const currentStatusElement = document.getElementById('currentStatus');
+            if (currentStatusElement) {
+                currentStatusElement.textContent = getStatusText(status);
+            }
+            
+            // Atualizar status no header
+            const rideStatusElement = document.getElementById('rideStatus');
+            if (rideStatusElement) {
+                rideStatusElement.textContent = getStatusText(status);
+            }
+        }
+
+        // Obter índice do passo atual
+        function getCurrentStepIndex(status) {
+            const statusOrder = ['confirmed', 'in_progress', 'arrived', 'in_progress', 'completed'];
+            const statusMap = {
+                'confirmed': 0,
+                'in_progress': 1,
+                'arrived': 2,
+                'completed': 4
+            };
+            return statusMap[status] || 0;
+        }
+
+        // Obter texto do status
+        function getStatusText(status) {
+            const statusTexts = {
+                'pending': 'Aguardando Confirmação',
+                'confirmed': 'Corrida Confirmada',
+                'in_progress': 'A caminho do passageiro',
+                'arrived': 'Chegou ao passageiro',
+                'completed': 'Corrida Finalizada',
+                'cancelled': 'Corrida Cancelada'
+            };
+            return statusTexts[status] || 'Status desconhecido';
+        }
+
+        // Carregar informações do passageiro
+        async function loadPassengerInfo(passengerId) {
+            try {
+                console.log('👤 Carregando informações do passageiro:', passengerId);
+                
+                // Verificar se o Firestore está disponível
+                if (!db) {
+                    throw new Error('Firestore não está disponível');
+                }
+                
+                const passengerDoc = await db.collection('users').doc(passengerId).get();
+                
+                if (passengerDoc.exists) {
+                    const passengerData = passengerDoc.data();
+                    console.log('✅ Dados do passageiro carregados:', passengerData);
+                    
+                    const passengerNameElement = document.getElementById('passengerName');
+                    const passengerPhoneElement = document.getElementById('passengerPhone');
+                    const passengerRatingElement = document.getElementById('passengerRating');
+                    const passengerSectionElement = document.getElementById('passengerSection');
+                    
+                    if (passengerNameElement) passengerNameElement.textContent = passengerData.name || 'N/A';
+                    if (passengerPhoneElement) passengerPhoneElement.textContent = passengerData.phone || 'N/A';
+                    if (passengerRatingElement) passengerRatingElement.textContent = `⭐ ${passengerData.rating?.toFixed(1) || '0.0'}`;
+                    
+                    // Mostrar seção do passageiro
+                    if (passengerSectionElement) passengerSectionElement.style.display = 'block';
+                    
+                    console.log('✅ Interface do passageiro atualizada');
+                } else {
+                    console.warn('⚠️ Passageiro não encontrado no Firestore');
+                }
+            } catch (error) {
+                console.error('❌ Erro ao carregar dados do passageiro:', error);
+            }
+        }
+
+        // Atualizar botões de ação
+        function updateActionButtons(status) {
+            console.log('🔘 Atualizando botões de ação para status:', status);
+            
+            const actionButtons = document.getElementById('actionButtons');
+            if (!actionButtons) {
+                console.error('❌ Elemento actionButtons não encontrado');
+                return;
+            }
+            
+            actionButtons.innerHTML = '';
+            
+            switch (status) {
+                case 'pending':
+                    actionButtons.innerHTML = `
+                        <button class="btn btn-primary" onclick="updateRideStatus('confirmed')">
+                            ✅ Confirmar Corrida
+                        </button>
+                        <button class="btn btn-danger" onclick="updateRideStatus('cancelled')">
+                            ❌ Cancelar Corrida
+                        </button>
+                    `;
+                    break;
+                    
+                case 'confirmed':
+                    actionButtons.innerHTML = `
+                        <button class="btn btn-primary" onclick="updateRideStatus('in_progress')">
+                            🚗 Iniciar Viagem
+                        </button>
+                    `;
+                    break;
+                    
+                case 'in_progress':
+                    actionButtons.innerHTML = `
+                        <button class="btn btn-success" onclick="updateRideStatus('arrived')">
+                            🎯 Cheguei ao Passageiro
+                        </button>
+                    `;
+                    break;
+                    
+                case 'arrived':
+                    actionButtons.innerHTML = `
+                        <button class="btn btn-success" onclick="updateRideStatus('completed')">
+                            ✅ Finalizar Corrida
+                        </button>
+                    `;
+                    break;
+                    
+                case 'completed':
+                    actionButtons.innerHTML = `
+                        <a href="corrida_finalizada.html?rideId=${getRideId()}" class="btn btn-info">
+                            📋 Ver Resumo
+                        </a>
+                        <a href="home.html" class="btn btn-secondary">
+                            🏠 Voltar ao Início
+                        </a>
+                    `;
+                    break;
+                    
+                case 'cancelled':
+                    actionButtons.innerHTML = `
+                        <a href="home.html" class="btn btn-secondary">
+                            🏠 Voltar ao Início
+                        </a>
+                    `;
+                    break;
+                    
+                default:
+                    actionButtons.innerHTML = `
+                        <button class="btn btn-primary" onclick="startRide()">
+                            🚗 Iniciar Corrida
+                        </button>
+                    `;
+                    break;
+            }
+            
+            console.log('✅ Botões de ação atualizados para status:', status);
+        }
+
+        // Configurar listener em tempo real
+        function setupRideListener() {
+            // Verificar se o Firestore está disponível
+            if (!db) {
+                console.error('Firestore não está disponível para configurar listener');
+                return;
+            }
+            
+            const rideId = getRideId();
+            if (!rideId) {
+                console.error('ID da corrida não encontrado para configurar listener');
+                return;
+            }
+            
+            console.log('🔍 Configurando listener para corrida:', rideId);
+            
+            db.collection('rides').doc(rideId).onSnapshot((doc) => {
+                if (doc.exists) {
+                    const rideData = doc.data();
+                    rideData.id = rideId; // Adicionar ID ao objeto
+                    
+                    console.log('📡 Atualização em tempo real recebida:', rideData);
+                    
+                    // Atualizar interface
+                    updateRideInterface(rideData);
+                }
+            }, (error) => {
+                console.error('❌ Erro no listener da corrida:', error);
+            });
+        }
+
+        // Atualizar status da corrida
+        async function updateRideStatus(newStatus) {
+            try {
+                console.log('🔄 Atualizando status da corrida para:', newStatus);
+                
+                // Verificar se o Firestore está disponível
+                if (!db) {
+                    throw new Error('Firestore não está disponível');
+                }
+                
+                const rideId = getRideId();
+                if (!rideId) {
+                    throw new Error('ID da corrida não encontrado');
+                }
+                
+                const updateData = {
+                    status: newStatus,
+                    updatedAt: new Date()
+                };
+                
+                // Adicionar timestamp específico baseado no status
+                switch (newStatus) {
+                    case 'in_progress':
+                        updateData.startedAt = new Date();
+                        break;
+                    case 'arrived':
+                        updateData.arrivedAt = new Date();
+                        break;
+                    case 'completed':
+                        updateData.completedAt = new Date();
+                        break;
+                }
+                
+                console.log('📝 Dados para atualização:', updateData);
+                
+                await db.collection('rides').doc(rideId).update(updateData);
+                
+                console.log('✅ Status atualizado com sucesso no Firestore');
+                
+                showNotification(`Status atualizado para: ${getStatusText(newStatus)}`, 'success');
+                
+                // Se finalizada, redirecionar após um delay
+                if (newStatus === 'completed') {
+                    setTimeout(() => {
+                        window.location.href = `corrida_finalizada.html?rideId=${rideId}`;
+                    }, 2000);
+                }
+                
+            } catch (error) {
+                console.error('❌ Erro ao atualizar status:', error);
+                showNotification('Erro ao atualizar status da corrida', 'error');
+            }
+        }
+
+        // Obter ID da corrida da URL
+        function getRideId() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const rideId = urlParams.get('rideId');
+            console.log('🔍 ID da corrida obtido da URL:', rideId);
+            return rideId;
+        }
+
+        // Adicionar atualização de status
+        async function addStatusUpdate(message) {
+            try {
+                console.log('📝 Adicionando atualização de status:', message);
+                
+                // Verificar se o Firestore está disponível
+                if (!db) {
+                    throw new Error('Firestore não está disponível');
+                }
+                
+                const rideId = getRideId();
+                const userId = localStorage.getItem('userId');
+                
+                console.log('📊 Dados para atualização:', { rideId, userId, message });
+                
+                await db.collection('rides').doc(rideId).collection('statusUpdates').add({
+                    message: message,
+                    timestamp: new Date(),
+                    userId: userId,
+                    userType: 'driver'
+                });
+                
+                console.log('✅ Atualização de status adicionada com sucesso');
+                
+                showNotification('Atualização adicionada', 'success');
+                
+            } catch (error) {
+                console.error('❌ Erro ao adicionar atualização:', error);
+                showNotification('Erro ao adicionar atualização', 'error');
+            }
+        }
+
+        // Fazer logout
+        function logout() {
+            console.log('🚪 Fazendo logout...');
+            if (window.utils && window.utils.logout) {
+                window.utils.logout();
+            } else {
+                // Fallback se utils não estiver disponível
+                console.log('⚠️ Utils não disponível, usando fallback para logout');
+                localStorage.clear();
+                window.location.href = 'login.html';
+            }
+        }
+
+        // Funções que estavam faltando
+        function startRide() {
+            console.log('🚗 Iniciando corrida...');
+            updateRideStatus('in_progress');
+        }
+
+        function callPassenger() {
+            console.log('📞 Tentando ligar para o passageiro...');
+            if (currentRide && currentRide.passengerPhone) {
+                console.log('✅ Abrindo telefone para:', currentRide.passengerPhone);
+                window.open(`tel:${currentRide.passengerPhone}`, '_blank');
+            } else {
+                console.warn('⚠️ Telefone do passageiro não disponível');
+                showNotification('Telefone do passageiro não disponível', 'warning');
+            }
+        }
+
+        function messagePassenger() {
+            console.log('💬 Tentando enviar mensagem para o passageiro...');
+            showNotification('Chat em desenvolvimento', 'info');
+        }
+
+        // Função para mostrar notificações (fallback)
+        function showNotification(message, type = 'info') {
+            if (window.utils && window.utils.showNotification) {
+                window.utils.showNotification(message, type);
+            } else {
+                // Fallback se utils não estiver disponível
+                const notification = document.getElementById('notification');
+                if (notification) {
+                    notification.textContent = message;
+                    notification.className = `notification show ${type}`;
+                    
+                    // Esconder após 3 segundos
+                    setTimeout(() => {
+                        notification.classList.remove('show');
+                    }, 3000);
+                } else {
+                    alert(message);
+                }
+            }
+        }
+
+        // Aguardar Firebase estar pronto
+        function waitForFirebase() {
+            return new Promise((resolve, reject) => {
+                console.log('⏳ Aguardando Firebase estar pronto...');
+                const maxAttempts = 100; // 10 segundos máximo
+                let attempts = 0;
+                
+                const checkFirebase = () => {
+                    attempts++;
+                    
+                    if (typeof firebase !== 'undefined' && firebase.auth && firebase.firestore) {
+                        console.log('✅ Firebase detectado, configurando...');
+                        
+                        // Configurar Firebase se necessário
+                        if (!firebase.apps.length) {
+                            console.log('⚙️ Inicializando Firebase...');
+                            firebase.initializeApp({
+                                // Configuração será carregada do firebase-config.js
+                            });
+                        }
+                        
+                        // Configurar variáveis globais
+                        db = firebase.firestore();
+                        auth = firebase.auth();
+                        
+                        console.log('✅ Firebase configurado com sucesso');
+                        console.log('📊 Firestore disponível:', !!db);
+                        console.log('🔐 Auth disponível:', !!auth);
+                        
+                        resolve();
+                    } else if (attempts >= maxAttempts) {
+                        const error = new Error('Firebase não carregou em tempo hábil');
+                        console.error('❌', error.message);
+                        reject(error);
+                    } else {
+                        if (attempts % 10 === 0) {
+                            console.log(`⏳ Tentativa ${attempts}/${maxAttempts} - Firebase ainda não está pronto...`);
+                        }
+                        setTimeout(checkFirebase, 100);
+                    }
+                };
+                
+                checkFirebase();
+            });
+        }
+
+        // Função para testar a página
+        function testPage() {
+            console.log('🧪 Iniciando teste da página...');
+            
+            // Verificar elementos HTML
+            const elements = [
+                'rideId', 'origin', 'destination', 'estimatedDistance', 
+                'estimatedDuration', 'estimatedFare', 'currentStatus', 
+                'passengerName', 'passengerPhone', 'passengerRating', 
+                'passengerSection', 'actionButtons'
+            ];
+            
+            console.log('🔍 Verificando elementos HTML...');
+            elements.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                    console.log(`✅ ${id}: encontrado`);
+                } else {
+                    console.error(`❌ ${id}: NÃO encontrado`);
+                }
+            });
+            
+            // Verificar variáveis globais
+            console.log('🔍 Verificando variáveis globais...');
+            console.log('📊 currentRide:', currentRide);
+            console.log('📊 rideStatus:', rideStatus);
+            console.log('📊 db:', !!db);
+            console.log('📊 auth:', !!auth);
+            
+            // Verificar Firebase
+            console.log('🔍 Verificando Firebase...');
+            console.log('📊 firebase:', typeof firebase !== 'undefined');
+            console.log('📊 firebase.auth:', typeof firebase !== 'undefined' && !!firebase.auth);
+            console.log('📊 firebase.firestore:', typeof firebase !== 'undefined' && !!firebase.firestore);
+            
+            // Verificar utils
+            console.log('🔍 Verificando utils...');
+            console.log('📊 window.utils:', !!window.utils);
+            if (window.utils) {
+                console.log('📊 utils.isLoggedIn:', !!window.utils.isLoggedIn);
+                console.log('📊 utils.showNotification:', !!window.utils.showNotification);
+                console.log('📊 utils.formatCurrency:', !!window.utils.formatCurrency);
+            }
+            
+            console.log('✅ Teste da página concluído!');
+        }
+
+        // Expor função de teste globalmente
+        window.testPage = testPage;
+    </script>
+</body>
+</html>

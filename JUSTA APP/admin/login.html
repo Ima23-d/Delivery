@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JUSTA - Login do Administrador</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #9C27B0, #673AB7);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 450px;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #9C27B0;
+            margin-bottom: 1rem;
+        }
+
+        .title {
+            font-size: 2rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #333;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #9C27B0;
+            box-shadow: 0 0 0 3px rgba(156, 39, 176, 0.1);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #9C27B0, #673AB7);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 1.5rem;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(156, 39, 176, 0.3);
+        }
+
+        .login-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 2rem 0;
+            color: #666;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #e0e0e0;
+        }
+
+        .divider span {
+            padding: 0 1rem;
+            font-size: 0.9rem;
+        }
+
+        .social-login {
+            display: grid;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .social-btn {
+            padding: 12px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            background: white;
+            color: #333;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-weight: 500;
+        }
+
+        .social-btn:hover {
+            border-color: #9C27B0;
+            background: #f8f9fa;
+            transform: translateY(-2px);
+        }
+
+        .google-btn:hover {
+            border-color: #DB4437;
+            color: #DB4437;
+        }
+
+        .facebook-btn:hover {
+            border-color: #4267B2;
+            color: #4267B2;
+        }
+
+        .links {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1.5rem;
+        }
+
+        .link {
+            color: #9C27B0;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+
+        .link:hover {
+            color: #673AB7;
+            text-decoration: underline;
+        }
+
+        .error-message {
+            background: #ffebee;
+            color: #c62828;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: none;
+            font-size: 0.9rem;
+        }
+
+        .success-message {
+            background: #e8f5e8;
+            color: #2e7d32;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: none;
+            font-size: 0.9rem;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 1rem;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #9C27B0;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 0.5rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .admin-note {
+            background: #e3f2fd;
+            color: #1976d2;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-top: 1.5rem;
+            font-size: 0.9rem;
+            border-left: 4px solid #2196f3;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 1rem;
+                padding: 2rem;
+            }
+            
+            .back-btn {
+                top: 1rem;
+                left: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="../index.html" class="back-btn">← Voltar</a>
+    
+    <div class="container">
+        <div class="logo">👑</div>
+        <h1 class="title">Login do Administrador</h1>
+        <p class="subtitle">Acesse o painel administrativo da JUSTA</p>
+        
+        <div class="error-message" id="errorMessage"></div>
+        <div class="success-message" id="successMessage"></div>
+        
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="email">E-mail</label>
+                <input type="email" id="email" name="email" placeholder="admin@justa.com" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Senha</label>
+                <input type="password" id="password" name="password" placeholder="Sua senha" required>
+            </div>
+            
+            <button type="submit" class="login-btn" id="loginBtn">
+                👑 Entrar como Administrador
+            </button>
+        </form>
+        
+        <div class="divider">
+            <span>ou</span>
+        </div>
+        
+        <div class="social-login">
+            <button class="social-btn google-btn" onclick="loginWithGoogle()">
+                <span>🔍</span> Continuar com Google
+            </button>
+            <button class="social-btn facebook-btn" onclick="loginWithFacebook()">
+                <span>📘</span> Continuar com Facebook
+            </button>
+        </div>
+        
+        <div class="links">
+            <a href="#" class="link" onclick="forgotPassword()">Esqueci minha senha</a>
+            <a href="#" class="link" onclick="contactSupport()">Contatar Suporte</a>
+            <a href="cadastro.html" class="link">Criar conta de administrador</a>
+        </div>
+        
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Fazendo login...</p>
+        </div>
+        
+        <div class="admin-note">
+            <strong>Nota:</strong> Apenas usuários com permissões administrativas podem acessar este painel.
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-storage-compat.js"></script>
+    
+    <!-- Configuração do Firebase -->
+    <script src="../assets/firebase-config.js"></script>
+
+    <script>
+        // Aguardar o Firebase estar pronto
+        async function initializeApp() {
+            await waitForFirebase();
+            
+            // Verificar se já está logado
+            if (utils.isLoggedIn()) {
+                const userType = localStorage.getItem('userType');
+                if (userType === 'admin') {
+                    window.location.href = 'dashboard.html';
+                } else {
+                    utils.logout();
+                }
+            }
+        }
+
+        // Inicializar quando a página carregar
+        document.addEventListener('DOMContentLoaded', initializeApp);
+
+        // Login com email e senha
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const loginBtn = document.getElementById('loginBtn');
+            const loading = document.getElementById('loading');
+            
+            if (!email || !password) {
+                utils.showNotification('Por favor, preencha todos os campos', 'warning');
+                return;
+            }
+            
+            if (!utils.validateEmail(email)) {
+                utils.showNotification('Por favor, insira um e-mail válido', 'warning');
+                return;
+            }
+            
+            if (password.length < 6) {
+                utils.showNotification('A senha deve ter pelo menos 6 caracteres', 'warning');
+                return;
+            }
+            
+            // Desabilitar botão e mostrar loading
+            loginBtn.disabled = true;
+            loading.style.display = 'block';
+            hideMessages();
+            
+            try {
+                // Fazer login no Firebase
+                const userCredential = await auth.signInWithEmailAndPassword(email, password);
+                const user = userCredential.user;
+                
+                // Verificar se é um administrador
+                const userDoc = await db.collection('users').doc(user.uid).get();
+                
+                if (!userDoc.exists || userDoc.data().userType !== 'admin') {
+                    await auth.signOut();
+                    utils.showNotification('Esta conta não é de um administrador', 'error');
+                    return;
+                }
+                
+                if (userDoc.data().status !== 'active') {
+                    await auth.signOut();
+                    if (userDoc.data().status === 'pending') {
+                        utils.showNotification('Sua conta ainda está em análise. Aguarde a aprovação.', 'warning');
+                    } else if (userDoc.data().status === 'suspended') {
+                        utils.showNotification('Sua conta foi suspensa. Entre em contato com o suporte.', 'error');
+                    } else {
+                        utils.showNotification('Status da conta inválido', 'error');
+                    }
+                    return;
+                }
+                
+                // Salvar dados na sessão
+                localStorage.setItem('userId', user.uid);
+                localStorage.setItem('userType', 'admin');
+                localStorage.setItem('userData', JSON.stringify(userDoc.data()));
+                
+                utils.showNotification('Login realizado com sucesso!', 'success');
+                setTimeout(() => {
+                    window.location.href = 'dashboard.html';
+                }, 1500);
+                
+            } catch (error) {
+                console.error('Erro no login:', error);
+                let errorMsg = 'Erro ao fazer login';
+                
+                if (error.code === 'auth/user-not-found') {
+                    errorMsg = 'E-mail não cadastrado';
+                } else if (error.code === 'auth/wrong-password') {
+                    errorMsg = 'Senha incorreta';
+                } else if (error.code === 'auth/invalid-email') {
+                    errorMsg = 'E-mail inválido';
+                } else if (error.code === 'auth/too-many-requests') {
+                    errorMsg = 'Muitas tentativas. Tente novamente mais tarde';
+                } else if (error.message.includes('administrador')) {
+                    errorMsg = error.message;
+                } else if (error.message.includes('análise')) {
+                    errorMsg = error.message;
+                } else if (error.message.includes('suspensa')) {
+                    errorMsg = error.message;
+                }
+                
+                utils.showNotification(errorMsg, 'error');
+            } finally {
+                loginBtn.disabled = false;
+                loading.style.display = 'none';
+            }
+        });
+
+        // Login com Google
+        async function loginWithGoogle() {
+            try {
+                await waitForFirebase();
+                
+                const provider = new firebase.auth.GoogleAuthProvider();
+                const result = await auth.signInWithPopup(provider);
+                await verifyAdminUser(result.user);
+                
+            } catch (error) {
+                console.error('Erro no login com Google:', error);
+                utils.showNotification('Erro ao fazer login com Google', 'error');
+            }
+        }
+
+        // Login com Facebook
+        async function loginWithFacebook() {
+            try {
+                await waitForFirebase();
+                
+                const provider = new firebase.auth.FacebookAuthProvider();
+                const result = await auth.signInWithPopup(provider);
+                await verifyAdminUser(result.user);
+                
+            } catch (error) {
+                console.error('Erro no login com Facebook:', error);
+                utils.showNotification('Erro ao fazer login com Facebook', 'error');
+            }
+        }
+
+        // Verificar usuário administrador
+        async function verifyAdminUser(user) {
+            try {
+                const userDoc = await db.collection('users').doc(user.uid).get();
+                
+                if (!userDoc.exists) {
+                    await auth.signOut();
+                    throw new Error('Usuário não encontrado no sistema');
+                }
+                
+                const userData = userDoc.data();
+                if (userData.userType !== 'admin') {
+                    await auth.signOut();
+                    throw new Error('Esta conta não é de um administrador');
+                }
+                
+                if (userData.status !== 'active') {
+                    await auth.signOut();
+                    if (userData.status === 'pending') {
+                        throw new Error('Sua conta ainda está em análise. Aguarde a aprovação.');
+                    } else if (userData.status === 'suspended') {
+                        throw new Error('Sua conta foi suspensa. Entre em contato com o suporte.');
+                    } else {
+                        throw new Error('Status da conta inválido');
+                    }
+                }
+                
+                localStorage.setItem('userId', user.uid);
+                localStorage.setItem('userType', 'admin');
+                localStorage.setItem('userData', JSON.stringify(userData));
+                
+                utils.showNotification('Login realizado com sucesso!', 'success');
+                setTimeout(() => {
+                    window.location.href = 'dashboard.html';
+                }, 1500);
+                
+            } catch (error) {
+                console.error('Erro na verificação:', error);
+                utils.showNotification(error.message, 'error');
+            }
+        }
+
+        // Funções auxiliares
+        async function forgotPassword() {
+            const email = document.getElementById('email').value.trim();
+            
+            if (!email || !utils.validateEmail(email)) {
+                utils.showNotification('Por favor, insira um e-mail válido primeiro', 'warning');
+                return;
+            }
+            
+            try {
+                await auth.sendPasswordResetEmail(email);
+                utils.showNotification('E-mail de redefinição enviado!', 'success');
+            } catch (error) {
+                console.error('Erro ao enviar e-mail:', error);
+                utils.showNotification('Erro ao enviar e-mail de redefinição', 'error');
+            }
+        }
+
+        function showError(message) {
+            const errorMessage = document.getElementById('errorMessage');
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+        }
+
+        function showSuccess(message) {
+            const successMessage = document.getElementById('successMessage');
+            successMessage.textContent = message;
+            successMessage.style.display = 'block';
+        }
+
+        function hideMessages() {
+            document.getElementById('errorMessage').style.display = 'none';
+            document.getElementById('successMessage').style.display = 'none';
+        }
+
+        function contactSupport() {
+            utils.showNotification('Entre em contato: suporte@justa.com.br', 'info');
+        }
+    </script>
+</body>
+</html>
+

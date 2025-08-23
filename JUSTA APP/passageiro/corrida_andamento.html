@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JUSTA - Corrida em Andamento</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            padding: 1rem 1.5rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        .status-indicator {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .main-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        .driver-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .driver-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: white;
+            margin: 0 auto 1rem;
+        }
+
+        .driver-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .driver-rating {
+            color: #666;
+            margin-bottom: 1rem;
+        }
+
+        .driver-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 1.5rem;
+        }
+
+        .action-btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-call {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .btn-message {
+            background: #2196F3;
+            color: white;
+        }
+
+        .btn-call:hover, .btn-message:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .ride-progress {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .progress-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .progress-steps {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .progress-steps::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #e0e0e0;
+            z-index: 1;
+        }
+
+        .progress-step {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: #666;
+            position: relative;
+            z-index: 2;
+            transition: all 0.3s ease;
+        }
+
+        .progress-step.active {
+            border-color: #4CAF50;
+            background: #4CAF50;
+            color: white;
+        }
+
+        .progress-step.completed {
+            border-color: #4CAF50;
+            background: #4CAF50;
+            color: white;
+        }
+
+        .step-label {
+            position: absolute;
+            top: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.8rem;
+            color: #666;
+            white-space: nowrap;
+        }
+
+        .ride-details {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.8rem 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            color: #666;
+            font-weight: 500;
+        }
+
+        .detail-value {
+            color: #333;
+            font-weight: 600;
+        }
+
+        .estimated-arrival {
+            background: #e8f5e8;
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .eta-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #2e7d32;
+            margin-bottom: 0.5rem;
+        }
+
+        .eta-time {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2e7d32;
+        }
+
+        .eta-distance {
+            color: #666;
+            margin-top: 0.5rem;
+        }
+
+        .map-container {
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .map-placeholder {
+            background: #f8f9fa;
+            border: 2px dashed #dee2e6;
+            border-radius: 15px;
+            padding: 3rem;
+            color: #666;
+        }
+
+        .map-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .emergency-section {
+            background: #ffebee;
+            border: 1px solid #ffcdd2;
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .emergency-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #c62828;
+            margin-bottom: 1rem;
+        }
+
+        .emergency-btn {
+            background: #f44336;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .emergency-btn:hover {
+            background: #d32f2f;
+            transform: translateY(-2px);
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #4CAF50;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .status-updates {
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .status-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 1rem;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .status-item:last-child {
+            border-bottom: none;
+        }
+
+        .status-icon {
+            font-size: 1.2rem;
+        }
+
+        .status-text {
+            color: #333;
+        }
+
+        .status-time {
+            color: #666;
+            font-size: 0.9rem;
+            margin-left: auto;
+        }
+
+        @media (max-width: 768px) {
+            .progress-steps {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .progress-steps::before {
+                display: none;
+            }
+            
+            .driver-actions {
+                flex-direction: column;
+            }
+            
+            .detail-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div class="logo">JUSTA</div>
+            <div class="status-indicator" id="statusIndicator">Procurando motorista...</div>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="driver-card" id="driverCard" style="display: none;">
+            <div class="driver-avatar" id="driverAvatar">🚗</div>
+            <div class="driver-name" id="driverName">Nome do Motorista</div>
+            <div class="driver-rating" id="driverRating">⭐ 4.8 (150 corridas)</div>
+            
+            <div class="driver-actions">
+                <button class="action-btn btn-call" onclick="callDriver()">
+                    📞 Ligar
+                </button>
+                <button class="action-btn btn-message" onclick="messageDriver()">
+                    💬 Mensagem
+                </button>
+            </div>
+        </div>
+
+        <div class="ride-progress">
+            <h3 class="progress-title">Status da Corrida</h3>
+            
+            <div class="progress-steps">
+                <div class="progress-step active" id="step1">
+                    <span>1</span>
+                    <div class="step-label">Solicitada</div>
+                </div>
+                <div class="progress-step" id="step2">
+                    <span>2</span>
+                    <div class="step-label">Motorista</div>
+                </div>
+                <div class="progress-step" id="step3">
+                    <span>3</span>
+                    <div class="step-label">A caminho</div>
+                </div>
+                <div class="progress-step" id="step4">
+                    <span>4</span>
+                    <div class="step-label">Chegou</div>
+                </div>
+                <div class="progress-step" id="step5">
+                    <span>5</span>
+                    <div class="step-label">Em viagem</div>
+                </div>
+                <div class="progress-step" id="step6">
+                    <span>6</span>
+                    <div class="step-label">Finalizada</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="ride-details">
+            <div class="detail-row">
+                <span class="detail-label">Origem:</span>
+                <span class="detail-value" id="origin">Carregando...</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Destino:</span>
+                <span class="detail-value" id="destination">Carregando...</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Distância:</span>
+                <span class="detail-value" id="distance">Calculando...</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Preço estimado:</span>
+                <span class="detail-value" id="estimatedPrice">Calculando...</span>
+            </div>
+        </div>
+
+        <div class="estimated-arrival" id="etaSection" style="display: none;">
+            <div class="eta-title">Tempo estimado de chegada</div>
+            <div class="eta-time" id="etaTime">5 min</div>
+            <div class="eta-distance" id="etaDistance">2.5 km</div>
+        </div>
+
+        <div class="map-container">
+            <div class="map-placeholder">
+                <div class="map-icon">🗺️</div>
+                <p>Mapa em tempo real</p>
+                <small>Localização do motorista e rota da viagem</small>
+            </div>
+        </div>
+
+        <div class="status-updates">
+            <h4 class="status-title">Atualizações da Corrida</h4>
+            <div id="statusUpdates">
+                <div class="status-item">
+                    <span class="status-icon">📱</span>
+                    <span class="status-text">Corrida solicitada</span>
+                    <span class="status-time" id="requestTime">Agora</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="emergency-section">
+            <div class="emergency-title">Precisa de ajuda?</div>
+            <button class="emergency-btn" onclick="emergencyCall()">
+                🚨 Emergência
+            </button>
+        </div>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Procurando motorista disponível...</p>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-storage-compat.js"></script>
+    
+    <!-- Configuração do Firebase -->
+    <script src="../assets/firebase-config.js"></script>
+
+    <script>
+        let currentRide = null;
+        let rideId = null;
+        let driverLocation = null;
+        let userLocation = null;
+        let rideStatus = 'pending';
+        let statusUpdateInterval = null;
+
+        // Verificar se está logado
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!utils.isLoggedIn()) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Obter ID da corrida
+            rideId = localStorage.getItem('currentRideId');
+            if (!rideId) {
+                window.location.href = 'home.html';
+                return;
+            }
+
+            // Obter localização atual
+            getCurrentLocation();
+            
+            // Carregar detalhes da corrida
+            loadRideDetails();
+            
+            // Iniciar monitoramento em tempo real
+            startRealTimeMonitoring();
+        });
+
+        // Obter localização atual
+        function getCurrentLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    function(position) {
+                        userLocation = {
+                            lat: position.coords.latitude,
+                            lng: position.coords.longitude
+                        };
+                        console.log('Localização do usuário:', userLocation);
+                    },
+                    function(error) {
+                        console.error('Erro ao obter localização:', error);
+                    }
+                );
+            }
+        }
+
+        // Carregar detalhes da corrida
+        async function loadRideDetails() {
+            try {
+                const rideDoc = await db.collection('rides').doc(rideId).get();
+                
+                if (!rideDoc.exists) {
+                    utils.showNotification('Corrida não encontrada', 'error');
+                    window.location.href = 'home.html';
+                    return;
+                }
+
+                currentRide = rideDoc.data();
+                displayRideDetails();
+                updateProgressSteps(currentRide.status);
+                
+            } catch (error) {
+                console.error('Erro ao carregar corrida:', error);
+                utils.showNotification('Erro ao carregar detalhes da corrida', 'error');
+            }
+        }
+
+        // Exibir detalhes da corrida
+        function displayRideDetails() {
+            if (!currentRide) return;
+
+            document.getElementById('origin').textContent = currentRide.origin;
+            document.getElementById('destination').textContent = currentRide.destination;
+            
+            // Calcular distância (simulado)
+            const distance = calculateDistance(currentRide.origin, currentRide.destination);
+            document.getElementById('distance').textContent = `${distance.toFixed(1)} km`;
+            
+            // Calcular preço
+            const fare = utils.calculateFare(distance, 0);
+            document.getElementById('estimatedPrice').textContent = utils.formatCurrency(fare.total);
+            
+            // Atualizar status
+            updateStatusIndicator(currentRide.status);
+        }
+
+        // Calcular distância (simulado)
+        function calculateDistance(origin, destination) {
+            return Math.random() * 13 + 2;
+        }
+
+        // Atualizar indicador de status
+        function updateStatusIndicator(status) {
+            const statusIndicator = document.getElementById('statusIndicator');
+            
+            switch (status) {
+                case 'pending':
+                    statusIndicator.textContent = 'Procurando motorista...';
+                    break;
+                case 'confirmed':
+                    statusIndicator.textContent = 'Corrida confirmada';
+                    break;
+                case 'assigned':
+                    statusIndicator.textContent = 'Motorista encontrado!';
+                    break;
+                case 'en_route':
+                    statusIndicator.textContent = 'Motorista a caminho';
+                    break;
+                case 'arrived':
+                    statusIndicator.textContent = 'Motorista chegou';
+                    break;
+                case 'in_progress':
+                    statusIndicator.textContent = 'Em viagem';
+                    break;
+                case 'completed':
+                    statusIndicator.textContent = 'Corrida finalizada';
+                    break;
+                default:
+                    statusIndicator.textContent = 'Status desconhecido';
+            }
+        }
+
+        // Atualizar passos do progresso
+        function updateProgressSteps(status) {
+            const steps = document.querySelectorAll('.progress-step');
+            
+            // Resetar todos os passos
+            steps.forEach((step, index) => {
+                step.classList.remove('active', 'completed');
+                if (index === 0) step.classList.add('active');
+            });
+            
+            // Marcar passos baseado no status
+            switch (status) {
+                case 'pending':
+                case 'confirmed':
+                    steps[0].classList.add('completed');
+                    steps[1].classList.add('active');
+                    break;
+                case 'assigned':
+                    steps[0].classList.add('completed');
+                    steps[1].classList.add('completed');
+                    steps[2].classList.add('active');
+                    showDriverCard();
+                    break;
+                case 'en_route':
+                    steps[0].classList.add('completed');
+                    steps[1].classList.add('completed');
+                    steps[2].classList.add('completed');
+                    steps[3].classList.add('active');
+                    showETA();
+                    break;
+                case 'arrived':
+                    steps[0].classList.add('completed');
+                    steps[1].classList.add('completed');
+                    steps[2].classList.add('completed');
+                    steps[3].classList.add('completed');
+                    steps[4].classList.add('active');
+                    break;
+                case 'in_progress':
+                    steps[0].classList.add('completed');
+                    steps[1].classList.add('completed');
+                    steps[2].classList.add('completed');
+                    steps[3].classList.add('completed');
+                    steps[4].classList.add('completed');
+                    steps[5].classList.add('active');
+                    break;
+                case 'completed':
+                    steps.forEach(step => step.classList.add('completed'));
+                    setTimeout(() => {
+                        window.location.href = 'corrida_finalizada.html';
+                    }, 2000);
+                    break;
+            }
+        }
+
+        // Mostrar card do motorista
+        function showDriverCard() {
+            if (currentRide.driverName) {
+                document.getElementById('driverName').textContent = currentRide.driverName;
+                document.getElementById('driverCard').style.display = 'block';
+                
+                // Simular dados do motorista
+                const rating = (Math.random() * 1 + 4).toFixed(1);
+                const rides = Math.floor(Math.random() * 500) + 50;
+                document.getElementById('driverRating').textContent = `⭐ ${rating} (${rides} corridas)`;
+            }
+        }
+
+        // Mostrar ETA
+        function showETA() {
+            const etaSection = document.getElementById('etaSection');
+            etaSection.style.display = 'block';
+            
+            // Simular ETA
+            const etaMinutes = Math.floor(Math.random() * 8) + 2;
+            const etaDistance = (Math.random() * 3 + 1).toFixed(1);
+            
+            document.getElementById('etaTime').textContent = `${etaMinutes} min`;
+            document.getElementById('etaDistance').textContent = `${etaDistance} km`;
+        }
+
+        // Iniciar monitoramento em tempo real
+        function startRealTimeMonitoring() {
+            // Monitorar mudanças na corrida
+            db.collection('rides').doc(rideId).onSnapshot(function(doc) {
+                if (doc.exists) {
+                    const rideData = doc.data();
+                    const newStatus = rideData.status;
+                    
+                    if (newStatus !== rideStatus) {
+                        rideStatus = newStatus;
+                        currentRide = rideData;
+                        
+                        updateStatusIndicator(newStatus);
+                        updateProgressSteps(newStatus);
+                        addStatusUpdate(newStatus);
+                        
+                        // Verificar se a corrida foi finalizada
+                        if (newStatus === 'completed') {
+                            clearInterval(statusUpdateInterval);
+                        }
+                    }
+                }
+            }, function(error) {
+                console.error('Erro no monitoramento:', error);
+            });
+        }
+
+        // Adicionar atualização de status
+        function addStatusUpdate(status) {
+            const statusUpdates = document.getElementById('statusUpdates');
+            const statusItem = document.createElement('div');
+            statusItem.className = 'status-item';
+            
+            let statusText = '';
+            let statusIcon = '';
+            
+            switch (status) {
+                case 'assigned':
+                    statusText = 'Motorista encontrado e aceitou a corrida';
+                    statusIcon = '✅';
+                    break;
+                case 'en_route':
+                    statusText = 'Motorista está a caminho da sua localização';
+                    statusIcon = '🚗';
+                    break;
+                case 'arrived':
+                    statusText = 'Motorista chegou ao local de partida';
+                    statusIcon = '📍';
+                    break;
+                case 'in_progress':
+                    statusText = 'Viagem iniciada';
+                    statusIcon = '🚀';
+                    break;
+                case 'completed':
+                    statusText = 'Corrida finalizada com sucesso';
+                    statusIcon = '🎉';
+                    break;
+            }
+            
+            if (statusText) {
+                statusItem.innerHTML = `
+                    <span class="status-icon">${statusIcon}</span>
+                    <span class="status-text">${statusText}</span>
+                    <span class="status-time">Agora</span>
+                `;
+                
+                statusUpdates.appendChild(statusItem);
+                
+                // Rolar para baixo
+                statusUpdates.scrollTop = statusUpdates.scrollHeight;
+            }
+        }
+
+        // Funções de ação
+        function callDriver() {
+            if (currentRide.driverPhone) {
+                window.open(`tel:${currentRide.driverPhone}`, '_blank');
+            } else {
+                utils.showNotification('Telefone do motorista não disponível', 'warning');
+            }
+        }
+
+        function messageDriver() {
+            utils.showNotification('Chat em desenvolvimento', 'info');
+        }
+
+        function emergencyCall() {
+            if (confirm('Deseja fazer uma chamada de emergência?')) {
+                // Em um app real, isso abriria o telefone com o número de emergência
+                utils.showNotification('Chamando emergência...', 'warning');
+            }
+        }
+
+        // Limpar recursos ao sair da página
+        window.addEventListener('beforeunload', function() {
+            if (statusUpdateInterval) {
+                clearInterval(statusUpdateInterval);
+            }
+        });
+    </script>
+</body>
+</html>

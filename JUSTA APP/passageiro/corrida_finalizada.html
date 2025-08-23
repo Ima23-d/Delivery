@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JUSTA - Corrida Finalizada</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            padding: 1rem 1.5rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        .home-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .home-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .main-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        .success-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .success-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .success-title {
+            font-size: 2rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .success-subtitle {
+            color: #666;
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+        }
+
+        .ride-summary {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .summary-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .summary-item {
+            background: white;
+            border-radius: 10px;
+            padding: 1rem;
+            text-align: center;
+            border: 1px solid #e9ecef;
+        }
+
+        .summary-label {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .summary-value {
+            color: #333;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .price-breakdown {
+            background: #e8f5e8;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .price-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #2e7d32;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .price-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.8rem 0;
+            border-bottom: 1px solid #c8e6c9;
+        }
+
+        .price-item:last-child {
+            border-bottom: none;
+        }
+
+        .price-item.total {
+            border-top: 2px solid #4CAF50;
+            padding-top: 1rem;
+            margin-top: 1rem;
+            font-weight: 600;
+            font-size: 1.2rem;
+        }
+
+        .driver-info {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid #e9ecef;
+        }
+
+        .driver-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .driver-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .driver-details h4 {
+            color: #333;
+            margin-bottom: 0.3rem;
+        }
+
+        .driver-details p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .rating-section {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .rating-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .rating-stars {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .star {
+            font-size: 2rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: #ddd;
+        }
+
+        .star:hover,
+        .star.active {
+            color: #ffc107;
+            transform: scale(1.1);
+        }
+
+        .rating-comment {
+            margin-bottom: 1.5rem;
+        }
+
+        .rating-comment textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            resize: vertical;
+            min-height: 100px;
+            font-family: inherit;
+        }
+
+        .rating-comment textarea:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+
+        .submit-rating-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .submit-rating-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(76, 175, 80, 0.3);
+        }
+
+        .submit-rating-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .payment-info {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .payment-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #856404;
+            margin-bottom: 1rem;
+        }
+
+        .payment-method {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: white;
+            border-radius: 10px;
+            border: 2px solid #ffeaa7;
+        }
+
+        .payment-icon {
+            font-size: 1.5rem;
+        }
+
+        .payment-text {
+            font-weight: 500;
+            color: #333;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #4CAF50;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .driver-header {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div class="logo">JUSTA</div>
+            <a href="home.html" class="home-btn">🏠 Início</a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="success-card">
+            <div class="success-icon">🎉</div>
+            <h1 class="success-title">Corrida Finalizada!</h1>
+            <p class="success-subtitle">Obrigado por escolher o JUSTA</p>
+        </div>
+
+        <div class="ride-summary">
+            <h3 class="summary-title">Resumo da Corrida</h3>
+            <div class="summary-grid">
+                <div class="summary-item">
+                    <div class="summary-label">Origem</div>
+                    <div class="summary-value" id="origin">Carregando...</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">Destino</div>
+                    <div class="summary-value" id="destination">Carregando...</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">Distância</div>
+                    <div class="summary-value" id="distance">Calculando...</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">Duração</div>
+                    <div class="summary-value" id="duration">Calculando...</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="price-breakdown">
+            <div class="price-title">Detalhamento do Preço</div>
+            <div class="price-item">
+                <span>Tarifa base:</span>
+                <span id="baseFare">R$ 5,00</span>
+            </div>
+            <div class="price-item">
+                <span>Por distância:</span>
+                <span id="distanceCost">R$ 0,00</span>
+            </div>
+            <div class="price-item">
+                <span>Por tempo:</span>
+                <span id="timeCost">R$ 0,00</span>
+            </div>
+            <div class="price-item">
+                <span>Taxa da plataforma:</span>
+                <span id="platformFee">R$ 1,00</span>
+            </div>
+            <div class="price-item total">
+                <span>Total pago:</span>
+                <span id="totalPrice">R$ 6,00</span>
+            </div>
+        </div>
+
+        <div class="driver-info">
+            <div class="driver-header">
+                <div class="driver-avatar" id="driverAvatar">🚗</div>
+                <div class="driver-details">
+                    <h4 id="driverName">Nome do Motorista</h4>
+                    <p id="driverRating">⭐ 4.8 (150 corridas)</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="payment-info">
+            <div class="payment-title">Forma de Pagamento</div>
+            <div class="payment-method">
+                <span class="payment-icon" id="paymentIcon">💳</span>
+                <span class="payment-text" id="paymentText">Cartão de Crédito</span>
+            </div>
+        </div>
+
+        <div class="rating-section">
+            <h3 class="rating-title">Avalie sua experiência</h3>
+            
+            <div class="rating-stars" id="ratingStars">
+                <span class="star" data-rating="1">⭐</span>
+                <span class="star" data-rating="2">⭐</span>
+                <span class="star" data-rating="3">⭐</span>
+                <span class="star" data-rating="4">⭐</span>
+                <span class="star" data-rating="5">⭐</span>
+            </div>
+            
+            <div class="rating-comment">
+                <textarea 
+                    id="ratingComment" 
+                    placeholder="Conte-nos sobre sua experiência (opcional)"
+                    maxlength="500"
+                ></textarea>
+            </div>
+            
+            <button class="submit-rating-btn" id="submitRatingBtn" onclick="submitRating()">
+                Enviar Avaliação
+            </button>
+        </div>
+
+        <div class="action-buttons">
+            <button class="btn btn-secondary" onclick="goToHistory()">
+                📋 Histórico
+            </button>
+            <button class="btn btn-primary" onclick="goToHome()">
+                🚗 Nova Corrida
+            </button>
+        </div>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Processando avaliação...</p>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-storage-compat.js"></script>
+    
+    <!-- Configuração do Firebase -->
+    <script src="../assets/firebase-config.js"></script>
+
+    <script>
+        let currentRide = null;
+        let rideId = null;
+        let selectedRating = 0;
+        let hasRated = false;
+
+        // Verificar se está logado
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!utils.isLoggedIn()) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Obter ID da corrida
+            rideId = localStorage.getItem('currentRideId');
+            if (!rideId) {
+                // Tentar obter da URL ou redirecionar
+                const urlParams = new URLSearchParams(window.location.search);
+                rideId = urlParams.get('rideId');
+                
+                if (!rideId) {
+                    window.location.href = 'home.html';
+                    return;
+                }
+            }
+
+            // Carregar detalhes da corrida
+            loadRideDetails();
+            
+            // Configurar sistema de avaliação
+            setupRatingSystem();
+        });
+
+        // Carregar detalhes da corrida
+        async function loadRideDetails() {
+            try {
+                const rideDoc = await db.collection('rides').doc(rideId).get();
+                
+                if (!rideDoc.exists) {
+                    utils.showNotification('Corrida não encontrada', 'error');
+                    window.location.href = 'home.html';
+                    return;
+                }
+
+                currentRide = rideDoc.data();
+                
+                // Verificar se a corrida foi finalizada
+                if (currentRide.status !== 'completed') {
+                    utils.showNotification('Esta corrida ainda não foi finalizada', 'warning');
+                    window.location.href = 'corrida_andamento.html';
+                    return;
+                }
+
+                displayRideDetails();
+                
+            } catch (error) {
+                console.error('Erro ao carregar corrida:', error);
+                utils.showNotification('Erro ao carregar detalhes da corrida', 'error');
+            }
+        }
+
+        // Exibir detalhes da corrida
+        function displayRideDetails() {
+            if (!currentRide) return;
+
+            // Preencher informações básicas
+            document.getElementById('origin').textContent = currentRide.origin;
+            document.getElementById('destination').textContent = currentRide.destination;
+            
+            // Calcular distância e duração (simulado)
+            const distance = calculateDistance(currentRide.origin, currentRide.destination);
+            const duration = calculateDuration(distance);
+            
+            document.getElementById('distance').textContent = `${distance.toFixed(1)} km`;
+            document.getElementById('duration').textContent = `${Math.round(duration)} min`;
+            
+            // Calcular preços
+            const fare = utils.calculateFare(distance, duration * 60);
+            
+            document.getElementById('baseFare').textContent = utils.formatCurrency(fare.breakdown.base);
+            document.getElementById('distanceCost').textContent = utils.formatCurrency(fare.breakdown.distance);
+            document.getElementById('timeCost').textContent = utils.formatCurrency(fare.breakdown.time);
+            document.getElementById('platformFee').textContent = utils.formatCurrency(fare.breakdown.platform);
+            document.getElementById('totalPrice').textContent = utils.formatCurrency(fare.total);
+            
+            // Mostrar informações do motorista
+            if (currentRide.driverName) {
+                document.getElementById('driverName').textContent = currentRide.driverName;
+                
+                // Simular dados do motorista
+                const rating = (Math.random() * 1 + 4).toFixed(1);
+                const rides = Math.floor(Math.random() * 500) + 50;
+                document.getElementById('driverRating').textContent = `⭐ ${rating} (${rides} corridas)`;
+            }
+            
+            // Atualizar método de pagamento
+            updatePaymentDisplay(currentRide.paymentMethod);
+            
+            // Verificar se já foi avaliada
+            checkIfAlreadyRated();
+        }
+
+        // Calcular distância (simulado)
+        function calculateDistance(origin, destination) {
+            return Math.random() * 13 + 2;
+        }
+
+        // Calcular duração (simulado)
+        function calculateDuration(distance) {
+            return (distance / 30) * 60;
+        }
+
+        // Atualizar exibição do método de pagamento
+        function updatePaymentDisplay(method) {
+            const icon = document.getElementById('paymentIcon');
+            const text = document.getElementById('paymentText');
+
+            switch (method) {
+                case 'card':
+                    icon.textContent = '💳';
+                    text.textContent = 'Cartão de Crédito/Débito';
+                    break;
+                case 'pix':
+                    icon.textContent = '📱';
+                    text.textContent = 'PIX';
+                    break;
+                case 'cash':
+                    icon.textContent = '💵';
+                    text.textContent = 'Dinheiro';
+                    break;
+                default:
+                    icon.textContent = '💳';
+                    text.textContent = 'Cartão de Crédito/Débito';
+            }
+        }
+
+        // Configurar sistema de avaliação
+        function setupRatingSystem() {
+            const stars = document.querySelectorAll('.star');
+            
+            stars.forEach(star => {
+                star.addEventListener('click', function() {
+                    const rating = parseInt(this.dataset.rating);
+                    selectRating(rating);
+                });
+                
+                star.addEventListener('mouseenter', function() {
+                    const rating = parseInt(this.dataset.rating);
+                    highlightStars(rating);
+                });
+            });
+            
+            // Remover highlight ao sair da área das estrelas
+            document.getElementById('ratingStars').addEventListener('mouseleave', function() {
+                highlightStars(selectedRating);
+            });
+        }
+
+        // Selecionar avaliação
+        function selectRating(rating) {
+            selectedRating = rating;
+            highlightStars(rating);
+            
+            // Atualizar texto do botão
+            const submitBtn = document.getElementById('submitRatingBtn');
+            submitBtn.textContent = `Enviar Avaliação (${rating} estrelas)`;
+        }
+
+        // Destacar estrelas
+        function highlightStars(rating) {
+            const stars = document.querySelectorAll('.star');
+            
+            stars.forEach((star, index) => {
+                if (index < rating) {
+                    star.classList.add('active');
+                } else {
+                    star.classList.remove('active');
+                }
+            });
+        }
+
+        // Verificar se já foi avaliada
+        async function checkIfAlreadyRated() {
+            try {
+                const ratingDoc = await db.collection('ratings')
+                    .where('rideId', '==', rideId)
+                    .where('passengerId', '==', localStorage.getItem('userId'))
+                    .get();
+                
+                if (!ratingDoc.empty) {
+                    hasRated = true;
+                    const rating = ratingDoc.docs[0].data();
+                    
+                    // Preencher avaliação existente
+                    selectRating(rating.rating);
+                    document.getElementById('ratingComment').value = rating.comment || '';
+                    
+                    // Desabilitar edição
+                    document.getElementById('submitRatingBtn').disabled = true;
+                    document.getElementById('submitRatingBtn').textContent = 'Avaliação já enviada';
+                    
+                    // Desabilitar estrelas
+                    document.querySelectorAll('.star').forEach(star => {
+                        star.style.pointerEvents = 'none';
+                    });
+                    
+                    document.getElementById('ratingComment').disabled = true;
+                }
+                
+            } catch (error) {
+                console.error('Erro ao verificar avaliação:', error);
+            }
+        }
+
+        // Enviar avaliação
+        async function submitRating() {
+            if (selectedRating === 0) {
+                utils.showNotification('Por favor, selecione uma avaliação', 'warning');
+                return;
+            }
+            
+            if (hasRated) {
+                utils.showNotification('Você já avaliou esta corrida', 'info');
+                return;
+            }
+            
+            const comment = document.getElementById('ratingComment').value.trim();
+            const submitBtn = document.getElementById('submitRatingBtn');
+            const loading = document.getElementById('loading');
+            
+            submitBtn.disabled = true;
+            loading.style.display = 'block';
+            
+            try {
+                // Salvar avaliação no Firebase
+                const ratingData = {
+                    rideId: rideId,
+                    passengerId: localStorage.getItem('userId'),
+                    driverId: currentRide.driverId,
+                    rating: selectedRating,
+                    comment: comment,
+                    createdAt: new Date()
+                };
+                
+                await db.collection('ratings').add(ratingData);
+                
+                // Atualizar rating médio do motorista
+                await updateDriverRating(currentRide.driverId, selectedRating);
+                
+                // Marcar como avaliada
+                hasRated = true;
+                
+                utils.showNotification('Avaliação enviada com sucesso!', 'success');
+                
+                // Atualizar interface
+                submitBtn.textContent = 'Avaliação enviada ✓';
+                submitBtn.style.background = '#28a745';
+                
+                // Desabilitar edição
+                document.querySelectorAll('.star').forEach(star => {
+                    star.style.pointerEvents = 'none';
+                });
+                document.getElementById('ratingComment').disabled = true;
+                
+            } catch (error) {
+                console.error('Erro ao enviar avaliação:', error);
+                utils.showNotification('Erro ao enviar avaliação', 'error');
+                submitBtn.disabled = false;
+            } finally {
+                loading.style.display = 'none';
+            }
+        }
+
+        // Atualizar rating do motorista
+        async function updateDriverRating(driverId, newRating) {
+            try {
+                const driverDoc = await db.collection('drivers').doc(driverId).get();
+                
+                if (driverDoc.exists) {
+                    const driverData = driverDoc.data();
+                    const currentRating = driverData.rating || 0;
+                    const totalRatings = driverData.totalRatings || 0;
+                    
+                    // Calcular novo rating médio
+                    const newAverageRating = ((currentRating * totalRatings) + newRating) / (totalRatings + 1);
+                    
+                    await db.collection('drivers').doc(driverId).update({
+                        rating: newAverageRating,
+                        totalRatings: totalRatings + 1
+                    });
+                }
+                
+            } catch (error) {
+                console.error('Erro ao atualizar rating do motorista:', error);
+            }
+        }
+
+        // Navegação
+        function goToHistory() {
+            window.location.href = 'historico.html';
+        }
+
+        function goToHome() {
+            // Limpar ID da corrida atual
+            localStorage.removeItem('currentRideId');
+            window.location.href = 'home.html';
+        }
+
+        // Limpar recursos ao sair da página
+        window.addEventListener('beforeunload', function() {
+            localStorage.removeItem('currentRideId');
+        });
+    </script>
+</body>
+</html>

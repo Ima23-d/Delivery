@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JUSTA - Dashboard Administrativo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #9C27B0, #673AB7);
+            color: white;
+            padding: 1rem 1.5rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        .admin-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .admin-avatar {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .admin-details {
+            text-align: right;
+        }
+
+        .admin-name {
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .admin-role {
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+
+        .logout-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-subtitle {
+            color: #666;
+            font-size: 1.2rem;
+        }
+
+        .stats-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: transform 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #9C27B0, #673AB7);
+        }
+
+        .stat-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #9C27B0;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .stat-change {
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            padding: 4px 8px;
+            border-radius: 12px;
+            display: inline-block;
+        }
+
+        .stat-change.positive {
+            background: #e8f5e8;
+            color: #2e7d32;
+        }
+
+        .stat-change.negative {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .chart-section {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .chart-container {
+            height: 300px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .recent-activity {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .activity-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 0;
+            border-bottom: 1px solid #f0f0f0;
+            transition: background-color 0.3s ease;
+        }
+
+        .activity-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: white;
+        }
+
+        .activity-icon.ride {
+            background: #4CAF50;
+        }
+
+        .activity-icon.user {
+            background: #2196F3;
+        }
+
+        .activity-icon.payment {
+            background: #FF9800;
+        }
+
+        .activity-icon.alert {
+            background: #f44336;
+        }
+
+        .activity-content h4 {
+            color: #333;
+            margin-bottom: 0.3rem;
+            font-size: 1rem;
+        }
+
+        .activity-content p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .activity-time {
+            color: #999;
+            font-size: 0.8rem;
+            margin-left: auto;
+        }
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .action-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .action-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .action-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .action-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .action-description {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #4CAF50;
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.error {
+            background: #f44336;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #9C27B0;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 1024px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            
+            .stats-overview {
+                grid-template-columns: 1fr;
+            }
+            
+            .quick-actions {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div class="logo">👑 JUSTA Admin</div>
+            <div class="admin-info">
+                <div class="admin-details">
+                    <div class="admin-name" id="adminName">Administrador</div>
+                    <div class="admin-role">Super Admin</div>
+                </div>
+                <div class="admin-avatar" id="adminAvatar">👑</div>
+                <button class="logout-btn" onclick="logout()">Sair</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="page-header">
+            <h1 class="page-title">Dashboard Administrativo</h1>
+            <p class="page-subtitle">Visão geral da plataforma JUSTA</p>
+        </div>
+
+        <!-- Estatísticas Principais -->
+        <div class="stats-overview">
+            <div class="stat-card">
+                <div class="stat-icon">🚗</div>
+                <div class="stat-value" id="totalRides">0</div>
+                <div class="stat-label">Total de Corridas</div>
+                <div class="stat-change positive" id="ridesChange">+0%</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">👥</div>
+                <div class="stat-value" id="totalUsers">0</div>
+                <div class="stat-label">Usuários Ativos</div>
+                <div class="stat-change positive" id="usersChange">+0%</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">👨‍💼</div>
+                <div class="stat-value" id="totalDrivers">0</div>
+                <div class="stat-label">Motoristas Ativos</div>
+                <div class="stat-change positive" id="driversChange">+0%</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">💰</div>
+                <div class="stat-value" id="totalRevenue">R$ 0</div>
+                <div class="stat-label">Receita Total</div>
+                <div class="stat-change positive" id="revenueChange">+0%</div>
+            </div>
+        </div>
+
+        <!-- Ações Rápidas -->
+        <div class="quick-actions">
+            <a href="corridas.html" class="action-card">
+                <div class="action-icon">🚗</div>
+                <div class="action-title">Gerenciar Corridas</div>
+                <div class="action-description">Visualize e gerencie todas as corridas da plataforma</div>
+            </a>
+            
+            <a href="motoristas.html" class="action-card">
+                <div class="action-icon">👨‍💼</div>
+                <div class="action-title">Gerenciar Motoristas</div>
+                <div class="action-description">Aprove, rejeite ou gerencie motoristas</div>
+            </a>
+            
+            <a href="usuarios.html" class="action-card">
+                <div class="action-icon">👥</div>
+                <div class="action-title">Gerenciar Usuários</div>
+                <div class="action-description">Visualize e gerencie usuários da plataforma</div>
+            </a>
+            
+            <a href="financeiro.html" class="action-card">
+                <div class="action-icon">💰</div>
+                <div class="action-title">Financeiro</div>
+                <div class="action-description">Acompanhe receitas, despesas e relatórios</div>
+            </a>
+            
+            <a href="promocoes.html" class="action-card">
+                <div class="action-icon">🎉</div>
+                <div class="action-title">Promoções</div>
+                <div class="action-description">Crie e gerencie cupons e promoções</div>
+            </a>
+            
+            <a href="suporte.html" class="action-card">
+                <div class="action-icon">🆘</div>
+                <div class="action-title">Suporte</div>
+                <div class="action-description">Gerencie tickets de suporte e atendimento</div>
+            </a>
+        </div>
+
+        <!-- Gráficos e Atividades -->
+        <div class="dashboard-grid">
+            <div class="chart-section">
+                <h2 class="section-title">📊 Estatísticas de Corridas</h2>
+                <div class="chart-container" id="ridesChart">
+                    📈 Gráfico de corridas por período<br><br>
+                    <small>Integração com biblioteca de gráficos (Chart.js, D3.js)</small>
+                </div>
+            </div>
+            
+            <div class="recent-activity">
+                <h2 class="section-title">🔔 Atividades Recentes</h2>
+                <div class="activity-list" id="activityList">
+                    <div class="loading" id="loading">
+                        <div class="spinner"></div>
+                        <p>Carregando atividades...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notificação -->
+    <div class="notification" id="notification"></div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-storage-compat.js"></script>
+    
+    <!-- Configuração do Firebase -->
+    <script src="../assets/firebase-config.js"></script>
+
+    <script>
+        // Aguardar o Firebase estar pronto
+        async function initializeApp() {
+            await waitForFirebase();
+            
+            // Verificar se está logado
+            if (!utils.isLoggedIn()) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            const userType = localStorage.getItem('userType');
+            if (userType !== 'admin') {
+                utils.logout();
+                return;
+            }
+            
+            // Carregar dados
+            await loadAdminData();
+            await loadDashboardStats();
+            await loadRecentActivity();
+        }
+
+        // Inicializar quando a página carregar
+        document.addEventListener('DOMContentLoaded', initializeApp);
+
+        // Carregar dados do admin
+        async function loadAdminData() {
+            try {
+                const userId = localStorage.getItem('userId');
+                const userDoc = await db.collection('users').doc(userId).get();
+                
+                if (userDoc.exists) {
+                    const userData = userDoc.data();
+                    document.getElementById('adminName').textContent = userData.name || 'Administrador';
+                    
+                    if (userData.photoURL) {
+                        const avatar = document.getElementById('adminAvatar');
+                        avatar.style.backgroundImage = `url(${userData.photoURL})`;
+                        avatar.textContent = '';
+                    }
+                }
+            } catch (error) {
+                console.error('Erro ao carregar dados do admin:', error);
+                utils.showNotification('Erro ao carregar dados', 'error');
+            }
+        }
+
+        // Carregar estatísticas do dashboard
+        async function loadDashboardStats() {
+            try {
+                // Total de usuários
+                const usersSnapshot = await db.collection('users').get();
+                const totalUsers = usersSnapshot.size;
+                document.getElementById('totalUsers').textContent = totalUsers.toLocaleString();
+                
+                // Total de motoristas
+                const driversSnapshot = await db.collection('users')
+                    .where('userType', '==', 'motorista')
+                    .get();
+                const totalDrivers = driversSnapshot.size;
+                document.getElementById('totalDrivers').textContent = totalDrivers.toLocaleString();
+                
+                // Total de corridas
+                const ridesSnapshot = await db.collection('rides').get();
+                const totalRides = ridesSnapshot.size;
+                document.getElementById('totalRides').textContent = totalRides.toLocaleString();
+                
+                // Receita total
+                const totalRevenue = ridesSnapshot.docs
+                    .filter(doc => doc.data().status === 'completed')
+                    .reduce((total, doc) => {
+                        const rideData = doc.data();
+                        return total + (rideData.estimatedFare || 0);
+                    }, 0);
+                
+                document.getElementById('totalRevenue').textContent = utils.formatCurrency(totalRevenue);
+                
+                // Calcular mudanças diárias (simulado)
+                updateDailyChanges();
+                
+            } catch (error) {
+                console.error('Erro ao carregar estatísticas:', error);
+                utils.showNotification('Erro ao carregar estatísticas', 'error');
+            }
+        }
+
+        // Atualizar mudanças diárias
+        function updateDailyChanges() {
+            // Simular mudanças diárias
+            const changes = {
+                users: Math.floor(Math.random() * 10) + 1,
+                drivers: Math.floor(Math.random() * 5) + 1,
+                rides: Math.floor(Math.random() * 20) + 5,
+                revenue: Math.floor(Math.random() * 100) + 20
+            };
+            
+            // Usuários
+            const usersChange = document.getElementById('usersChange');
+            usersChange.textContent = `+${changes.users}`;
+            usersChange.className = 'change-indicator positive';
+            
+            // Motoristas
+            const driversChange = document.getElementById('driversChange');
+            driversChange.textContent = `+${changes.drivers}`;
+            driversChange.className = 'change-indicator positive';
+            
+            // Corridas
+            const ridesChange = document.getElementById('ridesChange');
+            ridesChange.textContent = `+${changes.rides}`;
+            ridesChange.className = 'change-indicator positive';
+            
+            // Receita
+            const revenueChange = document.getElementById('revenueChange');
+            revenueChange.textContent = `+${utils.formatCurrency(changes.revenue)}`;
+            revenueChange.className = 'change-indicator positive';
+        }
+
+        // Carregar atividades recentes
+        async function loadRecentActivity() {
+            try {
+                const activitiesList = document.getElementById('activityList');
+                
+                // Buscar corridas recentes
+                const recentRidesSnapshot = await db.collection('rides')
+                    .orderBy('createdAt', 'desc')
+                    .limit(5)
+                    .get();
+                
+                let activitiesHTML = '';
+                
+                if (recentRidesSnapshot.empty) {
+                    activitiesHTML = '<p class="text-muted">Nenhuma atividade recente.</p>';
+                } else {
+                    const activitiesPromises = recentRidesSnapshot.docs.map(async (doc) => {
+                        const rideData = doc.data();
+                        return await createActivityItem(rideData);
+                    });
+                    
+                    const activities = await Promise.all(activitiesPromises);
+                    activitiesHTML = activities.join('');
+                }
+                
+                activitiesList.innerHTML = activitiesHTML;
+                
+            } catch (error) {
+                console.error('Erro ao carregar atividades:', error);
+                utils.showNotification('Erro ao carregar atividades', 'error');
+            }
+        }
+
+        // Criar item de atividade
+        async function createActivityItem(rideData) {
+            const timestamp = rideData.createdAt?.toDate() || new Date(rideData.createdAt);
+            const timeAgo = getTimeAgo(timestamp);
+            const status = getRideStatusText(rideData.status);
+            const statusClass = getRideStatusClass(rideData.status);
+            
+            let userInfo = 'Usuário desconhecido';
+            if (rideData.passengerId) {
+                try {
+                    const userDoc = await db.collection('users').doc(rideData.passengerId).get();
+                    if (userDoc.exists) {
+                        userInfo = userDoc.data().name || 'Usuário';
+                    }
+                } catch (error) {
+                    console.error('Erro ao buscar usuário:', error);
+                }
+            }
+            
+            return `
+                <div class="activity-item">
+                    <div class="activity-icon">🚗</div>
+                    <div class="activity-content">
+                        <div class="activity-title">
+                            Nova corrida solicitada por <strong>${userInfo}</strong>
+                        </div>
+                        <div class="activity-details">
+                            ${rideData.origin || 'Origem'} → ${rideData.destination || 'Destino'}
+                        </div>
+                        <div class="activity-meta">
+                            <span class="activity-time">${timeAgo}</span>
+                            <span class="activity-status ${statusClass}">${status}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Obter tempo relativo
+        function getTimeAgo(date) {
+            const now = new Date();
+            const diffTime = Math.abs(now - date);
+            const diffMinutes = Math.floor(diffTime / (1000 * 60));
+            const diffHours = Math.floor(diffTime / (1000 * 60 * 60));
+            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+            
+            if (diffMinutes < 1) {
+                return 'Agora mesmo';
+            } else if (diffMinutes < 60) {
+                return `${diffMinutes} min atrás`;
+            } else if (diffHours < 24) {
+                return `${diffHours}h atrás`;
+            } else {
+                return `${diffDays} dias atrás`;
+            }
+        }
+
+        // Obter texto do status da corrida
+        function getRideStatusText(status) {
+            const statusTexts = {
+                'requested': 'Solicitada',
+                'confirmed': 'Confirmada',
+                'in_progress': 'Em Andamento',
+                'arrived': 'Chegou ao Passageiro',
+                'completed': 'Finalizada',
+                'cancelled': 'Cancelada'
+            };
+            return statusTexts[status] || status;
+        }
+
+        // Obter classe CSS do status da corrida
+        function getRideStatusClass(status) {
+            const statusClasses = {
+                'requested': 'status-requested',
+                'confirmed': 'status-confirmed',
+                'in_progress': 'status-progress',
+                'arrived': 'status-arrived',
+                'completed': 'status-completed',
+                'cancelled': 'status-cancelled'
+            };
+            return statusClasses[status] || 'status-default';
+        }
+
+        // Navegar para outras páginas
+        function navigateTo(page) {
+            window.location.href = `${page}.html`;
+        }
+
+        // Fazer logout
+        function logout() {
+            utils.logout();
+        }
+    </script>
+</body>
+</html>

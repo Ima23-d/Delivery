@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JUSTA - Saldo do Motorista</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2196F3, #1976D2);
+            color: white;
+            padding: 1rem 1.5rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        .back-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .main-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-subtitle {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .balance-overview {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            border-radius: 20px;
+            padding: 3rem 2rem;
+            text-align: center;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(76, 175, 80, 0.3);
+        }
+
+        .balance-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .balance-amount {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .balance-label {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .stats-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #2196F3;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .withdrawal-section {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .withdrawal-form {
+            display: grid;
+            gap: 1.5rem;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group label {
+            font-weight: 500;
+            color: #333;
+            font-size: 0.9rem;
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #2196F3;
+        }
+
+        .withdrawal-btn {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .withdrawal-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(76, 175, 80, 0.3);
+        }
+
+        .withdrawal-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .transactions-section {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .transactions-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .transactions-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .refresh-btn {
+            background: #2196F3;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .refresh-btn:hover {
+            background: #1976D2;
+            transform: translateY(-2px);
+        }
+
+        .transaction-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid #f0f0f0;
+            transition: background-color 0.3s ease;
+        }
+
+        .transaction-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .transaction-item:last-child {
+            border-bottom: none;
+        }
+
+        .transaction-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .transaction-icon {
+            font-size: 1.5rem;
+            color: #2196F3;
+        }
+
+        .transaction-details h4 {
+            color: #333;
+            margin-bottom: 0.3rem;
+            font-size: 1rem;
+        }
+
+        .transaction-details p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .transaction-amount {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .amount-positive {
+            color: #4CAF50;
+        }
+
+        .amount-negative {
+            color: #f44336;
+        }
+
+        .amount-neutral {
+            color: #666;
+        }
+
+        .transaction-status {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-pending {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        .status-completed {
+            background: #e8f5e8;
+            color: #2e7d32;
+        }
+
+        .status-failed {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .no-transactions {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+        }
+
+        .no-transactions-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #4CAF50;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #4CAF50;
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.error {
+            background: #f44336;
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            
+            .stats-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .transaction-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            
+            .transaction-amount {
+                align-self: flex-end;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div class="logo">🚗 JUSTA</div>
+            <a href="home.html" class="back-btn">← Voltar</a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="page-header">
+            <h1 class="page-title">💰 Saldo e Saques</h1>
+            <p class="page-subtitle">Gerencie seus ganhos e solicite saques</p>
+        </div>
+
+        <!-- Visão Geral do Saldo -->
+        <div class="balance-overview">
+            <div class="balance-icon">💰</div>
+            <div class="balance-amount" id="currentBalance">R$ 0,00</div>
+            <div class="balance-label">Saldo Disponível para Saque</div>
+        </div>
+
+        <!-- Estatísticas -->
+        <div class="stats-cards">
+            <div class="stat-card">
+                <div class="stat-icon">🚗</div>
+                <div class="stat-value" id="totalRides">0</div>
+                <div class="stat-label">Total de Corridas</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">💵</div>
+                <div class="stat-value" id="totalEarnings">R$ 0</div>
+                <div class="stat-label">Total Ganho</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">📤</div>
+                <div class="stat-value" id="totalWithdrawals">R$ 0</div>
+                <div class="stat-label">Total Sacado</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">📊</div>
+                <div class="stat-value" id="avgPerRide">R$ 0</div>
+                <div class="stat-label">Média por Corrida</div>
+            </div>
+        </div>
+
+        <!-- Solicitar Saque -->
+        <div class="withdrawal-section">
+            <h2 class="section-title">📤 Solicitar Saque</h2>
+            <form class="withdrawal-form" id="withdrawalForm">
+                <div class="form-group">
+                    <label for="withdrawalAmount">Valor do Saque</label>
+                    <input 
+                        type="number" 
+                        id="withdrawalAmount" 
+                        placeholder="0.00" 
+                        step="0.01" 
+                        min="10" 
+                        required
+                    >
+                </div>
+                
+                <div class="form-group">
+                    <label for="withdrawalMethod">Método de Saque</label>
+                    <select id="withdrawalMethod" required>
+                        <option value="">Selecione o método</option>
+                        <option value="pix">PIX</option>
+                        <option value="bank_transfer">Transferência Bancária</option>
+                    </select>
+                </div>
+                
+                <div class="form-group" id="pixFields" style="display: none;">
+                    <label for="pixKey">Chave PIX</label>
+                    <input 
+                        type="text" 
+                        id="pixKey" 
+                        placeholder="CPF, e-mail ou telefone"
+                    >
+                </div>
+                
+                <div class="form-group" id="bankFields" style="display: none;">
+                    <label for="bankName">Nome do Banco</label>
+                    <input 
+                        type="text" 
+                        id="bankName" 
+                        placeholder="Ex: Banco do Brasil"
+                    >
+                    <label for="accountType">Tipo de Conta</label>
+                    <select id="accountType">
+                        <option value="checking">Conta Corrente</option>
+                        <option value="savings">Conta Poupança</option>
+                    </select>
+                    <label for="accountNumber">Número da Conta</label>
+                    <input 
+                        type="text" 
+                        id="accountNumber" 
+                        placeholder="Número da conta"
+                    >
+                </div>
+                
+                <button type="submit" class="withdrawal-btn" id="withdrawalBtn">
+                    💰 Solicitar Saque
+                </button>
+            </form>
+        </div>
+
+        <!-- Histórico de Transações -->
+        <div class="transactions-section">
+            <div class="transactions-header">
+                <h2 class="transactions-title">📊 Histórico de Transações</h2>
+                <button class="refresh-btn" onclick="loadTransactions()">🔄 Atualizar</button>
+            </div>
+            
+            <div id="transactionsContainer">
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <p>Carregando transações...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notificação -->
+    <div class="notification" id="notification"></div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-storage-compat.js"></script>
+    
+    <!-- Configuração do Firebase -->
+    <script src="../assets/firebase-config.js"></script>
+
+    <script>
+        // Aguardar o Firebase estar pronto
+        async function initializeApp() {
+            await waitForFirebase();
+            
+            // Verificar se está logado
+            if (!utils.isLoggedIn()) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            const userType = localStorage.getItem('userType');
+            if (userType !== 'motorista') {
+                utils.logout();
+                return;
+            }
+            
+            // Carregar dados
+            await loadDriverData();
+            await loadTransactions();
+        }
+
+        // Inicializar quando a página carregar
+        document.addEventListener('DOMContentLoaded', initializeApp);
+
+        // Carregar dados do motorista
+        async function loadDriverData() {
+            try {
+                const userId = localStorage.getItem('userId');
+                const userDoc = await db.collection('users').doc(userId).get();
+                
+                if (userDoc.exists) {
+                    const userData = userDoc.data();
+                    
+                    // Atualizar saldo
+                    const balance = userData.balance || 0;
+                    document.getElementById('currentBalance').textContent = utils.formatCurrency(balance);
+                    
+                    // Atualizar estatísticas
+                    await updateDriverStats();
+                }
+            } catch (error) {
+                console.error('Erro ao carregar dados do motorista:', error);
+                utils.showNotification('Erro ao carregar dados', 'error');
+            }
+        }
+
+        // Atualizar estatísticas do motorista
+        async function updateDriverStats() {
+            try {
+                const userId = localStorage.getItem('userId');
+                
+                // Ganhos do mês atual
+                const now = new Date();
+                const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+                
+                const monthlyRidesSnapshot = await db.collection('rides')
+                    .where('driverId', '==', userId)
+                    .where('status', '==', 'completed')
+                    .where('completedAt', '>=', startOfMonth)
+                    .get();
+                
+                const monthlyEarnings = monthlyRidesSnapshot.docs.reduce((total, doc) => {
+                    const rideData = doc.data();
+                    const driverEarnings = (rideData.estimatedFare || 0) - 1; // R$ 1 de taxa
+                    return total + driverEarnings;
+                }, 0);
+                
+                document.getElementById('monthlyEarnings').textContent = utils.formatCurrency(monthlyEarnings);
+                
+                // Total de corridas do mês
+                document.getElementById('monthlyRides').textContent = monthlyRidesSnapshot.size;
+                
+                // Média por corrida
+                const avgPerRide = monthlyRidesSnapshot.size > 0 ? monthlyEarnings / monthlyRidesSnapshot.size : 0;
+                document.getElementById('avgPerRide').textContent = utils.formatCurrency(avgPerRide);
+                
+            } catch (error) {
+                console.error('Erro ao atualizar estatísticas:', error);
+            }
+        }
+
+        // Carregar transações
+        async function loadTransactions() {
+            try {
+                const userId = localStorage.getItem('userId');
+                
+                const transactionsSnapshot = await db.collection('transactions')
+                    .where('userId', '==', userId)
+                    .orderBy('createdAt', 'desc')
+                    .limit(20)
+                    .get();
+                
+                if (transactionsSnapshot.empty) {
+                    document.getElementById('transactionsList').innerHTML = '<p class="text-muted">Nenhuma transação encontrada.</p>';
+                    return;
+                }
+                
+                const transactionsList = document.getElementById('transactionsList');
+                transactionsList.innerHTML = '';
+                
+                transactionsSnapshot.forEach(doc => {
+                    const transaction = doc.data();
+                    const transactionElement = createTransactionElement(transaction);
+                    transactionsList.appendChild(transactionElement);
+                });
+                
+            } catch (error) {
+                console.error('Erro ao carregar transações:', error);
+                utils.showNotification('Erro ao carregar transações', 'error');
+            }
+        }
+
+        // Criar elemento de transação
+        function createTransactionElement(transaction) {
+            const div = document.createElement('div');
+            div.className = 'transaction-item';
+            
+            const type = transaction.type;
+            const amount = transaction.amount;
+            const status = transaction.status;
+            const date = formatDate(transaction.createdAt);
+            
+            const typeIcon = type === 'withdrawal' ? '💸' : '💰';
+            const typeText = type === 'withdrawal' ? 'Saque' : 'Ganho';
+            const amountClass = type === 'withdrawal' ? 'amount-negative' : 'amount-positive';
+            const statusClass = getStatusClass(status);
+            
+            div.innerHTML = `
+                <div class="transaction-icon">${typeIcon}</div>
+                <div class="transaction-details">
+                    <div class="transaction-type">${typeText}</div>
+                    <div class="transaction-date">${date}</div>
+                    ${transaction.description ? `<div class="transaction-description">${transaction.description}</div>` : ''}
+                </div>
+                <div class="transaction-amount ${amountClass}">
+                    ${type === 'withdrawal' ? '-' : '+'}${utils.formatCurrency(amount)}
+                </div>
+                <div class="transaction-status ${statusClass}">
+                    ${getStatusText(status)}
+                </div>
+            `;
+            
+            return div;
+        }
+
+        // Obter classe CSS do status
+        function getStatusClass(status) {
+            const statusClasses = {
+                'pending': 'status-pending',
+                'completed': 'status-completed',
+                'failed': 'status-failed',
+                'cancelled': 'status-cancelled'
+            };
+            return statusClasses[status] || 'status-default';
+        }
+
+        // Obter texto do status
+        function getStatusText(status) {
+            const statusTexts = {
+                'pending': 'Pendente',
+                'completed': 'Concluído',
+                'failed': 'Falhou',
+                'cancelled': 'Cancelado'
+            };
+            return statusTexts[status] || status;
+        }
+
+        // Formatar data
+        function formatDate(date) {
+            if (!date) return 'N/A';
+            
+            const transactionDate = date.toDate ? date.toDate() : new Date(date);
+            const now = new Date();
+            const diffTime = Math.abs(now - transactionDate);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            
+            if (diffDays === 1) {
+                return 'Hoje';
+            } else if (diffDays === 2) {
+                return 'Ontem';
+            } else if (diffDays <= 7) {
+                return `${diffDays - 1} dias atrás`;
+            } else {
+                return transactionDate.toLocaleDateString('pt-BR');
+            }
+        }
+
+        // Solicitar saque
+        async function requestWithdrawal() {
+            try {
+                const amount = parseFloat(document.getElementById('withdrawalAmount').value);
+                const method = document.getElementById('withdrawalMethod').value;
+                const accountInfo = document.getElementById('accountInfo').value.trim();
+                
+                if (!amount || amount <= 0) {
+                    utils.showNotification('Por favor, insira um valor válido', 'error');
+                    return;
+                }
+                
+                if (!accountInfo) {
+                    utils.showNotification('Por favor, insira as informações da conta', 'error');
+                    return;
+                }
+                
+                const userId = localStorage.getItem('userId');
+                
+                // Verificar saldo disponível
+                const userDoc = await db.collection('users').doc(userId).get();
+                const currentBalance = userDoc.data().balance || 0;
+                
+                if (amount > currentBalance) {
+                    utils.showNotification('Saldo insuficiente para este saque', 'error');
+                    return;
+                }
+                
+                // Criar transação de saque
+                const withdrawalData = {
+                    userId: userId,
+                    type: 'withdrawal',
+                    amount: amount,
+                    method: method,
+                    accountInfo: accountInfo,
+                    status: 'pending',
+                    createdAt: new Date(),
+                    description: `Saque via ${method}`
+                };
+                
+                const transactionRef = await db.collection('transactions').add(withdrawalData);
+                
+                // Atualizar saldo do motorista
+                await db.collection('users').doc(userId).update({
+                    balance: firebase.firestore.FieldValue.increment(-amount),
+                    updatedAt: new Date()
+                });
+                
+                // Limpar formulário
+                document.getElementById('withdrawalAmount').value = '';
+                document.getElementById('accountInfo').value = '';
+                
+                utils.showNotification('Solicitação de saque enviada com sucesso!', 'success');
+                
+                // Recarregar dados
+                await loadDriverData();
+                await loadTransactions();
+                
+            } catch (error) {
+                console.error('Erro ao solicitar saque:', error);
+                utils.showNotification('Erro ao solicitar saque', 'error');
+            }
+        }
+
+        // Atualizar campos do método de saque
+        function updateWithdrawalFields() {
+            const method = document.getElementById('withdrawalMethod').value;
+            const accountInfoLabel = document.getElementById('accountInfoLabel');
+            const accountInfoInput = document.getElementById('accountInfo');
+            
+            switch (method) {
+                case 'pix':
+                    accountInfoLabel.textContent = 'Chave PIX:';
+                    accountInfoInput.placeholder = 'Digite sua chave PIX (CPF, e-mail, telefone)';
+                    break;
+                case 'bank_transfer':
+                    accountInfoLabel.textContent = 'Dados Bancários:';
+                    accountInfoInput.placeholder = 'Banco, Agência, Conta, CPF do titular';
+                    break;
+                default:
+                    accountInfoLabel.textContent = 'Informações da Conta:';
+                    accountInfoInput.placeholder = 'Digite as informações necessárias';
+            }
+        }
+
+        // Fazer logout
+        function logout() {
+            utils.logout();
+        }
+    </script>
+</body>
+</html>

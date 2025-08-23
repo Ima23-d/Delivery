@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JUSTA - Confirmação da Corrida</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            padding: 1rem 1.5rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        .back-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .main-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        .confirmation-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .card-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .card-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-subtitle {
+            color: #666;
+            font-size: 1rem;
+        }
+
+        .ride-details {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            color: #666;
+            font-weight: 500;
+        }
+
+        .detail-value {
+            color: #333;
+            font-weight: 600;
+        }
+
+        .price-breakdown {
+            background: #e8f5e8;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .price-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #2e7d32;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .price-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+        }
+
+        .price-item.total {
+            border-top: 2px solid #4CAF50;
+            padding-top: 1rem;
+            margin-top: 1rem;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .payment-info {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .payment-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #856404;
+            margin-bottom: 1rem;
+        }
+
+        .payment-method {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: white;
+            border-radius: 10px;
+            border: 2px solid #ffeaa7;
+        }
+
+        .payment-icon {
+            font-size: 1.5rem;
+        }
+
+        .payment-text {
+            font-weight: 500;
+            color: #333;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 16px;
+            border: none;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #4CAF50;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .estimated-time {
+            background: #e3f2fd;
+            border: 1px solid #bbdefb;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .time-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1976d2;
+            margin-bottom: 0.5rem;
+        }
+
+        .time-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1976d2;
+        }
+
+        @media (max-width: 768px) {
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .detail-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div class="logo">JUSTA</div>
+            <a href="home.html" class="back-btn">← Voltar</a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="confirmation-card">
+            <div class="card-header">
+                <h1 class="card-title">Confirme sua Corrida</h1>
+                <p class="card-subtitle">Revise os detalhes antes de confirmar</p>
+            </div>
+
+            <div class="ride-details">
+                <div class="detail-row">
+                    <span class="detail-label">Origem:</span>
+                    <span class="detail-value" id="origin">Carregando...</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Destino:</span>
+                    <span class="detail-value" id="destination">Carregando...</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Distância estimada:</span>
+                    <span class="detail-value" id="distance">Calculando...</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Tempo estimado:</span>
+                    <span class="detail-value" id="duration">Calculando...</span>
+                </div>
+            </div>
+
+            <div class="estimated-time">
+                <div class="time-title">Tempo de espera estimado</div>
+                <div class="time-value" id="waitTime">2-5 min</div>
+            </div>
+
+            <div class="price-breakdown">
+                <div class="price-title">Detalhamento do Preço</div>
+                <div class="price-item">
+                    <span>Tarifa base:</span>
+                    <span id="baseFare">R$ 5,00</span>
+                </div>
+                <div class="price-item">
+                    <span>Por distância:</span>
+                    <span id="distanceCost">R$ 0,00</span>
+                </div>
+                <div class="price-item">
+                    <span>Por tempo:</span>
+                    <span id="timeCost">R$ 0,00</span>
+                </div>
+                <div class="price-item">
+                    <span>Taxa da plataforma:</span>
+                    <span id="platformFee">R$ 1,00</span>
+                </div>
+                <div class="price-item total">
+                    <span>Total:</span>
+                    <span id="totalPrice">R$ 6,00</span>
+                </div>
+            </div>
+
+            <div class="payment-info">
+                <div class="payment-title">Forma de Pagamento</div>
+                <div class="payment-method">
+                    <span class="payment-icon" id="paymentIcon">💳</span>
+                    <span class="payment-text" id="paymentText">Cartão de Crédito</span>
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <button class="btn btn-secondary" onclick="cancelRide()">
+                    ❌ Cancelar
+                </button>
+                <button class="btn btn-primary" onclick="confirmRide()" id="confirmBtn">
+                    ✅ Confirmar Corrida
+                </button>
+            </div>
+        </div>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Processando sua solicitação...</p>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-storage-compat.js"></script>
+    
+    <!-- Configuração do Firebase -->
+    <script src="../assets/firebase-config.js"></script>
+
+    <script>
+        let currentRide = null;
+        let rideId = null;
+
+        // Verificar se está logado
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!utils.isLoggedIn()) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Obter ID da corrida
+            rideId = localStorage.getItem('currentRideId');
+            if (!rideId) {
+                window.location.href = 'home.html';
+                return;
+            }
+
+            // Carregar detalhes da corrida
+            loadRideDetails();
+        });
+
+        // Carregar detalhes da corrida
+        async function loadRideDetails() {
+            try {
+                const rideDoc = await db.collection('rides').doc(rideId).get();
+                
+                if (!rideDoc.exists) {
+                    utils.showNotification('Corrida não encontrada', 'error');
+                    window.location.href = 'home.html';
+                    return;
+                }
+
+                currentRide = rideDoc.data();
+                displayRideDetails();
+                
+            } catch (error) {
+                console.error('Erro ao carregar corrida:', error);
+                utils.showNotification('Erro ao carregar detalhes da corrida', 'error');
+            }
+        }
+
+        // Exibir detalhes da corrida
+        function displayRideDetails() {
+            if (!currentRide) return;
+
+            // Preencher informações básicas
+            document.getElementById('origin').textContent = currentRide.origin;
+            document.getElementById('destination').textContent = currentRide.destination;
+
+            // Calcular distância e tempo (simulado)
+            const distance = calculateDistance(currentRide.origin, currentRide.destination);
+            const duration = calculateDuration(distance);
+            
+            document.getElementById('distance').textContent = `${distance.toFixed(1)} km`;
+            document.getElementById('duration').textContent = `${Math.round(duration)} min`;
+
+            // Calcular preços
+            const fare = utils.calculateFare(distance, duration * 60);
+            
+            document.getElementById('baseFare').textContent = utils.formatCurrency(fare.breakdown.base);
+            document.getElementById('distanceCost').textContent = utils.formatCurrency(fare.breakdown.distance);
+            document.getElementById('timeCost').textContent = utils.formatCurrency(fare.breakdown.time);
+            document.getElementById('platformFee').textContent = utils.formatCurrency(fare.breakdown.platform);
+            document.getElementById('totalPrice').textContent = utils.formatCurrency(fare.total);
+
+            // Atualizar método de pagamento
+            updatePaymentDisplay(currentRide.paymentMethod);
+
+            // Atualizar tempo de espera
+            updateWaitTime();
+        }
+
+        // Calcular distância (simulado)
+        function calculateDistance(origin, destination) {
+            // Em um app real, isso seria calculado usando a API do Google Maps
+            // Por enquanto, retornamos um valor aleatório entre 2 e 15 km
+            return Math.random() * 13 + 2;
+        }
+
+        // Calcular duração (simulado)
+        function calculateDuration(distance) {
+            // Velocidade média de 30 km/h em trânsito urbano
+            return (distance / 30) * 60;
+        }
+
+        // Atualizar exibição do método de pagamento
+        function updatePaymentDisplay(method) {
+            const icon = document.getElementById('paymentIcon');
+            const text = document.getElementById('paymentText');
+
+            switch (method) {
+                case 'card':
+                    icon.textContent = '💳';
+                    text.textContent = 'Cartão de Crédito/Débito';
+                    break;
+                case 'pix':
+                    icon.textContent = '📱';
+                    text.textContent = 'PIX';
+                    break;
+                case 'cash':
+                    icon.textContent = '💵';
+                    text.textContent = 'Dinheiro';
+                    break;
+                default:
+                    icon.textContent = '💳';
+                    text.textContent = 'Cartão de Crédito/Débito';
+            }
+        }
+
+        // Atualizar tempo de espera
+        function updateWaitTime() {
+            // Tempo baseado na hora do dia e localização
+            const hour = new Date().getHours();
+            let waitTime = '2-5 min';
+            
+            if (hour >= 7 && hour <= 9) { // Manhã
+                waitTime = '5-10 min';
+            } else if (hour >= 17 && hour <= 19) { // Tarde
+                waitTime = '8-15 min';
+            } else if (hour >= 22 || hour <= 6) { // Noite
+                waitTime = '10-20 min';
+            }
+            
+            document.getElementById('waitTime').textContent = waitTime;
+        }
+
+        // Confirmar corrida
+        async function confirmRide() {
+            if (!currentRide || !rideId) {
+                utils.showNotification('Erro: dados da corrida não encontrados', 'error');
+                return;
+            }
+
+            const confirmBtn = document.getElementById('confirmBtn');
+            const loading = document.getElementById('loading');
+            
+            confirmBtn.disabled = true;
+            loading.style.display = 'block';
+
+            try {
+                // Atualizar status da corrida para 'confirmed'
+                await db.collection('rides').doc(rideId).update({
+                    status: 'confirmed',
+                    confirmedAt: new Date()
+                });
+
+                // Buscar motoristas disponíveis
+                const driversSnapshot = await db.collection('drivers')
+                    .where('isActive', '==', true)
+                    .where('isAvailable', '==', true)
+                    .get();
+
+                if (driversSnapshot.empty) {
+                    utils.showNotification('Nenhum motorista disponível no momento', 'warning');
+                    // Aguardar motoristas ficarem disponíveis
+                    setTimeout(() => {
+                        window.location.href = 'corrida_andamento.html';
+                    }, 2000);
+                } else {
+                    // Selecionar motorista mais próximo (simulado)
+                    const drivers = driversSnapshot.docs.map(doc => ({
+                        id: doc.id,
+                        ...doc.data()
+                    }));
+                    
+                    const selectedDriver = drivers[Math.floor(Math.random() * drivers.length)];
+                    
+                    // Atribuir motorista à corrida
+                    await db.collection('rides').doc(rideId).update({
+                        driverId: selectedDriver.id,
+                        driverName: selectedDriver.name,
+                        driverPhone: selectedDriver.phone,
+                        status: 'assigned',
+                        assignedAt: new Date()
+                    });
+
+                    utils.showNotification('Motorista encontrado! Redirecionando...', 'success');
+                    
+                    setTimeout(() => {
+                        window.location.href = 'corrida_andamento.html';
+                    }, 2000);
+                }
+
+            } catch (error) {
+                console.error('Erro ao confirmar corrida:', error);
+                utils.showNotification('Erro ao confirmar corrida', 'error');
+                confirmBtn.disabled = false;
+            }
+        }
+
+        // Cancelar corrida
+        async function cancelRide() {
+            if (confirm('Tem certeza que deseja cancelar esta corrida?')) {
+                try {
+                    // Atualizar status da corrida para 'cancelled'
+                    await db.collection('rides').doc(rideId).update({
+                        status: 'cancelled',
+                        cancelledAt: new Date()
+                    });
+
+                    utils.showNotification('Corrida cancelada com sucesso', 'success');
+                    
+                    // Remover ID da corrida do localStorage
+                    localStorage.removeItem('currentRideId');
+                    
+                    setTimeout(() => {
+                        window.location.href = 'home.html';
+                    }, 1500);
+                    
+                } catch (error) {
+                    console.error('Erro ao cancelar corrida:', error);
+                    utils.showNotification('Erro ao cancelar corrida', 'error');
+                }
+            }
+        }
+
+        // Verificar se a página está visível
+        document.addEventListener('visibilitychange', function() {
+            if (document.visibilityState === 'visible' && rideId) {
+                // Verificar se a corrida ainda existe e não foi cancelada
+                checkRideStatus();
+            }
+        });
+
+        // Verificar status da corrida
+        async function checkRideStatus() {
+            try {
+                const rideDoc = await db.collection('rides').doc(rideId).get();
+                
+                if (!rideDoc.exists) {
+                    utils.showNotification('Corrida não encontrada', 'error');
+                    window.location.href = 'home.html';
+                    return;
+                }
+
+                const rideData = rideDoc.data();
+                
+                if (rideData.status === 'cancelled') {
+                    utils.showNotification('Esta corrida foi cancelada', 'warning');
+                    window.location.href = 'home.html';
+                    return;
+                }
+
+                if (rideData.status === 'assigned') {
+                    utils.showNotification('Motorista encontrado! Redirecionando...', 'success');
+                    setTimeout(() => {
+                        window.location.href = 'corrida_andamento.html';
+                    }, 1500);
+                }
+
+            } catch (error) {
+                console.error('Erro ao verificar status da corrida:', error);
+            }
+        }
+    </script>
+</body>
+</html>

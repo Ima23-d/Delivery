@@ -1,0 +1,149 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Função para verificar se o usuário está autenticado
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // Função para verificar se o usuário é o dono do documento
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+    
+    // Função para verificar se o usuário é administrador
+    function isAdmin() {
+      return isAuthenticated() && 
+             exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.userType == 'admin';
+    }
+    
+    // Função para verificar se o usuário é motorista
+    function isDriver() {
+      return isAuthenticated() && 
+             exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.userType == 'motorista';
+    }
+    
+    // Função para verificar se o usuário é passageiro
+    function isPassenger() {
+      return isAuthenticated() && 
+             exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.userType == 'passageiro';
+    }
+    
+    // Função para verificar se a conta está ativa
+    function isAccountActive() {
+      return isAuthenticated() && 
+             exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.status in ['active', 'approved'];
+    }
+
+    // Coleção de usuários
+    match /users/{userId} {
+      // Usuários podem ler e atualizar apenas seus próprios dados
+      allow read, update: if isOwner(userId) && isAccountActive();
+      
+      // Administradores podem ler todos os usuários
+      allow read: if isAdmin();
+      
+      // Apenas administradores podem criar usuários (exceto durante cadastro)
+      allow create: if isAuthenticated() && 
+                      (isAdmin() || 
+                       (request.auth.uid == userId && 
+                        request.resource.data.userType in ['passageiro', 'motorista']));
+      
+      // Apenas administradores podem deletar usuários
+      allow delete: if isAdmin();
+    }
+
+    // Coleção de corridas
+    match /rides/{rideId} {
+      // Passageiros podem ler e criar suas próprias corridas
+      allow read, create: if isPassenger() && isAccountActive();
+      
+      // Motoristas podem ler corridas disponíveis e suas corridas atribuídas
+      allow read: if isDriver() && isAccountActive();
+      
+      // Motoristas podem atualizar corridas quando aceitam ou finalizam
+      allow update: if isDriver() && isAccountActive() &&
+                      (resource.data.driverId == request.auth.uid || 
+                       resource.data.status == 'pending');
+      
+      // Administradores têm acesso total
+      allow read, write: if isAdmin();
+    }
+
+    // Coleção de métodos de pagamento
+    match /paymentMethods/{methodId} {
+      // Usuários podem gerenciar apenas seus próprios métodos
+      allow read, write: if isAuthenticated() && 
+                          resource.data.userId == request.auth.uid;
+      
+      // Administradores podem ler todos
+      allow read: if isAdmin();
+    }
+
+    // Coleção de transações
+    match /transactions/{transactionId} {
+      // Usuários podem ler apenas suas próprias transações
+      allow read: if isAuthenticated() && 
+                   resource.data.userId == request.auth.uid;
+      
+      // Administradores têm acesso total
+      allow read, write: if isAdmin();
+      
+      // Sistema pode criar transações (para pagamentos automáticos)
+      allow create: if isAuthenticated() && 
+                      (isAdmin() || 
+                       request.resource.data.userId == request.auth.uid);
+    }
+
+    // Coleção de documentos de motoristas
+    match /driverDocuments/{docId} {
+      // Motoristas podem gerenciar apenas seus próprios documentos
+      allow read, write: if isDriver() && isAccountActive() &&
+                          resource.data.driverId == request.auth.uid;
+      
+      // Administradores podem ler todos os documentos
+      allow read: if isAdmin();
+    }
+
+    // Coleção de promoções
+    match /promotions/{promoId} {
+      // Todos os usuários autenticados podem ler promoções ativas
+      allow read: if isAuthenticated() && 
+                   resource.data.status == 'active';
+      
+      // Apenas administradores podem gerenciar promoções
+      allow write: if isAdmin();
+    }
+
+    // Coleção de suporte
+    match /support/{ticketId} {
+      // Usuários podem criar e ler seus próprios tickets
+      allow read, create: if isAuthenticated() && 
+                           resource.data.userId == request.auth.uid;
+      
+      // Administradores podem ler e responder todos os tickets
+      allow read, write: if isAdmin();
+    }
+
+    // Coleção de configurações do sistema
+    match /systemConfig/{configId} {
+      // Apenas administradores podem acessar configurações
+      allow read, write: if isAdmin();
+    }
+
+    // Coleção de logs de auditoria
+    match /auditLogs/{logId} {
+      // Apenas administradores podem ler logs
+      allow read: if isAdmin();
+      
+      // Sistema pode criar logs automaticamente
+      allow create: if true;
+    }
+  }
+}

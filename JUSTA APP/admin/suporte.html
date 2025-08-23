@@ -1,0 +1,1183 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JUSTA - Suporte</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #9C27B0, #673AB7);
+            color: white;
+            padding: 1rem 1.5rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .nav-link.active {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-subtitle {
+            color: #666;
+            font-size: 1.2rem;
+        }
+
+        .stats-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #9C27B0;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .support-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .tickets-section {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .refresh-btn {
+            background: #9C27B0;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .refresh-btn:hover {
+            background: #673AB7;
+            transform: translateY(-2px);
+        }
+
+        .ticket-filters {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            color: #333;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .filter-btn:hover {
+            border-color: #9C27B0;
+            color: #9C27B0;
+        }
+
+        .filter-btn.active {
+            background: #9C27B0;
+            border-color: #9C27B0;
+            color: white;
+        }
+
+        .tickets-list {
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .ticket-item {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid #e0e0e0;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .ticket-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .ticket-item.open {
+            border-left-color: #f44336;
+        }
+
+        .ticket-item.in-progress {
+            border-left-color: #ff9800;
+        }
+
+        .ticket-item.resolved {
+            border-left-color: #4CAF50;
+        }
+
+        .ticket-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .ticket-title {
+            font-weight: 600;
+            color: #333;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .ticket-status {
+            padding: 6px 12px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-open {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .status-in-progress {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        .status-resolved {
+            background: #e8f5e8;
+            color: #2e7d32;
+        }
+
+        .ticket-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+        }
+
+        .info-label {
+            font-size: 0.8rem;
+            color: #666;
+            font-weight: 500;
+        }
+
+        .info-value {
+            color: #333;
+            font-weight: 500;
+        }
+
+        .ticket-description {
+            color: #666;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-bottom: 1rem;
+        }
+
+        .ticket-actions {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: flex-end;
+        }
+
+        .action-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .action-btn.view {
+            background: #2196F3;
+            color: white;
+        }
+
+        .action-btn.view:hover {
+            background: #1976D2;
+        }
+
+        .action-btn.resolve {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .action-btn.resolve:hover {
+            background: #45a049;
+        }
+
+        .action-btn.close {
+            background: #f44336;
+            color: white;
+        }
+
+        .action-btn.close:hover {
+            background: #d32f2f;
+        }
+
+        .quick-actions {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .quick-action-btn {
+            width: 100%;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border: 2px solid #e0e0e0;
+            background: white;
+            color: #333;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-weight: 500;
+        }
+
+        .quick-action-btn:hover {
+            border-color: #9C27B0;
+            background: #f8f9fa;
+            transform: translateY(-2px);
+        }
+
+        .quick-action-icon {
+            font-size: 1.5rem;
+            color: #9C27B0;
+        }
+
+        .recent-activity {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-icon {
+            font-size: 1.2rem;
+            color: #9C27B0;
+        }
+
+        .activity-content h4 {
+            color: #333;
+            margin-bottom: 0.3rem;
+            font-size: 0.9rem;
+        }
+
+        .activity-content p {
+            color: #666;
+            font-size: 0.8rem;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 2rem;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .close {
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .close:hover {
+            color: #333;
+        }
+
+        .ticket-details {
+            margin-bottom: 2rem;
+        }
+
+        .ticket-detail-item {
+            margin-bottom: 1rem;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .detail-value {
+            color: #666;
+            line-height: 1.5;
+        }
+
+        .response-section {
+            margin-top: 2rem;
+        }
+
+        .response-form {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .response-input {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 60px;
+        }
+
+        .response-input:focus {
+            outline: none;
+            border-color: #9C27B0;
+        }
+
+        .response-btn {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #9C27B0, #673AB7);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            align-self: flex-end;
+        }
+
+        .response-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(156, 39, 176, 0.3);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 3rem;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #9C27B0;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .no-tickets {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+        }
+
+        .no-tickets-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #4CAF50;
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.error {
+            background: #f44336;
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            
+            .support-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .ticket-filters {
+                justify-content: center;
+            }
+            
+            .ticket-info {
+                grid-template-columns: 1fr;
+            }
+            
+            .response-form {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div class="logo">👑 JUSTA Admin</div>
+            <div class="nav-links">
+                <a href="dashboard.html" class="nav-link">Dashboard</a>
+                <a href="corridas.html" class="nav-link">Corridas</a>
+                <a href="motoristas.html" class="nav-link">Motoristas</a>
+                <a href="usuarios.html" class="nav-link">Usuários</a>
+                <a href="financeiro.html" class="nav-link">Financeiro</a>
+                <a href="promocoes.html" class="nav-link">Promoções</a>
+                <a href="suporte.html" class="nav-link active">Suporte</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="page-header">
+            <h1 class="page-title">🆘 Suporte</h1>
+            <p class="page-subtitle">Gerencie tickets de suporte e atendimento ao cliente</p>
+        </div>
+
+        <!-- Estatísticas -->
+        <div class="stats-cards">
+            <div class="stat-card">
+                <div class="stat-icon">📋</div>
+                <div class="stat-value" id="totalTickets">0</div>
+                <div class="stat-label">Total de Tickets</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">🔴</div>
+                <div class="stat-value" id="openTickets">0</div>
+                <div class="stat-label">Abertos</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">🟡</div>
+                <div class="stat-value" id="inProgressTickets">0</div>
+                <div class="stat-label">Em Andamento</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">🟢</div>
+                <div class="stat-value" id="resolvedTickets">0</div>
+                <div class="stat-label">Resolvidos</div>
+            </div>
+        </div>
+
+        <!-- Grid Principal -->
+        <div class="support-grid">
+            <!-- Lista de Tickets -->
+            <div class="tickets-section">
+                <div class="section-header">
+                    <h2 class="section-title">📋 Tickets de Suporte</h2>
+                    <button class="refresh-btn" onclick="loadTickets()">🔄 Atualizar</button>
+                </div>
+                
+                <!-- Filtros -->
+                <div class="ticket-filters">
+                    <button class="filter-btn active" onclick="filterTickets('all')">Todos</button>
+                    <button class="filter-btn" onclick="filterTickets('open')">Abertos</button>
+                    <button class="filter-btn" onclick="filterTickets('in-progress')">Em Andamento</button>
+                    <button class="filter-btn" onclick="filterTickets('resolved')">Resolvidos</button>
+                </div>
+                
+                <!-- Lista de Tickets -->
+                <div id="ticketsContainer">
+                    <div class="loading" id="loading">
+                        <div class="spinner"></div>
+                        <p>Carregando tickets...</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Ações Rápidas -->
+            <div class="quick-actions">
+                <h2 class="section-title">⚡ Ações Rápidas</h2>
+                
+                <button class="quick-action-btn" onclick="createTicket()">
+                    <div class="quick-action-icon">➕</div>
+                    <div>
+                        <div>Criar Ticket</div>
+                        <small>Novo ticket de suporte</small>
+                    </div>
+                </button>
+                
+                <button class="quick-action-btn" onclick="viewReports()">
+                    <div class="quick-action-icon">📊</div>
+                    <div>
+                        <div>Relatórios</div>
+                        <small>Análise de suporte</small>
+                    </div>
+                </button>
+                
+                <button class="quick-action-btn" onclick="manageTeam()">
+                    <div class="quick-action-icon">👥</div>
+                    <div>
+                        <div>Equipe</div>
+                        <small>Gerenciar agentes</small>
+                    </div>
+                </button>
+                
+                <button class="quick-action-btn" onclick="knowledgeBase()">
+                    <div class="quick-action-icon">📚</div>
+                    <div>
+                        <div>Base de Conhecimento</div>
+                        <small>Artigos e FAQs</small>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <!-- Atividade Recente -->
+        <div class="recent-activity">
+            <h2 class="section-title">🔔 Atividade Recente</h2>
+            <div id="activityContainer">
+                <div class="loading" id="loadingActivity">
+                    <div class="spinner"></div>
+                    <p>Carregando atividades...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Detalhes do Ticket -->
+    <div id="ticketModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">Detalhes do Ticket</h3>
+                <span class="close" onclick="closeModal()">&times;</span>
+            </div>
+            
+            <div id="ticketDetails">
+                <!-- Conteúdo será preenchido dinamicamente -->
+            </div>
+            
+            <div class="response-section">
+                <h4>Responder ao Ticket</h4>
+                <div class="response-form">
+                    <textarea 
+                        class="response-input" 
+                        id="responseInput" 
+                        placeholder="Digite sua resposta..."
+                    ></textarea>
+                    <button class="response-btn" onclick="sendResponse()">📤 Enviar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notificação -->
+    <div class="notification" id="notification"></div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-storage-compat.js"></script>
+    
+    <!-- Configuração do Firebase -->
+    <script src="../assets/firebase-config.js"></script>
+
+    <script>
+        let allTickets = [];
+        let filteredTickets = [];
+        let currentFilter = 'all';
+        let selectedTicket = null;
+
+        // Verificar se está logado
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!utils.isLoggedIn()) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            const userType = localStorage.getItem('userType');
+            if (userType !== 'admin') {
+                utils.logout();
+                window.location.href = '../index.html';
+                return;
+            }
+
+            // Carregar dados
+            loadTickets();
+            loadRecentActivity();
+        });
+
+        // Carregar tickets
+        async function loadTickets() {
+            try {
+                const loading = document.getElementById('loading');
+                loading.style.display = 'block';
+                
+                // Buscar todos os tickets
+                const ticketsSnapshot = await db.collection('support_tickets').get();
+                
+                allTickets = [];
+                ticketsSnapshot.forEach(doc => {
+                    allTickets.push({
+                        id: doc.id,
+                        ...doc.data()
+                    });
+                });
+                
+                // Aplicar filtros
+                filterTickets(currentFilter);
+                
+                // Atualizar estatísticas
+                updateStats();
+                
+            } catch (error) {
+                console.error('Erro ao carregar tickets:', error);
+                utils.showNotification('Erro ao carregar tickets', 'error');
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+
+        // Filtrar tickets
+        function filterTickets(filter) {
+            currentFilter = filter;
+            
+            // Atualizar botões de filtro
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            if (filter === 'all') {
+                filteredTickets = allTickets;
+            } else {
+                filteredTickets = allTickets.filter(ticket => ticket.status === filter);
+            }
+            
+            // Ordenar por prioridade e data
+            filteredTickets.sort((a, b) => {
+                const priorityOrder = { 'high': 3, 'medium': 2, 'low': 1 };
+                const aPriority = priorityOrder[a.priority] || 1;
+                const bPriority = priorityOrder[b.priority] || 1;
+                
+                if (aPriority !== bPriority) {
+                    return bPriority - aPriority;
+                }
+                
+                return b.createdAt?.toDate?.() - a.createdAt?.toDate?.();
+            });
+            
+            displayTickets();
+        }
+
+        // Exibir tickets
+        function displayTickets() {
+            const container = document.getElementById('ticketsContainer');
+            
+            if (filteredTickets.length === 0) {
+                showNoTickets();
+                return;
+            }
+            
+            const ticketsHTML = filteredTickets.map(ticket => createTicketItem(ticket)).join('');
+            container.innerHTML = ticketsHTML;
+        }
+
+        // Criar item de ticket
+        function createTicketItem(ticket) {
+            const statusClass = `status-${ticket.status}`;
+            const statusText = getStatusText(ticket.status);
+            const priorityText = getPriorityText(ticket.priority);
+            const createdAt = formatDate(ticket.createdAt);
+            
+            return `
+                <div class="ticket-item ${ticket.status}" onclick="viewTicket('${ticket.id}')">
+                    <div class="ticket-header">
+                        <div>
+                            <div class="ticket-title">${ticket.subject}</div>
+                            <div style="color: #666; font-size: 0.9rem;">
+                                ${ticket.userName} • ${priorityText} • ${createdAt}
+                            </div>
+                        </div>
+                        <span class="ticket-status ${statusClass}">${statusText}</span>
+                    </div>
+                    
+                    <div class="ticket-info">
+                        <div class="info-item">
+                            <div class="info-label">Categoria</div>
+                            <div class="info-value">${ticket.category || 'N/A'}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Prioridade</div>
+                            <div class="info-value">${priorityText}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="ticket-description">
+                        ${ticket.description?.substring(0, 150)}${ticket.description?.length > 150 ? '...' : ''}
+                    </div>
+                    
+                    <div class="ticket-actions">
+                        <button class="action-btn view" onclick="event.stopPropagation(); viewTicket('${ticket.id}')">
+                            👁️ Ver
+                        </button>
+                        ${ticket.status === 'open' ? `
+                            <button class="action-btn resolve" onclick="event.stopPropagation(); updateTicketStatus('${ticket.id}', 'in-progress')">
+                                ▶️ Iniciar
+                            </button>
+                        ` : ticket.status === 'in-progress' ? `
+                            <button class="action-btn resolve" onclick="event.stopPropagation(); updateTicketStatus('${ticket.id}', 'resolved')">
+                                ✅ Resolver
+                            </button>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+        }
+
+        // Mostrar mensagem de nenhum ticket
+        function showNoTickets() {
+            const container = document.getElementById('ticketsContainer');
+            container.innerHTML = `
+                <div class="no-tickets">
+                    <div class="no-tickets-icon">📋</div>
+                    <div>Nenhum ticket encontrado</div>
+                </div>
+            `;
+        }
+
+        // Atualizar estatísticas
+        function updateStats() {
+            const total = allTickets.length;
+            const open = allTickets.filter(t => t.status === 'open').length;
+            const inProgress = allTickets.filter(t => t.status === 'in-progress').length;
+            const resolved = allTickets.filter(t => t.status === 'resolved').length;
+            
+            document.getElementById('totalTickets').textContent = total;
+            document.getElementById('openTickets').textContent = open;
+            document.getElementById('inProgressTickets').textContent = inProgress;
+            document.getElementById('resolvedTickets').textContent = resolved;
+        }
+
+        // Carregar atividade recente
+        async function loadRecentActivity() {
+            try {
+                const loading = document.getElementById('loadingActivity');
+                loading.style.display = 'block';
+                
+                // Buscar últimas atividades (simulado)
+                const activities = [
+                    {
+                        icon: '📋',
+                        title: 'Novo ticket criado',
+                        description: 'Ticket #1234 criado por João Silva',
+                        time: '2 minutos atrás'
+                    },
+                    {
+                        icon: '✅',
+                        title: 'Ticket resolvido',
+                        description: 'Ticket #1230 marcado como resolvido',
+                        time: '15 minutos atrás'
+                    },
+                    {
+                        icon: '🔄',
+                        title: 'Status atualizado',
+                        description: 'Ticket #1228 movido para "Em Andamento"',
+                        time: '1 hora atrás'
+                    },
+                    {
+                        icon: '👥',
+                        title: 'Agente atribuído',
+                        description: 'Maria Santos atribuída ao ticket #1225',
+                        time: '2 horas atrás'
+                    }
+                ];
+                
+                displayRecentActivity(activities);
+                
+            } catch (error) {
+                console.error('Erro ao carregar atividades:', error);
+            } finally {
+                document.getElementById('loadingActivity').style.display = 'none';
+            }
+        }
+
+        // Exibir atividade recente
+        function displayRecentActivity(activities) {
+            const container = document.getElementById('activityContainer');
+            
+            const activitiesHTML = activities.map(activity => `
+                <div class="activity-item">
+                    <div class="activity-icon">${activity.icon}</div>
+                    <div class="activity-content">
+                        <h4>${activity.title}</h4>
+                        <p>${activity.description} • ${activity.time}</p>
+                    </div>
+                </div>
+            `).join('');
+            
+            container.innerHTML = activitiesHTML;
+        }
+
+        // Visualizar ticket
+        async function viewTicket(ticketId) {
+            try {
+                const ticket = allTickets.find(t => t.id === ticketId);
+                if (!ticket) return;
+                
+                selectedTicket = ticket;
+                
+                // Preencher modal com detalhes do ticket
+                const detailsHTML = `
+                    <div class="ticket-details">
+                        <div class="ticket-detail-item">
+                            <div class="detail-label">Assunto</div>
+                            <div class="detail-value">${ticket.subject}</div>
+                        </div>
+                        
+                        <div class="ticket-detail-item">
+                            <div class="detail-label">Descrição</div>
+                            <div class="detail-value">${ticket.description}</div>
+                        </div>
+                        
+                        <div class="ticket-detail-item">
+                            <div class="detail-label">Usuário</div>
+                            <div class="detail-value">${ticket.userName} (${ticket.userEmail})</div>
+                        </div>
+                        
+                        <div class="ticket-detail-item">
+                            <div class="detail-label">Categoria</div>
+                            <div class="detail-value">${ticket.category || 'N/A'}</div>
+                        </div>
+                        
+                        <div class="ticket-detail-item">
+                            <div class="detail-label">Prioridade</div>
+                            <div class="detail-value">${getPriorityText(ticket.priority)}</div>
+                        </div>
+                        
+                        <div class="ticket-detail-item">
+                            <div class="detail-label">Status</div>
+                            <div class="detail-value">${getStatusText(ticket.status)}</div>
+                        </div>
+                        
+                        <div class="ticket-detail-item">
+                            <div class="detail-label">Data de Criação</div>
+                            <div class="detail-value">${formatDate(ticket.createdAt)}</div>
+                        </div>
+                    </div>
+                `;
+                
+                document.getElementById('ticketDetails').innerHTML = detailsHTML;
+                document.getElementById('modalTitle').textContent = `Ticket #${ticket.id.slice(0, 8)}`;
+                document.getElementById('ticketModal').style.display = 'block';
+                
+            } catch (error) {
+                console.error('Erro ao visualizar ticket:', error);
+                utils.showNotification('Erro ao visualizar ticket', 'error');
+            }
+        }
+
+        // Atualizar status do ticket
+        async function updateTicketStatus(ticketId, newStatus) {
+            try {
+                await db.collection('support_tickets').doc(ticketId).update({
+                    status: newStatus,
+                    updatedAt: new Date(),
+                    updatedBy: 'admin'
+                });
+                
+                utils.showNotification(`Ticket ${newStatus === 'resolved' ? 'resolvido' : 'movido para "Em Andamento"'} com sucesso!`, 'success');
+                loadTickets();
+                
+            } catch (error) {
+                console.error('Erro ao atualizar ticket:', error);
+                utils.showNotification('Erro ao atualizar ticket', 'error');
+            }
+        }
+
+        // Enviar resposta
+        async function sendResponse() {
+            if (!selectedTicket) return;
+            
+            const responseText = document.getElementById('responseInput').value.trim();
+            if (!responseText) {
+                utils.showNotification('Digite uma resposta', 'error');
+                return;
+            }
+            
+            try {
+                // Adicionar resposta ao ticket
+                await db.collection('support_tickets').doc(selectedTicket.id).update({
+                    responses: firebase.firestore.FieldValue.arrayUnion({
+                        text: responseText,
+                        author: 'Admin',
+                        timestamp: new Date()
+                    }),
+                    updatedAt: new Date()
+                });
+                
+                utils.showNotification('Resposta enviada com sucesso!', 'success');
+                document.getElementById('responseInput').value = '';
+                
+                // Recarregar ticket
+                viewTicket(selectedTicket.id);
+                
+            } catch (error) {
+                console.error('Erro ao enviar resposta:', error);
+                utils.showNotification('Erro ao enviar resposta', 'error');
+            }
+        }
+
+        // Funções de ações rápidas (placeholders)
+        function createTicket() {
+            utils.showNotification('Funcionalidade de criação de ticket em desenvolvimento', 'info');
+        }
+
+        function viewReports() {
+            utils.showNotification('Funcionalidade de relatórios em desenvolvimento', 'info');
+        }
+
+        function manageTeam() {
+            utils.showNotification('Funcionalidade de gerenciamento de equipe em desenvolvimento', 'info');
+        }
+
+        function knowledgeBase() {
+            utils.showNotification('Funcionalidade de base de conhecimento em desenvolvimento', 'info');
+        }
+
+        // Fechar modal
+        function closeModal() {
+            document.getElementById('ticketModal').style.display = 'none';
+            selectedTicket = null;
+        }
+
+        // Funções auxiliares
+        function getStatusText(status) {
+            const statusTexts = {
+                'open': 'Aberto',
+                'in-progress': 'Em Andamento',
+                'resolved': 'Resolvido'
+            };
+            return statusTexts[status] || 'Desconhecido';
+        }
+
+        function getPriorityText(priority) {
+            const priorityTexts = {
+                'high': '🔴 Alta',
+                'medium': '🟡 Média',
+                'low': '🟢 Baixa'
+            };
+            return priorityTexts[priority] || 'N/A';
+        }
+
+        function formatDate(timestamp) {
+            if (!timestamp) return 'N/A';
+            
+            const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+            return date.toLocaleDateString('pt-BR', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        function showNotification(message, type = 'info') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${type}`;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Fechar modal ao clicar fora dele
+        window.onclick = function(event) {
+            const modal = document.getElementById('ticketModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+    </script>
+</body>
+</html>

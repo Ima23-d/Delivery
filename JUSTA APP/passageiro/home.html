@@ -1,0 +1,1563 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JUSTA - Home do Passageiro</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            padding: 1rem 1.5rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .user-name {
+            font-weight: 500;
+        }
+
+        .logout-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        .ride-form {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .form-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .location-input {
+            position: relative;
+        }
+
+        .location-input input {
+            padding-left: 40px;
+        }
+
+        .location-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+            font-size: 1.2rem;
+        }
+
+        .current-location-btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            margin-top: 0.5rem;
+        }
+
+        .current-location-btn:hover {
+            background: #45a049;
+        }
+
+        .payment-section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .payment-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 1rem;
+        }
+
+        .payment-methods {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .payment-method {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 10px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .payment-method.selected {
+            border-color: #4CAF50;
+            background: #e8f5e8;
+        }
+
+        .payment-method:hover {
+            border-color: #4CAF50;
+        }
+
+        .coupon-section {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .coupon-input {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .coupon-input input {
+            flex: 1;
+        }
+
+        .apply-coupon-btn {
+            background: #ffc107;
+            color: #333;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .apply-coupon-btn:hover {
+            background: #ffb300;
+        }
+
+        .request-ride-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        .request-ride-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(76, 175, 80, 0.3);
+        }
+
+        .request-ride-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .action-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .action-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .action-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .action-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .action-description {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .recent-rides {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 1.5rem;
+        }
+
+        .ride-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .ride-item:last-child {
+            border-bottom: none;
+        }
+
+        .ride-info h4 {
+            color: #333;
+            margin-bottom: 0.3rem;
+        }
+
+        .ride-info p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .ride-price {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #4CAF50;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #4CAF50;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .payment-methods {
+                flex-direction: column;
+            }
+            
+            .coupon-input {
+                flex-direction: column;
+            }
+            
+            .quick-actions {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* Estilos do Mapa */
+        .map-container {
+            margin-bottom: 20px;
+        }
+        
+        .user-marker {
+            background: #2196F3;
+            border: 3px solid white;
+            border-radius: 50%;
+            color: white;
+            font-size: 20px;
+            text-align: center;
+            line-height: 24px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        }
+        
+        .driver-marker {
+            background: #4CAF50;
+            border: 3px solid white;
+            border-radius: 50%;
+            color: white;
+            font-size: 20px;
+            text-align: center;
+            line-height: 24px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        }
+        
+        .destination-marker {
+            background: #FF5722;
+            border: 3px solid white;
+            border-radius: 50%;
+            color: white;
+            font-size: 20px;
+            text-align: center;
+            line-height: 24px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        }
+        
+        .ride-status {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .driver-info {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-left: 4px solid #2196F3;
+        }
+        
+        .driver-info h3 {
+            margin: 0 0 10px 0;
+            color: #333;
+        }
+        
+        .driver-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .driver-detail {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 14px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div class="logo">JUSTA</div>
+            <div class="user-info">
+                <div class="user-avatar" id="userAvatar">👤</div>
+                <div class="user-name" id="userName">Usuário</div>
+                <button class="logout-btn" onclick="logout()">Sair</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <!-- Mapa Interativo -->
+        <div class="map-container">
+            <div id="rideMap" style="height: 300px; width: 100%; border-radius: 15px; margin-bottom: 20px;"></div>
+        </div>
+        
+        <!-- Status da Corrida -->
+        <div class="ride-status" id="rideStatus" style="display: none;">
+            <h3 id="statusTitle">Aguardando Motorista</h3>
+            <p id="statusMessage">Procurando motoristas próximos...</p>
+            <div class="spinner" id="statusSpinner"></div>
+        </div>
+        
+        <!-- Informações do Motorista -->
+        <div class="driver-info" id="driverInfo" style="display: none;">
+            <h3>🚗 Motorista Encontrado</h3>
+            <div class="driver-details" id="driverDetails">
+                <!-- Dados do motorista serão inseridos aqui -->
+            </div>
+            
+            <!-- Informações da Rota -->
+            <div id="routeInfo" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #e0e0e0;">
+                <!-- Informações da rota serão inseridas aqui -->
+            </div>
+            
+            <!-- Tempo Estimado -->
+            <div style="margin-top: 10px; text-align: center; font-size: 18px; font-weight: bold; color: #2196F3;">
+                ⏱️ Chegada em: <span id="estimatedTime">--</span>
+            </div>
+        </div>
+        
+        <div class="ride-form">
+            <h2 class="form-title">Solicitar Corrida</h2>
+            
+            <form id="rideForm">
+                <div class="form-row">
+                    <div class="form-group location-input">
+                        <label for="origin">Origem</label>
+                        <span class="location-icon">📍</span>
+                        <input type="text" id="origin" name="origin" placeholder="Digite sua origem" required>
+                        <button type="button" class="current-location-btn" onclick="getCurrentLocation('origin')">
+                            Usar localização atual
+                        </button>
+                    </div>
+
+                    <div class="form-group location-input">
+                        <label for="destination">Destino</label>
+                        <span class="location-icon">🎯</span>
+                        <input type="text" id="destination" name="destination" placeholder="Digite seu destino" required>
+                    </div>
+                </div>
+
+                <div class="payment-section">
+                    <div class="payment-title">Forma de Pagamento</div>
+                    <div class="payment-methods">
+                        <div class="payment-method" onclick="selectPayment('card')">
+                            <input type="radio" name="payment" value="card" id="card" checked>
+                            <label for="card">💳 Cartão</label>
+                        </div>
+                        <div class="payment-method" onclick="selectPayment('pix')">
+                            <input type="radio" name="payment" value="pix" id="pix">
+                            <label for="pix">📱 PIX</label>
+                        </div>
+                        <div class="payment-method" onclick="selectPayment('cash')">
+                            <input type="radio" name="payment" value="cash" id="cash">
+                            <label for="cash">💵 Dinheiro</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="coupon-section">
+                    <div class="coupon-title">Cupom de Desconto</div>
+                    <div class="coupon-input">
+                        <input type="text" id="couponCode" placeholder="Digite o código do cupom">
+                        <button type="button" class="apply-coupon-btn" onclick="applyCoupon()">
+                            Aplicar
+                        </button>
+                    </div>
+                </div>
+
+                <button type="submit" class="request-ride-btn" id="requestRideBtn">
+                    Solicitar Corrida
+                </button>
+                
+                <!-- Botão de teste para criar motoristas -->
+                <button type="button" class="test-drivers-btn" id="testDriversBtn" onclick="createTestDriversManually()" style="
+                    width: 100%;
+                    padding: 12px;
+                    background: #FF9800;
+                    color: white;
+                    border: none;
+                    border-radius: 10px;
+                    font-size: 1rem;
+                    font-weight: 600;
+                    cursor: pointer;
+                    margin-top: 10px;
+                    transition: all 0.3s ease;
+                ">
+                    🔧 Criar Motoristas de Teste
+                </button>
+            </form>
+        </div>
+
+        <div class="quick-actions">
+            <div class="action-card" onclick="goToHistory()">
+                <div class="action-icon">📋</div>
+                <div class="action-title">Histórico</div>
+                <div class="action-description">Veja suas corridas anteriores</div>
+            </div>
+
+            <div class="action-card" onclick="goToPayments()">
+                <div class="action-icon">💳</div>
+                <div class="action-title">Pagamentos</div>
+                <div class="action-description">Gerencie seus métodos de pagamento</div>
+            </div>
+
+            <div class="action-card" onclick="goToProfile()">
+                <div class="action-icon">👤</div>
+                <div class="action-title">Perfil</div>
+                <div class="action-description">Configure suas informações</div>
+            </div>
+        </div>
+
+        <div class="recent-rides">
+            <h3 class="section-title">Corridas Recentes</h3>
+            <div id="recentRides">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Carregando corridas recentes...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-storage-compat.js"></script>
+    
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <!-- Configuração do Firebase -->
+    <script src="../assets/firebase-config.js"></script>
+    
+    <!-- Configuração de Mapas -->
+    <script src="../assets/map-config.js"></script>
+
+    <script>
+        let currentUser = null;
+        let userLocation = null;
+        let currentRide = null;
+        let locationWatchId = null;
+        let rideListener = null;
+
+        // Aguardar Firebase carregar
+        function waitForFirebase() {
+            return new Promise((resolve) => {
+                if (typeof firebase !== 'undefined' && firebase.auth && typeof db !== 'undefined') {
+                    resolve();
+                } else {
+                    const checkFirebase = setInterval(() => {
+                        if (typeof firebase !== 'undefined' && firebase.auth && typeof db !== 'undefined') {
+                            clearInterval(checkFirebase);
+                            resolve();
+                        }
+                    }, 100);
+                }
+            });
+        }
+
+        // Verificar se está logado
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Aguardar Firebase carregar
+            await waitForFirebase();
+            
+            if (!window.utils || !window.utils.isLoggedIn || !utils.isLoggedIn()) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Carregar dados do usuário
+            await loadUserData();
+            
+            // Carregar corridas recentes
+            await loadRecentRides();
+            
+            // Inicializar mapa
+            await initializeMap();
+            
+            // Obter localização atual
+            await getCurrentLocation();
+            
+            // Iniciar monitoramento de localização
+            startLocationTracking();
+        });
+
+        // Carregar dados do usuário
+        async function loadUserData() {
+            try {
+                const userData = JSON.parse(localStorage.getItem('userData'));
+                const userId = localStorage.getItem('userId');
+                
+                if (userData && userData.name) {
+                    currentUser = userData;
+                    const userNameElement = document.getElementById('userName');
+                    const userAvatarElement = document.getElementById('userAvatar');
+                    
+                    if (userNameElement) {
+                        userNameElement.textContent = userData.name;
+                    }
+                    
+                    if (userAvatarElement) {
+                        if (userData.photoURL) {
+                            userAvatarElement.style.backgroundImage = `url(${userData.photoURL})`;
+                            userAvatarElement.textContent = '';
+                        } else {
+                            userAvatarElement.textContent = userData.name.charAt(0).toUpperCase();
+                        }
+                    }
+                } else if (userId) {
+                    // Se não tem userData no localStorage, buscar do Firestore
+                    const userDoc = await db.collection('users').doc(userId).get();
+                    if (userDoc.exists) {
+                        const firestoreUserData = userDoc.data();
+                        currentUser = {
+                            name: firestoreUserData.nome || firestoreUserData.name || 'Usuário',
+                            email: firestoreUserData.email || '',
+                            photoURL: firestoreUserData.photoURL || null
+                        };
+                        
+                        // Atualizar localStorage
+                        localStorage.setItem('userData', JSON.stringify(currentUser));
+                        
+                        const userNameElement = document.getElementById('userName');
+                        const userAvatarElement = document.getElementById('userAvatar');
+                        
+                        if (userNameElement) {
+                            userNameElement.textContent = currentUser.name;
+                        }
+                        
+                        if (userAvatarElement) {
+                            if (currentUser.photoURL) {
+                                userAvatarElement.style.backgroundImage = `url(${currentUser.photoURL})`;
+                                userAvatarElement.textContent = '';
+                            } else {
+                                userAvatarElement.textContent = currentUser.name.charAt(0).toUpperCase();
+                            }
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('Erro ao carregar dados do usuário:', error);
+                // Fallback para evitar erros
+                currentUser = {
+                    name: 'Usuário',
+                    email: '',
+                    photoURL: null
+                };
+                
+                const userNameElement = document.getElementById('userName');
+                const userAvatarElement = document.getElementById('userAvatar');
+                
+                if (userNameElement) {
+                    userNameElement.textContent = 'Usuário';
+                }
+                
+                if (userAvatarElement) {
+                    userAvatarElement.textContent = 'U';
+                }
+            }
+        }
+
+        // Inicializar mapa
+        async function initializeMap() {
+            try {
+                // Aguardar um pouco para garantir que o DOM está pronto
+                await new Promise(resolve => setTimeout(resolve, 100));
+                
+                // Inicializar mapa
+                MapSystem.initMap('rideMap');
+                
+                console.log('Mapa inicializado com sucesso');
+            } catch (error) {
+                console.error('Erro ao inicializar mapa:', error);
+            }
+        }
+        
+        // Iniciar monitoramento de localização
+        function startLocationTracking() {
+            try {
+                locationWatchId = GeoLocationSystem.watchLocation((position) => {
+                    userLocation = position;
+                    
+                    // Atualizar posição no mapa
+                    MapSystem.updateUserPosition(position.lat, position.lng);
+                    
+                    // Atualizar localização no Firestore
+                    updateUserLocation(position);
+                });
+                
+                console.log('Monitoramento de localização iniciado');
+            } catch (error) {
+                console.error('Erro ao iniciar monitoramento de localização:', error);
+            }
+        }
+        
+        // Atualizar localização do usuário no Firestore
+        async function updateUserLocation(position) {
+            try {
+                const userId = localStorage.getItem('userId');
+                if (userId) {
+                    await db.collection('users').doc(userId).update({
+                        currentLocation: new firebase.firestore.GeoPoint(position.lat, position.lng),
+                        lastLocationUpdate: new Date()
+                    });
+                }
+            } catch (error) {
+                console.error('Erro ao atualizar localização:', error);
+            }
+        }
+        
+        // Obter localização atual
+        async function getCurrentLocation(field = null) {
+            try {
+                const position = await GeoLocationSystem.getCurrentLocation();
+                userLocation = {
+                    lat: position.lat,
+                    lng: position.lng
+                };
+                
+                // Adicionar marcador no mapa
+                MapSystem.addUserMarker(position.lat, position.lng, 'Sua localização');
+                
+                if (field === 'origin') {
+                    // Geocodificar coordenadas para endereço
+                    const address = await GeoLocationSystem.reverseGeocode(position.lat, position.lng);
+                    if (address) {
+                        const fieldElement = document.getElementById(field);
+                        if (fieldElement) {
+                            fieldElement.value = address.address;
+                        }
+                    }
+                }
+                
+                if (window.utils && window.utils.showNotification) {
+                    utils.showNotification('Localização obtida com sucesso!', 'success');
+                }
+                
+                return position;
+            } catch (error) {
+                console.error('Erro ao obter localização:', error);
+                if (window.utils && window.utils.showNotification) {
+                    utils.showNotification('Erro ao obter localização. Verifique as permissões.', 'error');
+                }
+                return null;
+            }
+        }
+
+        // Obter endereço a partir das coordenadas
+        async function getAddressFromCoords(lat, lng, field) {
+            try {
+                const response = await fetch(
+                    `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=SUA_API_KEY_AQUI`
+                );
+                const data = await response.json();
+                
+                if (data.results && data.results[0]) {
+                    const address = data.results[0].formatted_address;
+                    const fieldElement = document.getElementById(field);
+                    if (fieldElement) {
+                        fieldElement.value = address;
+                    }
+                }
+            } catch (error) {
+                console.error('Erro ao obter endereço:', error);
+                // Fallback: usar coordenadas
+                const fieldElement = document.getElementById(field);
+                if (fieldElement) {
+                    fieldElement.value = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+                }
+            }
+        }
+
+        // Selecionar método de pagamento
+        function selectPayment(method) {
+            // Remover seleção anterior
+            document.querySelectorAll('.payment-method').forEach(el => {
+                el.classList.remove('selected');
+            });
+            
+            // Selecionar método atual
+            document.querySelector(`input[value="${method}"]`).checked = true;
+            document.querySelector(`input[value="${method}"]`).parentElement.classList.add('selected');
+        }
+
+        // Aplicar cupom
+        async function applyCoupon() {
+            const couponElement = document.getElementById('couponCode');
+            if (!couponElement) {
+                console.error('Elemento couponCode não encontrado');
+                return;
+            }
+            
+            const couponCode = couponElement.value.trim();
+            
+            if (!couponCode) {
+                if (window.utils && window.utils.showNotification) {
+                    utils.showNotification('Digite um código de cupom', 'warning');
+                }
+                return;
+            }
+            
+            try {
+                // Verificar cupom no Firebase
+                const couponDoc = await db.collection('promotions')
+                    .where('code', '==', couponCode.toUpperCase())
+                    .where('isActive', '==', true)
+                    .get();
+                
+                if (!couponDoc.empty) {
+                    const coupon = couponDoc.docs[0].data();
+                    if (window.utils && window.utils.showNotification) {
+                        utils.showNotification(`Cupom aplicado! Desconto de ${coupon.discount}%`, 'success');
+                    }
+                } else {
+                    if (window.utils && window.utils.showNotification) {
+                        utils.showNotification('Cupom inválido ou expirado', 'error');
+                    }
+                }
+            } catch (error) {
+                console.error('Erro ao aplicar cupom:', error);
+                if (window.utils && window.utils.showNotification) {
+                    utils.showNotification('Erro ao aplicar cupom', 'error');
+                }
+            }
+        }
+
+        // Solicitar corrida
+        document.getElementById('rideForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const originElement = document.getElementById('origin');
+            const destinationElement = document.getElementById('destination');
+            const couponElement = document.getElementById('couponCode');
+            
+            if (!originElement || !destinationElement) {
+                if (window.utils && window.utils.showNotification) {
+                    utils.showNotification('Erro: Formulário não carregado corretamente', 'error');
+                }
+                return;
+            }
+            
+            const origin = originElement.value.trim();
+            const destination = destinationElement.value.trim();
+            const paymentMethodElement = document.querySelector('input[name="payment"]:checked');
+            const paymentMethod = paymentMethodElement ? paymentMethodElement.value : null;
+            const couponCode = couponElement ? couponElement.value.trim() : '';
+            
+            if (!origin || !destination) {
+                if (window.utils && window.utils.showNotification) {
+                    utils.showNotification('Preencha origem e destino', 'warning');
+                }
+                return;
+            }
+            
+            if (!paymentMethod) {
+                if (window.utils && window.utils.showNotification) {
+                    utils.showNotification('Selecione um método de pagamento', 'warning');
+                }
+                return;
+            }
+            
+            // Verificar se currentUser está carregado
+            if (!currentUser || !currentUser.name) {
+                if (window.utils && window.utils.showNotification) {
+                    utils.showNotification('Erro ao carregar dados do usuário. Tente novamente.', 'error');
+                }
+                return;
+            }
+            
+            const requestBtn = document.getElementById('requestRideBtn');
+            requestBtn.disabled = true;
+            requestBtn.textContent = 'Solicitando...';
+            
+            try {
+                const userId = localStorage.getItem('userId');
+                
+                if (!userId) {
+                    throw new Error('Usuário não autenticado');
+                }
+                
+                if (!userLocation) {
+                    throw new Error('Localização não disponível. Aguarde um momento e tente novamente.');
+                }
+                
+                // Geocodificar origem e destino
+                const originCoords = await GeoLocationSystem.geocodeAddress(origin);
+                const destinationCoords = await GeoLocationSystem.geocodeAddress(destination);
+                
+                if (!originCoords || !destinationCoords) {
+                    throw new Error('Não foi possível localizar o endereço. Verifique se os endereços estão corretos.');
+                }
+                
+                // Calcular distância e duração estimada
+                const estimatedDistance = MapSystem.calculateDistance(
+                    originCoords.lat, originCoords.lng,
+                    destinationCoords.lat, destinationCoords.lng
+                );
+                
+                const estimatedDuration = Math.round(estimatedDistance * 3); // ~3 min por km
+                
+                // Calcular preço estimado
+                const estimatedPrice = RideMatchingSystem.calculateEstimatedPrice(
+                    estimatedDistance, 
+                    estimatedDuration
+                );
+                
+                // Debug: Log da localização do usuário
+                console.log('🔍 DEBUG: Localização do usuário:', userLocation);
+                
+                // Buscar motoristas próximos
+                console.log('🔍 DEBUG: Buscando motoristas próximos...');
+                const nearbyDrivers = await RideMatchingSystem.findNearbyDrivers(
+                    userLocation.lat, 
+                    userLocation.lng, 
+                    10 // Aumentei para 10km de raio
+                );
+                
+                console.log('🔍 DEBUG: Motoristas encontrados:', nearbyDrivers.length);
+                console.log('🔍 DEBUG: Dados dos motoristas:', nearbyDrivers);
+                
+                if (nearbyDrivers.length === 0) {
+                    // Tentar criar motoristas de teste se não houver nenhum
+                    console.log('🔍 DEBUG: Nenhum motorista encontrado, criando motoristas de teste...');
+                    await createTestDrivers(userLocation);
+                    
+                    // Buscar novamente
+                    const testDrivers = await RideMatchingSystem.findNearbyDrivers(
+                        userLocation.lat, 
+                        userLocation.lng, 
+                        10
+                    );
+                    
+                    if (testDrivers.length === 0) {
+                        throw new Error('Nenhum motorista disponível na sua região. Use o botão "🔧 Criar Motoristas de Teste" abaixo para testar o sistema.');
+                    } else {
+                        nearbyDrivers.push(...testDrivers);
+                        console.log('✅ DEBUG: Motoristas de teste adicionados:', testDrivers.length);
+                    }
+                }
+                
+                // Criar solicitação de corrida com validação
+                const rideData = {
+                    passengerId: userId,
+                    passengerName: currentUser.name,
+                    passengerEmail: currentUser.email || '',
+                    origin: origin,
+                    destination: destination,
+                    originCoords: {
+                        latitude: originCoords.lat,
+                        longitude: originCoords.lng
+                    },
+                    destinationCoords: {
+                        latitude: destinationCoords.lat,
+                        longitude: destinationCoords.lng
+                    },
+                    paymentMethod: paymentMethod,
+                    couponCode: couponCode || null,
+                    status: 'requested',
+                    createdAt: new Date(),
+                    userLocation: {
+                        latitude: userLocation.lat,
+                        longitude: userLocation.lng
+                    },
+                    estimatedDistance: Math.round(estimatedDistance * 100) / 100,
+                    estimatedDuration: estimatedDuration,
+                    estimatedPrice: Math.round(estimatedPrice * 100) / 100,
+                    finalPrice: 0,
+                    distance: 0,
+                    duration: 0,
+                    nearbyDrivers: nearbyDrivers.map(d => d.id) // IDs dos motoristas próximos
+                };
+                
+                // Validar dados antes de enviar
+                if (!rideData.passengerId || !rideData.passengerName || !rideData.origin || !rideData.destination || !rideData.paymentMethod) {
+                    throw new Error('Dados incompletos para criar a corrida');
+                }
+                
+                // Salvar no Firebase
+                const rideRef = await db.collection('rides').add(rideData);
+                rideData.id = rideRef.id;
+                
+                // Notificar motoristas próximos
+                await RideMatchingSystem.notifyDrivers(rideData, nearbyDrivers);
+                
+                // Mostrar status de busca
+                showRideStatus('Procurando motoristas próximos...', 'searching');
+                
+                // Iniciar listener para mudanças na corrida
+                startRideListener(rideRef.id);
+                
+                if (window.utils && window.utils.showNotification) {
+                    utils.showNotification('Corrida solicitada! Procurando motoristas...', 'success');
+                }
+                
+                // Salvar ID da corrida atual
+                currentRide = rideRef.id;
+                localStorage.setItem('currentRideId', rideRef.id);
+                
+            } catch (error) {
+                console.error('Erro ao solicitar corrida:', error);
+                let errorMessage = 'Erro ao solicitar corrida';
+                
+                if (error.message.includes('invalid data')) {
+                    errorMessage = 'Dados inválidos. Verifique as informações e tente novamente.';
+                } else if (error.message.includes('não autenticado')) {
+                    errorMessage = 'Sessão expirada. Faça login novamente.';
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 2000);
+                }
+                
+                if (window.utils && window.utils.showNotification) {
+                    utils.showNotification(errorMessage, 'error');
+                }
+            } finally {
+                requestBtn.disabled = false;
+                requestBtn.textContent = 'Solicitar Corrida';
+            }
+        });
+
+        // Carregar corridas recentes
+        async function loadRecentRides() {
+            try {
+                const userId = localStorage.getItem('userId');
+                
+                if (!userId) {
+                    console.log('Usuário não autenticado, pulando carregamento de corridas recentes');
+                    return;
+                }
+                
+                const ridesSnapshot = await db.collection('rides')
+                    .where('passengerId', '==', userId)
+                    .where('status', '==', 'completed')
+                    .orderBy('createdAt', 'desc')
+                    .limit(5)
+                    .get();
+                
+                const recentRidesDiv = document.getElementById('recentRides');
+                
+                if (!recentRidesDiv) {
+                    console.log('Elemento recentRides não encontrado');
+                    return;
+                }
+                
+                if (ridesSnapshot.empty) {
+                    recentRidesDiv.innerHTML = '<p style="text-align: center; color: #666;">Nenhuma corrida encontrada</p>';
+                    return;
+                }
+                
+                let ridesHTML = '';
+                ridesSnapshot.forEach(doc => {
+                    const ride = doc.data();
+                    ridesHTML += `
+                        <div class="ride-item">
+                            <div class="ride-info">
+                                <h4>${ride.origin} → ${ride.destination}</h4>
+                                <p>${new Date(ride.createdAt.toDate()).toLocaleDateString('pt-BR')}</p>
+                            </div>
+                            <div class="ride-price">
+                                ${window.utils && window.utils.formatCurrency ? utils.formatCurrency(ride.finalPrice) : `R$ ${(ride.finalPrice || 0).toFixed(2)}`}
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                recentRidesDiv.innerHTML = ridesHTML;
+                
+            } catch (error) {
+                console.error('Erro ao carregar corridas:', error);
+                const recentRidesDiv = document.getElementById('recentRides');
+                if (recentRidesDiv) {
+                    recentRidesDiv.innerHTML = '<p style="text-align: center; color: #f44336;">Erro ao carregar corridas recentes</p>';
+                }
+            }
+        }
+
+        // Navegação
+        function goToHistory() {
+            window.location.href = 'historico.html';
+        }
+
+        function goToPayments() {
+            window.location.href = 'pagamentos.html';
+        }
+
+        function goToProfile() {
+            window.location.href = 'perfil.html';
+        }
+
+        // Mostrar status da corrida
+        function showRideStatus(message, type = 'searching') {
+            const statusDiv = document.getElementById('rideStatus');
+            const titleElement = document.getElementById('statusTitle');
+            const messageElement = document.getElementById('statusMessage');
+            const spinnerElement = document.getElementById('statusSpinner');
+            
+            if (statusDiv && titleElement && messageElement) {
+                statusDiv.style.display = 'block';
+                messageElement.textContent = message;
+                
+                switch (type) {
+                    case 'searching':
+                        titleElement.textContent = '🔍 Procurando Motorista';
+                        if (spinnerElement) spinnerElement.style.display = 'block';
+                        break;
+                    case 'found':
+                        titleElement.textContent = '✅ Motorista Encontrado';
+                        if (spinnerElement) spinnerElement.style.display = 'none';
+                        break;
+                    case 'accepted':
+                        titleElement.textContent = '🚗 Motorista a Caminho';
+                        if (spinnerElement) spinnerElement.style.display = 'none';
+                        break;
+                    case 'completed':
+                        titleElement.textContent = '✅ Corrida Finalizada';
+                        if (spinnerElement) spinnerElement.style.display = 'none';
+                        break;
+                }
+            }
+        }
+        
+        // Esconder status da corrida
+        function hideRideStatus() {
+            const statusDiv = document.getElementById('rideStatus');
+            if (statusDiv) {
+                statusDiv.style.display = 'none';
+            }
+        }
+        
+        // Mostrar informações do motorista
+        function showDriverInfo(driverData) {
+            const driverInfoDiv = document.getElementById('driverInfo');
+            const driverDetailsDiv = document.getElementById('driverDetails');
+            
+            if (driverInfoDiv && driverDetailsDiv) {
+                driverInfoDiv.style.display = 'block';
+                
+                driverDetailsDiv.innerHTML = `
+                    <div class="driver-detail">
+                        <span>👤 Nome:</span>
+                        <strong>${driverData.nome || driverData.name || 'Motorista'}</strong>
+                    </div>
+                    <div class="driver-detail">
+                        <span>🚗 Placa:</span>
+                        <strong>${driverData.veiculo?.placa || 'N/A'}</strong>
+                    </div>
+                    <div class="driver-detail">
+                        <span>📋 CNH:</span>
+                        <strong>${driverData.cnh || 'N/A'}</strong>
+                    </div>
+                    <div class="driver-detail">
+                        <span>⭐ Avaliação:</span>
+                        <strong>${driverData.rating || '0.0'}</strong>
+                    </div>
+                    <div class="driver-detail">
+                        <span>📱 Telefone:</span>
+                        <strong>${driverData.telefone || 'N/A'}</strong>
+                    </div>
+                    <div class="driver-detail">
+                        <span>🚗 Modelo:</span>
+                        <strong>${driverData.veiculo?.modelo || 'N/A'}</strong>
+                    </div>
+                `;
+            }
+        }
+        
+        // Esconder informações do motorista
+        function hideDriverInfo() {
+            const driverInfoDiv = document.getElementById('driverInfo');
+            if (driverInfoDiv) {
+                driverInfoDiv.style.display = 'none';
+            }
+        }
+        
+        // Iniciar listener para mudanças na corrida
+        function startRideListener(rideId) {
+            if (rideListener) {
+                rideListener();
+            }
+            
+            rideListener = db.collection('rides').doc(rideId).onSnapshot((doc) => {
+                if (doc.exists) {
+                    const rideData = doc.data();
+                    handleRideUpdate(rideData);
+                }
+            }, (error) => {
+                console.error('Erro no listener da corrida:', error);
+            });
+        }
+        
+        // Lidar com atualizações da corrida
+        async function handleRideUpdate(rideData) {
+            switch (rideData.status) {
+                case 'accepted':
+                    showRideStatus('Motorista aceitou sua corrida!', 'accepted');
+                    
+                    // Buscar dados do motorista
+                    if (rideData.driverId) {
+                        try {
+                            const driverDoc = await db.collection('users').doc(rideData.driverId).get();
+                            if (driverDoc.exists) {
+                                const driverData = driverDoc.data();
+                                showDriverInfo(driverData);
+                                
+                                // Adicionar marcador do motorista no mapa
+                                if (driverData.currentLocation) {
+                                    MapSystem.addDriverMarker(
+                                        driverData.currentLocation.latitude,
+                                        driverData.currentLocation.longitude,
+                                        driverData.nome || driverData.name
+                                    );
+                                }
+                                
+                                // Adicionar marcador de destino
+                                if (rideData.destinationCoords) {
+                                    MapSystem.addDestinationMarker(
+                                        rideData.destinationCoords.latitude,
+                                        rideData.destinationCoords.longitude,
+                                        'Destino'
+                                    );
+                                }
+                                
+                                // Calcular e mostrar rota completa
+                                if (driverData.currentLocation && rideData.userLocation && rideData.destinationCoords) {
+                                    const completeRoute = await MapSystem.calculateCompleteRoute(
+                                        { lat: driverData.currentLocation.latitude, lng: driverData.currentLocation.longitude },
+                                        { lat: rideData.userLocation.latitude, lng: rideData.userLocation.longitude },
+                                        { lat: rideData.destinationCoords.latitude, lng: rideData.destinationCoords.longitude }
+                                    );
+                                    
+                                    if (completeRoute) {
+                                        updateRouteInfo(completeRoute);
+                                    }
+                                }
+                                
+                                // Iniciar tracking em tempo real do motorista
+                                RideTrackingSystem.startDriverTracking(rideData.driverId, (position) => {
+                                    console.log('Motorista atualizou posição:', position);
+                                    // Atualizar informações de tempo estimado
+                                    updateEstimatedTime(position);
+                                });
+                            }
+                        } catch (error) {
+                            console.error('Erro ao buscar dados do motorista:', error);
+                        }
+                    }
+                    break;
+                    
+                case 'in_progress':
+                    showRideStatus('Corrida em andamento...', 'accepted');
+                    break;
+                    
+                case 'completed':
+                    showRideStatus('Corrida finalizada!', 'completed');
+                    RideTrackingSystem.stopTracking();
+                    setTimeout(() => {
+                        window.location.href = 'corrida_finalizada.html?rideId=' + rideData.id;
+                    }, 2000);
+                    break;
+                    
+                case 'cancelled':
+                    showRideStatus('Corrida cancelada', 'cancelled');
+                    hideDriverInfo();
+                    RideTrackingSystem.stopTracking();
+                    setTimeout(() => {
+                        hideRideStatus();
+                        resetRideForm();
+                    }, 3000);
+                    break;
+            }
+        }
+        
+        // Atualizar informações da rota
+        function updateRouteInfo(routeData) {
+            const routeInfoDiv = document.getElementById('routeInfo');
+            if (routeInfoDiv) {
+                routeInfoDiv.innerHTML = `
+                    <div class="route-details">
+                        <div class="route-detail">
+                            <span>📏 Distância total:</span>
+                            <strong>${routeData.totalDistance.toFixed(1)} km</strong>
+                        </div>
+                        <div class="route-detail">
+                            <span>⏱️ Tempo estimado:</span>
+                            <strong>${Math.round(routeData.totalDuration)} min</strong>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+        
+        // Atualizar tempo estimado baseado na posição atual do motorista
+        function updateEstimatedTime(driverPosition) {
+            if (userLocation) {
+                const distanceToDriver = MapSystem.calculateDistance(
+                    userLocation.lat, userLocation.lng,
+                    driverPosition.lat, driverPosition.lng
+                );
+                
+                const estimatedTime = Math.round(distanceToDriver * 3); // ~3 min por km
+                
+                const timeElement = document.getElementById('estimatedTime');
+                if (timeElement) {
+                    timeElement.textContent = `${estimatedTime} min`;
+                }
+            }
+        }
+        
+        // Criar motoristas de teste para demonstração
+        async function createTestDrivers(userLocation) {
+            try {
+                const testDrivers = [
+                    {
+                        nome: 'João Silva',
+                        email: 'joao.motorista@test.com',
+                        telefone: '(11) 99999-1111',
+                        cnh: '12345678901',
+                        userType: 'motorista',
+                        status: 'approved',
+                        isOnline: true,
+                        rating: 4.8,
+                        veiculo: {
+                            marca: 'Toyota',
+                            modelo: 'Corolla',
+                            placa: 'ABC-1234',
+                            cor: 'Branco',
+                            ano: 2020
+                        },
+                        currentLocation: new firebase.firestore.GeoPoint(
+                            userLocation.lat + 0.01, // ~1km de distância
+                            userLocation.lng + 0.01
+                        ),
+                        lastLocationUpdate: new Date()
+                    },
+                    {
+                        nome: 'Maria Santos',
+                        email: 'maria.motorista@test.com',
+                        telefone: '(11) 99999-2222',
+                        cnh: '09876543210',
+                        userType: 'motorista',
+                        status: 'approved',
+                        isOnline: true,
+                        rating: 4.9,
+                        veiculo: {
+                            marca: 'Honda',
+                            modelo: 'Civic',
+                            placa: 'XYZ-5678',
+                            cor: 'Prata',
+                            ano: 2021
+                        },
+                        currentLocation: new firebase.firestore.GeoPoint(
+                            userLocation.lat - 0.005, // ~500m de distância
+                            userLocation.lng + 0.005
+                        ),
+                        lastLocationUpdate: new Date()
+                    },
+                    {
+                        nome: 'Pedro Oliveira',
+                        email: 'pedro.motorista@test.com',
+                        telefone: '(11) 99999-3333',
+                        cnh: '11122233344',
+                        userType: 'motorista',
+                        status: 'approved',
+                        isOnline: true,
+                        rating: 4.7,
+                        veiculo: {
+                            marca: 'Volkswagen',
+                            modelo: 'Jetta',
+                            placa: 'DEF-9012',
+                            cor: 'Preto',
+                            ano: 2019
+                        },
+                        currentLocation: new firebase.firestore.GeoPoint(
+                            userLocation.lat + 0.008, // ~800m de distância
+                            userLocation.lng - 0.003
+                        ),
+                        lastLocationUpdate: new Date()
+                    }
+                ];
+                
+                console.log('🔧 DEBUG: Criando motoristas de teste...');
+                
+                // Verificar se os motoristas já existem antes de criar
+                for (const driver of testDrivers) {
+                    const existingDriver = await db.collection('users')
+                        .where('email', '==', driver.email)
+                        .get();
+                    
+                    if (existingDriver.empty) {
+                        await db.collection('users').add(driver);
+                        console.log(`✅ Motorista de teste criado: ${driver.nome}`);
+                    } else {
+                        // Atualizar localização e status online do motorista existente
+                        const driverDoc = existingDriver.docs[0];
+                        await db.collection('users').doc(driverDoc.id).update({
+                            isOnline: true,
+                            currentLocation: driver.currentLocation,
+                            lastLocationUpdate: new Date()
+                        });
+                        console.log(`🔄 Motorista de teste atualizado: ${driver.nome}`);
+                    }
+                }
+                
+                console.log('✅ Motoristas de teste criados/atualizados com sucesso!');
+                
+            } catch (error) {
+                console.error('Erro ao criar motoristas de teste:', error);
+            }
+        }
+        
+        // Criar motoristas de teste manualmente
+        async function createTestDriversManually() {
+            const btn = document.getElementById('testDriversBtn');
+            btn.disabled = true;
+            btn.textContent = '🔧 Criando motoristas...';
+            
+            try {
+                if (!userLocation) {
+                    if (window.utils && window.utils.showNotification) {
+                        utils.showNotification('Obtendo localização primeiro...', 'info');
+                    }
+                    await getCurrentLocation();
+                }
+                
+                if (userLocation) {
+                    await createTestDrivers(userLocation);
+                    if (window.utils && window.utils.showNotification) {
+                        utils.showNotification('✅ Motoristas de teste criados com sucesso!', 'success');
+                    }
+                    
+                    // Esconder o botão após criar os motoristas
+                    btn.style.display = 'none';
+                } else {
+                    if (window.utils && window.utils.showNotification) {
+                        utils.showNotification('Erro ao obter localização. Tente novamente.', 'error');
+                    }
+                }
+            } catch (error) {
+                console.error('Erro ao criar motoristas manualmente:', error);
+                if (window.utils && window.utils.showNotification) {
+                    utils.showNotification('Erro ao criar motoristas de teste', 'error');
+                }
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '🔧 Criar Motoristas de Teste';
+            }
+        }
+        
+        // Resetar formulário de corrida
+        function resetRideForm() {
+            const form = document.getElementById('rideForm');
+            if (form) {
+                form.reset();
+            }
+            hideRideStatus();
+            hideDriverInfo();
+            MapSystem.clearMap();
+        }
+        
+        function logout() {
+            if (window.utils && window.utils.logout) {
+                utils.logout();
+            } else {
+                // Fallback se utils não estiver disponível
+                localStorage.clear();
+                window.location.href = 'login.html';
+            }
+        }
+
+        // Inicializar seleção de pagamento (será chamado após o carregamento principal)
+        setTimeout(() => {
+            selectPayment('card');
+        }, 100);
+    </script>
+</body>
+</html>

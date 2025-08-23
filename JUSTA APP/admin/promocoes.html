@@ -1,0 +1,1092 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JUSTA - Promoções</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #9C27B0, #673AB7);
+            color: white;
+            padding: 1rem 1.5rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .nav-link.active {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-subtitle {
+            color: #666;
+            font-size: 1.2rem;
+        }
+
+        .stats-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #9C27B0;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .actions-section {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 1.5rem;
+        }
+
+        .create-promo-btn {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .create-promo-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(76, 175, 80, 0.3);
+        }
+
+        .promotions-section {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .refresh-btn {
+            background: #9C27B0;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .refresh-btn:hover {
+            background: #673AB7;
+            transform: translateY(-2px);
+        }
+
+        .promotions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .promo-card {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .promo-card:hover {
+            border-color: #9C27B0;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(156, 39, 176, 0.2);
+        }
+
+        .promo-card.active {
+            border-color: #4CAF50;
+            background: #f8fff8;
+        }
+
+        .promo-card.expired {
+            border-color: #f44336;
+            background: #fff8f8;
+            opacity: 0.7;
+        }
+
+        .promo-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .promo-code {
+            background: linear-gradient(135deg, #9C27B0, #673AB7);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+        }
+
+        .promo-status {
+            padding: 6px 12px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-active {
+            background: #e8f5e8;
+            color: #2e7d32;
+        }
+
+        .status-expired {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .status-scheduled {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .promo-details h3 {
+            color: #333;
+            margin-bottom: 0.5rem;
+            font-size: 1.2rem;
+        }
+
+        .promo-description {
+            color: #666;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .promo-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .info-item {
+            text-align: center;
+        }
+
+        .info-label {
+            font-size: 0.8rem;
+            color: #666;
+            margin-bottom: 0.3rem;
+        }
+
+        .info-value {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .promo-actions {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: flex-end;
+        }
+
+        .action-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .action-btn.edit {
+            background: #2196F3;
+            color: white;
+        }
+
+        .action-btn.edit:hover {
+            background: #1976D2;
+        }
+
+        .action-btn.delete {
+            background: #f44336;
+            color: white;
+        }
+
+        .action-btn.delete:hover {
+            background: #d32f2f;
+        }
+
+        .action-btn.toggle {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .action-btn.toggle:hover {
+            background: #45a049;
+        }
+
+        .action-btn.toggle.inactive {
+            background: #ff9800;
+        }
+
+        .action-btn.toggle.inactive:hover {
+            background: #f57c00;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 2rem;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .close {
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .close:hover {
+            color: #333;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #333;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #9C27B0;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #9C27B0, #673AB7);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(156, 39, 176, 0.3);
+        }
+
+        .btn-secondary {
+            background: #e0e0e0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #d0d0d0;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 3rem;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #9C27B0;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .no-promotions {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+        }
+
+        .no-promotions-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #4CAF50;
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.error {
+            background: #f44336;
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            
+            .promotions-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .promo-info {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div class="logo">👑 JUSTA Admin</div>
+            <div class="nav-links">
+                <a href="dashboard.html" class="nav-link">Dashboard</a>
+                <a href="corridas.html" class="nav-link">Corridas</a>
+                <a href="motoristas.html" class="nav-link">Motoristas</a>
+                <a href="usuarios.html" class="nav-link">Usuários</a>
+                <a href="financeiro.html" class="nav-link">Financeiro</a>
+                <a href="promocoes.html" class="nav-link active">Promoções</a>
+                <a href="suporte.html" class="nav-link">Suporte</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="page-header">
+            <h1 class="page-title">🎉 Promoções</h1>
+            <p class="page-subtitle">Crie e gerencie cupons e promoções da plataforma</p>
+        </div>
+
+        <!-- Estatísticas -->
+        <div class="stats-cards">
+            <div class="stat-card">
+                <div class="stat-icon">🎫</div>
+                <div class="stat-value" id="totalPromos">0</div>
+                <div class="stat-label">Total de Promoções</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">✅</div>
+                <div class="stat-value" id="activePromos">0</div>
+                <div class="stat-label">Ativas</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">📊</div>
+                <div class="stat-value" id="totalUsage">0</div>
+                <div class="stat-label">Total de Usos</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">💰</div>
+                <div class="stat-value" id="totalSavings">R$ 0</div>
+                <div class="stat-label">Total Economizado</div>
+            </div>
+        </div>
+
+        <!-- Ações -->
+        <div class="actions-section">
+            <h2 class="section-title">🎯 Gerenciar Promoções</h2>
+            <button class="create-promo-btn" onclick="openCreateModal()">
+                ➕ Criar Nova Promoção
+            </button>
+        </div>
+
+        <!-- Lista de Promoções -->
+        <div class="promotions-section">
+            <div class="section-header">
+                <h2 class="section-title">🎫 Lista de Promoções</h2>
+                <button class="refresh-btn" onclick="loadPromotions()">🔄 Atualizar</button>
+            </div>
+            
+            <div id="promotionsContainer">
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <p>Carregando promoções...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Criação/Edição -->
+    <div id="promoModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">Criar Nova Promoção</h3>
+                <span class="close" onclick="closeModal()">&times;</span>
+            </div>
+            
+            <form id="promoForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="promoCode">Código da Promoção</label>
+                        <input type="text" id="promoCode" name="promoCode" placeholder="EX: JUSTA10" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="discountType">Tipo de Desconto</label>
+                        <select id="discountType" name="discountType" required>
+                            <option value="">Selecione...</option>
+                            <option value="percentage">Porcentagem (%)</option>
+                            <option value="fixed">Valor Fixo (R$)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="discountValue">Valor do Desconto</label>
+                        <input type="number" id="discountValue" name="discountValue" placeholder="0" step="0.01" min="0" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="maxDiscount">Desconto Máximo (R$)</label>
+                        <input type="number" id="maxDiscount" name="maxDiscount" placeholder="0" step="0.01" min="0">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="minRideValue">Valor Mínimo da Corrida</label>
+                        <input type="number" id="minRideValue" name="minRideValue" placeholder="0" step="0.01" min="0">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="maxUsage">Uso Máximo por Usuário</label>
+                        <input type="number" id="maxUsage" name="maxUsage" placeholder="1" min="1">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="totalMaxUsage">Uso Total Máximo</label>
+                        <input type="number" id="totalMaxUsage" name="totalMaxUsage" placeholder="100" min="1">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="startDate">Data de Início</label>
+                        <input type="datetime-local" id="startDate" name="startDate" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="endDate">Data de Fim</label>
+                        <input type="datetime-local" id="endDate" name="endDate" required>
+                    </div>
+                    
+                    <div class="form-group full-width">
+                        <label for="description">Descrição</label>
+                        <textarea id="description" name="description" placeholder="Descreva a promoção..." rows="3"></textarea>
+                    </div>
+                    
+                    <div class="form-group full-width">
+                        <label for="terms">Termos e Condições</label>
+                        <textarea id="terms" name="terms" placeholder="Termos e condições da promoção..." rows="3"></textarea>
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+                    <button type="submit" class="btn btn-primary" id="submitBtn">Criar Promoção</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Notificação -->
+    <div class="notification" id="notification"></div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-storage-compat.js"></script>
+    
+    <!-- Configuração do Firebase -->
+    <script src="../assets/firebase-config.js"></script>
+
+    <script>
+        let allPromotions = [];
+        let editingPromotion = null;
+
+        // Verificar se está logado
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!utils.isLoggedIn()) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            const userType = localStorage.getItem('userType');
+            if (userType !== 'admin') {
+                utils.logout();
+                window.location.href = '../index.html';
+                return;
+            }
+
+            // Carregar promoções
+            loadPromotions();
+            
+            // Configurar formulário
+            setupForm();
+        });
+
+        // Carregar promoções
+        async function loadPromotions() {
+            try {
+                const loading = document.getElementById('loading');
+                loading.style.display = 'block';
+                
+                // Buscar todas as promoções
+                const promotionsSnapshot = await db.collection('promotions').get();
+                
+                allPromotions = [];
+                promotionsSnapshot.forEach(doc => {
+                    allPromotions.push({
+                        id: doc.id,
+                        ...doc.data()
+                    });
+                });
+                
+                // Exibir promoções
+                displayPromotions();
+                
+                // Atualizar estatísticas
+                updateStats();
+                
+            } catch (error) {
+                console.error('Erro ao carregar promoções:', error);
+                utils.showNotification('Erro ao carregar promoções', 'error');
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+
+        // Exibir promoções
+        function displayPromotions() {
+            const container = document.getElementById('promotionsContainer');
+            
+            if (allPromotions.length === 0) {
+                showNoPromotions();
+                return;
+            }
+            
+            // Ordenar por data de criação (mais recentes primeiro)
+            const sortedPromotions = allPromotions.sort((a, b) => {
+                return b.createdAt?.toDate?.() - a.createdAt?.toDate?.();
+            });
+            
+            const promotionsHTML = sortedPromotions.map(promotion => createPromotionCard(promotion)).join('');
+            container.innerHTML = `<div class="promotions-grid">${promotionsHTML}</div>`;
+        }
+
+        // Criar card de promoção
+        function createPromotionCard(promotion) {
+            const isActive = isPromotionActive(promotion);
+            const isExpired = isPromotionExpired(promotion);
+            
+            let statusClass = 'status-active';
+            let statusText = 'Ativa';
+            
+            if (isExpired) {
+                statusClass = 'status-expired';
+                statusText = 'Expirada';
+            } else if (!isActive) {
+                statusClass = 'status-scheduled';
+                statusText = 'Agendada';
+            }
+            
+            const cardClass = `promo-card ${isActive ? 'active' : ''} ${isExpired ? 'expired' : ''}`;
+            
+            return `
+                <div class="${cardClass}">
+                    <div class="promo-header">
+                        <div class="promo-code">${promotion.code}</div>
+                        <span class="promo-status ${statusClass}">${statusText}</span>
+                    </div>
+                    
+                    <div class="promo-details">
+                        <h3>${promotion.description || 'Promoção'}</h3>
+                        <p class="promo-description">${promotion.terms || 'Sem descrição adicional'}</p>
+                        
+                        <div class="promo-info">
+                            <div class="info-item">
+                                <div class="info-label">Desconto</div>
+                                <div class="info-value">
+                                    ${promotion.discountType === 'percentage' ? 
+                                        `${promotion.discountValue}%` : 
+                                        utils.formatCurrency(promotion.discountValue)
+                                    }
+                                </div>
+                            </div>
+                            
+                            <div class="info-item">
+                                <div class="info-label">Usos</div>
+                                <div class="info-value">${promotion.totalUsage || 0}/${promotion.totalMaxUsage || '∞'}</div>
+                            </div>
+                            
+                            <div class="info-item">
+                                <div class="info-label">Valor Mín.</div>
+                                <div class="info-value">${promotion.minRideValue ? utils.formatCurrency(promotion.minRideValue) : 'N/A'}</div>
+                            </div>
+                            
+                            <div class="info-item">
+                                <div class="info-label">Válida até</div>
+                                <div class="info-value">${formatDate(promotion.endDate)}</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="promo-actions">
+                        <button class="action-btn edit" onclick="editPromotion('${promotion.id}')">✏️ Editar</button>
+                        <button class="action-btn toggle ${isActive ? 'inactive' : ''}" onclick="togglePromotion('${promotion.id}')">
+                            ${isActive ? '⏸️ Pausar' : '▶️ Ativar'}
+                        </button>
+                        <button class="action-btn delete" onclick="deletePromotion('${promotion.id}')">🗑️ Excluir</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Mostrar mensagem de nenhuma promoção
+        function showNoPromotions() {
+            const container = document.getElementById('promotionsContainer');
+            container.innerHTML = `
+                <div class="no-promotions">
+                    <div class="no-promotions-icon">🎫</div>
+                    <div>Nenhuma promoção encontrada</div>
+                </div>
+            `;
+        }
+
+        // Atualizar estatísticas
+        function updateStats() {
+            const total = allPromotions.length;
+            const active = allPromotions.filter(p => isPromotionActive(p)).length;
+            
+            let totalUsage = 0;
+            let totalSavings = 0;
+            
+            allPromotions.forEach(promo => {
+                totalUsage += promo.totalUsage || 0;
+                // Simular economia total (em produção, isso viria de dados reais)
+                totalSavings += (promo.totalUsage || 0) * (promo.discountValue || 0);
+            });
+            
+            document.getElementById('totalPromos').textContent = total;
+            document.getElementById('activePromos').textContent = active;
+            document.getElementById('totalUsage').textContent = totalUsage;
+            document.getElementById('totalSavings').textContent = utils.formatCurrency(totalSavings);
+        }
+
+        // Verificar se promoção está ativa
+        function isPromotionActive(promotion) {
+            if (!promotion.startDate || !promotion.endDate) return false;
+            
+            const now = new Date();
+            const startDate = promotion.startDate.toDate ? promotion.startDate.toDate() : new Date(promotion.startDate);
+            const endDate = promotion.endDate.toDate ? promotion.endDate.toDate() : new Date(promotion.endDate);
+            
+            return now >= startDate && now <= endDate && promotion.status !== 'paused';
+        }
+
+        // Verificar se promoção expirou
+        function isPromotionExpired(promotion) {
+            if (!promotion.endDate) return false;
+            
+            const now = new Date();
+            const endDate = promotion.endDate.toDate ? promotion.endDate.toDate() : new Date(promotion.endDate);
+            
+            return now > endDate;
+        }
+
+        // Configurar formulário
+        function setupForm() {
+            document.getElementById('promoForm').addEventListener('submit', handleFormSubmit);
+            
+            // Definir data mínima como hoje
+            const today = new Date().toISOString().slice(0, 16);
+            document.getElementById('startDate').min = today;
+            document.getElementById('endDate').min = today;
+            
+            // Atualizar data mínima de fim quando data de início mudar
+            document.getElementById('startDate').addEventListener('change', function() {
+                document.getElementById('endDate').min = this.value;
+            });
+        }
+
+        // Abrir modal de criação
+        function openCreateModal() {
+            editingPromotion = null;
+            document.getElementById('modalTitle').textContent = 'Criar Nova Promoção';
+            document.getElementById('submitBtn').textContent = 'Criar Promoção';
+            document.getElementById('promoForm').reset();
+            
+            // Definir data mínima como hoje
+            const today = new Date().toISOString().slice(0, 16);
+            document.getElementById('startDate').min = today;
+            document.getElementById('endDate').min = today;
+            
+            document.getElementById('promoModal').style.display = 'block';
+        }
+
+        // Editar promoção
+        function editPromotion(promotionId) {
+            const promotion = allPromotions.find(p => p.id === promotionId);
+            if (!promotion) return;
+            
+            editingPromotion = promotion;
+            document.getElementById('modalTitle').textContent = 'Editar Promoção';
+            document.getElementById('submitBtn').textContent = 'Salvar Alterações';
+            
+            // Preencher formulário
+            document.getElementById('promoCode').value = promotion.code;
+            document.getElementById('discountType').value = promotion.discountType;
+            document.getElementById('discountValue').value = promotion.discountValue;
+            document.getElementById('maxDiscount').value = promotion.maxDiscount || '';
+            document.getElementById('minRideValue').value = promotion.minRideValue || '';
+            document.getElementById('maxUsage').value = promotion.maxUsage || 1;
+            document.getElementById('totalMaxUsage').value = promotion.totalMaxUsage || '';
+            document.getElementById('startDate').value = formatDateTimeLocal(promotion.startDate);
+            document.getElementById('endDate').value = formatDateTimeLocal(promotion.endDate);
+            document.getElementById('description').value = promotion.description || '';
+            document.getElementById('terms').value = promotion.terms || '';
+            
+            document.getElementById('promoModal').style.display = 'block';
+        }
+
+        // Fechar modal
+        function closeModal() {
+            document.getElementById('promoModal').style.display = 'none';
+            editingPromotion = null;
+        }
+
+        // Manipular envio do formulário
+        async function handleFormSubmit(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Salvando...';
+            submitBtn.disabled = true;
+            
+            try {
+                const formData = new FormData(e.target);
+                const promotionData = {
+                    code: formData.get('promoCode').toUpperCase(),
+                    discountType: formData.get('discountType'),
+                    discountValue: parseFloat(formData.get('discountValue')),
+                    maxDiscount: formData.get('maxDiscount') ? parseFloat(formData.get('maxDiscount')) : null,
+                    minRideValue: formData.get('minRideValue') ? parseFloat(formData.get('minRideValue')) : null,
+                    maxUsage: parseInt(formData.get('maxUsage')) || 1,
+                    totalMaxUsage: formData.get('totalMaxUsage') ? parseInt(formData.get('totalMaxUsage')) : null,
+                    startDate: new Date(formData.get('startDate')),
+                    endDate: new Date(formData.get('endDate')),
+                    description: formData.get('description'),
+                    terms: formData.get('terms'),
+                    status: 'active',
+                    totalUsage: 0,
+                    createdAt: editingPromotion ? editingPromotion.createdAt : new Date(),
+                    updatedAt: new Date()
+                };
+                
+                if (editingPromotion) {
+                    // Atualizar promoção existente
+                    await db.collection('promotions').doc(editingPromotion.id).update(promotionData);
+                    utils.showNotification('Promoção atualizada com sucesso!', 'success');
+                } else {
+                    // Criar nova promoção
+                    await db.collection('promotions').add(promotionData);
+                    utils.showNotification('Promoção criada com sucesso!', 'success');
+                }
+                
+                closeModal();
+                loadPromotions();
+                
+            } catch (error) {
+                console.error('Erro ao salvar promoção:', error);
+                utils.showNotification('Erro ao salvar promoção', 'error');
+            } finally {
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+            }
+        }
+
+        // Alternar status da promoção
+        async function togglePromotion(promotionId) {
+            try {
+                const promotion = allPromotions.find(p => p.id === promotionId);
+                if (!promotion) return;
+                
+                const newStatus = promotion.status === 'paused' ? 'active' : 'paused';
+                
+                await db.collection('promotions').doc(promotionId).update({
+                    status: newStatus,
+                    updatedAt: new Date()
+                });
+                
+                utils.showNotification(`Promoção ${newStatus === 'active' ? 'ativada' : 'pausada'} com sucesso!`, 'success');
+                loadPromotions();
+                
+            } catch (error) {
+                console.error('Erro ao alternar promoção:', error);
+                utils.showNotification('Erro ao alternar promoção', 'error');
+            }
+        }
+
+        // Excluir promoção
+        async function deletePromotion(promotionId) {
+            if (!confirm('Tem certeza que deseja excluir esta promoção?')) return;
+            
+            try {
+                await db.collection('promotions').doc(promotionId).delete();
+                utils.showNotification('Promoção excluída com sucesso!', 'success');
+                loadPromotions();
+                
+            } catch (error) {
+                console.error('Erro ao excluir promoção:', error);
+                utils.showNotification('Erro ao excluir promoção', 'error');
+            }
+        }
+
+        // Funções auxiliares
+        function formatDate(timestamp) {
+            if (!timestamp) return 'N/A';
+            
+            const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+            return date.toLocaleDateString('pt-BR', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric'
+            });
+        }
+
+        function formatDateTimeLocal(timestamp) {
+            if (!timestamp) return '';
+            
+            const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+            return date.toISOString().slice(0, 16);
+        }
+
+        function showNotification(message, type = 'info') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${type}`;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Fechar modal ao clicar fora dele
+        window.onclick = function(event) {
+            const modal = document.getElementById('promoModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+    </script>
+</body>
+</html>

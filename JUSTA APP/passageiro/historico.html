@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JUSTA - Histórico de Corridas</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            padding: 1rem 1.5rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        .back-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .main-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-subtitle {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .filters {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .filters-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 1rem;
+        }
+
+        .filters-row {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .filter-group label {
+            font-size: 0.9rem;
+            color: #666;
+            font-weight: 500;
+        }
+
+        .filter-group select,
+        .filter-group input {
+            padding: 8px 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .filter-group select:focus,
+        .filter-group input:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+
+        .filter-btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            margin-top: 1.5rem;
+        }
+
+        .filter-btn:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+        }
+
+        .stats-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .stat-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #4CAF50;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .rides-list {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .rides-header {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .rides-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .ride-item {
+            padding: 1.5rem;
+            border-bottom: 1px solid #f0f0f0;
+            transition: all 0.3s ease;
+        }
+
+        .ride-item:hover {
+            background: #f8f9fa;
+        }
+
+        .ride-item:last-child {
+            border-bottom: none;
+        }
+
+        .ride-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .ride-route {
+            flex: 1;
+        }
+
+        .ride-route h4 {
+            color: #333;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .ride-route p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .ride-status {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-completed {
+            background: #e8f5e8;
+            color: #2e7d32;
+        }
+
+        .status-cancelled {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .ride-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .detail-item {
+            text-align: center;
+        }
+
+        .detail-label {
+            color: #666;
+            font-size: 0.8rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .detail-value {
+            color: #333;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .ride-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+
+        .action-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: #4CAF50;
+            border: 2px solid #4CAF50;
+        }
+
+        .btn-outline:hover {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+        }
+
+        .empty-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 3rem;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #4CAF50;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .page-btn {
+            padding: 8px 16px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            color: #333;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .page-btn:hover,
+        .page-btn.active {
+            border-color: #4CAF50;
+            background: #4CAF50;
+            color: white;
+        }
+
+        .page-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        @media (max-width: 768px) {
+            .filters-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .ride-header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .ride-details {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .ride-actions {
+                justify-content: stretch;
+            }
+            
+            .action-btn {
+                flex: 1;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div class="logo">JUSTA</div>
+            <a href="home.html" class="back-btn">← Voltar</a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="page-header">
+            <h1 class="page-title">Histórico de Corridas</h1>
+            <p class="page-subtitle">Acompanhe todas as suas viagens</p>
+        </div>
+
+        <div class="filters">
+            <h3 class="filters-title">Filtros</h3>
+            <div class="filters-row">
+                <div class="filter-group">
+                    <label for="statusFilter">Status</label>
+                    <select id="statusFilter">
+                        <option value="">Todos os status</option>
+                        <option value="completed">Finalizadas</option>
+                        <option value="cancelled">Canceladas</option>
+                        <option value="pending">Pendentes</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label for="dateFilter">Período</label>
+                    <select id="dateFilter">
+                        <option value="">Todos os períodos</option>
+                        <option value="today">Hoje</option>
+                        <option value="week">Última semana</option>
+                        <option value="month">Último mês</option>
+                        <option value="year">Último ano</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label for="searchFilter">Buscar</label>
+                    <input type="text" id="searchFilter" placeholder="Origem ou destino">
+                </div>
+            </div>
+            
+            <button class="filter-btn" onclick="applyFilters()">
+                🔍 Aplicar Filtros
+            </button>
+        </div>
+
+        <div class="stats-cards">
+            <div class="stat-card">
+                <div class="stat-icon">🚗</div>
+                <div class="stat-value" id="totalRides">0</div>
+                <div class="stat-label">Total de Corridas</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">✅</div>
+                <div class="stat-value" id="completedRides">0</div>
+                <div class="stat-label">Finalizadas</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">💰</div>
+                <div class="stat-value" id="totalSpent">R$ 0</div>
+                <div class="stat-label">Total Gasto</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">⭐</div>
+                <div class="stat-value" id="avgRating">0.0</div>
+                <div class="stat-label">Avaliação Média</div>
+            </div>
+        </div>
+
+        <div class="rides-list">
+            <div class="rides-header">
+                <h3 class="rides-title">Suas Corridas</h3>
+            </div>
+            
+            <div id="ridesContainer">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Carregando histórico...</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="pagination" id="pagination" style="display: none;">
+            <button class="page-btn" onclick="previousPage()" id="prevBtn">← Anterior</button>
+            <span class="page-btn active" id="currentPage">1</span>
+            <button class="page-btn" onclick="nextPage()" id="nextBtn">Próxima →</button>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-storage-compat.js"></script>
+    
+    <!-- Configuração do Firebase -->
+    <script src="../assets/firebase-config.js"></script>
+
+    <script>
+        let currentUser = null;
+        let allRides = [];
+        let filteredRides = [];
+        let currentPage = 1;
+        const ridesPerPage = 10;
+
+        // Verificar se está logado
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!utils.isLoggedIn()) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Carregar dados do usuário
+            loadUserData();
+            
+            // Carregar histórico de corridas
+            loadRideHistory();
+        });
+
+        // Carregar dados do usuário
+        function loadUserData() {
+            const userData = JSON.parse(localStorage.getItem('userData'));
+            if (userData) {
+                currentUser = userData;
+            }
+        }
+
+        // Carregar histórico de corridas
+        async function loadRideHistory() {
+            try {
+                const userId = localStorage.getItem('userId');
+                const ridesSnapshot = await db.collection('rides')
+                    .where('passengerId', '==', userId)
+                    .orderBy('createdAt', 'desc')
+                    .get();
+                
+                allRides = ridesSnapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                }));
+                
+                // Carregar avaliações para calcular estatísticas
+                await loadRatings();
+                
+                // Aplicar filtros iniciais
+                applyFilters();
+                
+            } catch (error) {
+                console.error('Erro ao carregar histórico:', error);
+                utils.showNotification('Erro ao carregar histórico de corridas', 'error');
+                showEmptyState();
+            }
+        }
+
+        // Carregar avaliações
+        async function loadRatings() {
+            try {
+                const userId = localStorage.getItem('userId');
+                const ratingsSnapshot = await db.collection('ratings')
+                    .where('passengerId', '==', userId)
+                    .get();
+                
+                const ratings = ratingsSnapshot.docs.map(doc => doc.data());
+                
+                // Adicionar avaliações às corridas
+                allRides.forEach(ride => {
+                    const rating = ratings.find(r => r.rideId === ride.id);
+                    ride.rating = rating ? rating.rating : null;
+                    ride.comment = rating ? rating.comment : null;
+                });
+                
+            } catch (error) {
+                console.error('Erro ao carregar avaliações:', error);
+            }
+        }
+
+        // Aplicar filtros
+        function applyFilters() {
+            const statusFilter = document.getElementById('statusFilter').value;
+            const dateFilter = document.getElementById('dateFilter').value;
+            const searchFilter = document.getElementById('searchFilter').value.toLowerCase();
+            
+            filteredRides = allRides.filter(ride => {
+                // Filtro por status
+                if (statusFilter && ride.status !== statusFilter) {
+                    return false;
+                }
+                
+                // Filtro por data
+                if (dateFilter) {
+                    const rideDate = ride.createdAt.toDate();
+                    const now = new Date();
+                    
+                    switch (dateFilter) {
+                        case 'today':
+                            if (!isSameDay(rideDate, now)) return false;
+                            break;
+                        case 'week':
+                            if (!isWithinDays(rideDate, now, 7)) return false;
+                            break;
+                        case 'month':
+                            if (!isWithinDays(rideDate, now, 30)) return false;
+                            break;
+                        case 'year':
+                            if (!isWithinDays(rideDate, now, 365)) return false;
+                            break;
+                    }
+                }
+                
+                // Filtro por busca
+                if (searchFilter) {
+                    const searchText = `${ride.origin} ${ride.destination}`.toLowerCase();
+                    if (!searchText.includes(searchFilter)) {
+                        return false;
+                    }
+                }
+                
+                return true;
+            });
+            
+            // Atualizar estatísticas
+            updateStats();
+            
+            // Mostrar corridas filtradas
+            displayRides();
+            
+            // Resetar paginação
+            currentPage = 1;
+            updatePagination();
+        }
+
+        // Verificar se é o mesmo dia
+        function isSameDay(date1, date2) {
+            return date1.getDate() === date2.getDate() &&
+                   date1.getMonth() === date2.getMonth() &&
+                   date1.getFullYear() === date2.getFullYear();
+        }
+
+        // Verificar se está dentro de X dias
+        function isWithinDays(date1, date2, days) {
+            const diffTime = Math.abs(date2 - date1);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            return diffDays <= days;
+        }
+
+        // Atualizar estatísticas
+        function updateStats() {
+            const totalRides = filteredRides.length;
+            const completedRides = filteredRides.filter(ride => ride.status === 'completed').length;
+            const totalSpent = filteredRides
+                .filter(ride => ride.status === 'completed')
+                .reduce((sum, ride) => sum + (ride.finalPrice || 0), 0);
+            
+            const ratedRides = filteredRides.filter(ride => ride.rating);
+            const avgRating = ratedRides.length > 0 
+                ? (ratedRides.reduce((sum, ride) => sum + ride.rating, 0) / ratedRides.length).toFixed(1)
+                : '0.0';
+            
+            document.getElementById('totalRides').textContent = totalRides;
+            document.getElementById('completedRides').textContent = completedRides;
+            document.getElementById('totalSpent').textContent = utils.formatCurrency(totalSpent);
+            document.getElementById('avgRating').textContent = avgRating;
+        }
+
+        // Exibir corridas
+        function displayRides() {
+            const container = document.getElementById('ridesContainer');
+            
+            if (filteredRides.length === 0) {
+                showEmptyState();
+                return;
+            }
+            
+            // Calcular índices para paginação
+            const startIndex = (currentPage - 1) * ridesPerPage;
+            const endIndex = startIndex + ridesPerPage;
+            const pageRides = filteredRides.slice(startIndex, endIndex);
+            
+            let ridesHTML = '';
+            
+            pageRides.forEach(ride => {
+                ridesHTML += createRideHTML(ride);
+            });
+            
+            container.innerHTML = ridesHTML;
+        }
+
+        // Criar HTML de uma corrida
+        function createRideHTML(ride) {
+            const statusClass = getStatusClass(ride.status);
+            const statusText = getStatusText(ride.status);
+            const rideDate = ride.createdAt.toDate();
+            const formattedDate = rideDate.toLocaleDateString('pt-BR');
+            const formattedTime = rideDate.toLocaleTimeString('pt-BR', { 
+                hour: '2-digit', 
+                minute: '2-digit' 
+            });
+            
+            // Calcular distância e duração (simulado)
+            const distance = calculateDistance(ride.origin, ride.destination);
+            const duration = calculateDuration(distance);
+            
+            // Calcular preço se não estiver definido
+            const finalPrice = ride.finalPrice || utils.calculateFare(distance, duration * 60).total;
+            
+            return `
+                <div class="ride-item">
+                    <div class="ride-header">
+                        <div class="ride-route">
+                            <h4>${ride.origin} → ${ride.destination}</h4>
+                            <p>${formattedDate} às ${formattedTime}</p>
+                        </div>
+                        <div class="ride-status ${statusClass}">${statusText}</div>
+                    </div>
+                    
+                    <div class="ride-details">
+                        <div class="detail-item">
+                            <div class="detail-label">Distância</div>
+                            <div class="detail-value">${distance.toFixed(1)} km</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Duração</div>
+                            <div class="detail-value">${Math.round(duration)} min</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Preço</div>
+                            <div class="detail-value">${utils.formatCurrency(finalPrice)}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Motorista</div>
+                            <div class="detail-value">${ride.driverName || 'N/A'}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="ride-actions">
+                        ${ride.status === 'completed' ? `
+                            <button class="action-btn btn-outline" onclick="viewRideDetails('${ride.id}')">
+                                📋 Detalhes
+                            </button>
+                            ${ride.rating ? `
+                                <span class="action-btn btn-secondary" style="cursor: default;">
+                                    ⭐ ${ride.rating}/5
+                                </span>
+                            ` : `
+                                <button class="action-btn btn-primary" onclick="rateRide('${ride.id}')">
+                                    ⭐ Avaliar
+                                </button>
+                            `}
+                        ` : `
+                            <button class="action-btn btn-outline" onclick="viewRideDetails('${ride.id}')">
+                                📋 Detalhes
+                            </button>
+                        `}
+                    </div>
+                </div>
+            `;
+        }
+
+        // Obter classe CSS do status
+        function getStatusClass(status) {
+            switch (status) {
+                case 'completed': return 'status-completed';
+                case 'cancelled': return 'status-cancelled';
+                case 'pending': return 'status-pending';
+                default: return 'status-pending';
+            }
+        }
+
+        // Obter texto do status
+        function getStatusText(status) {
+            switch (status) {
+                case 'completed': return 'Finalizada';
+                case 'cancelled': return 'Cancelada';
+                case 'pending': return 'Pendente';
+                case 'assigned': return 'Motorista Atribuído';
+                case 'en_route': return 'A Caminho';
+                case 'arrived': return 'Chegou';
+                case 'in_progress': return 'Em Viagem';
+                default: return 'Desconhecido';
+            }
+        }
+
+        // Calcular distância (simulado)
+        function calculateDistance(origin, destination) {
+            return Math.random() * 13 + 2;
+        }
+
+        // Calcular duração (simulado)
+        function calculateDuration(distance) {
+            return (distance / 30) * 60;
+        }
+
+        // Mostrar estado vazio
+        function showEmptyState() {
+            const container = document.getElementById('ridesContainer');
+            container.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-icon">🚗</div>
+                    <h3>Nenhuma corrida encontrada</h3>
+                    <p>Você ainda não fez nenhuma corrida ou os filtros aplicados não retornaram resultados.</p>
+                </div>
+            `;
+        }
+
+        // Atualizar paginação
+        function updatePagination() {
+            const totalPages = Math.ceil(filteredRides.length / ridesPerPage);
+            const pagination = document.getElementById('pagination');
+            
+            if (totalPages <= 1) {
+                pagination.style.display = 'none';
+                return;
+            }
+            
+            pagination.style.display = 'flex';
+            
+            document.getElementById('currentPage').textContent = currentPage;
+            document.getElementById('prevBtn').disabled = currentPage === 1;
+            document.getElementById('nextBtn').disabled = currentPage === totalPages;
+        }
+
+        // Página anterior
+        function previousPage() {
+            if (currentPage > 1) {
+                currentPage--;
+                displayRides();
+                updatePagination();
+            }
+        }
+
+        // Próxima página
+        function nextPage() {
+            const totalPages = Math.ceil(filteredRides.length / ridesPerPage);
+            if (currentPage < totalPages) {
+                currentPage++;
+                displayRides();
+                updatePagination();
+            }
+        }
+
+        // Ver detalhes da corrida
+        function viewRideDetails(rideId) {
+            // Em um app real, isso abriria uma modal ou redirecionaria para uma página de detalhes
+            utils.showNotification('Funcionalidade de detalhes em desenvolvimento', 'info');
+        }
+
+        // Avaliar corrida
+        function rateRide(rideId) {
+            // Redirecionar para a página de avaliação
+            localStorage.setItem('currentRideId', rideId);
+            window.location.href = 'corrida_finalizada.html';
+        }
+
+        // Event listeners para filtros
+        document.getElementById('statusFilter').addEventListener('change', applyFilters);
+        document.getElementById('dateFilter').addEventListener('change', applyFilters);
+        document.getElementById('searchFilter').addEventListener('input', function() {
+            // Aplicar filtros após um pequeno delay para melhor performance
+            clearTimeout(this.searchTimeout);
+            this.searchTimeout = setTimeout(applyFilters, 300);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JUSTA - Métodos de Pagamento</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            padding: 1rem 1.5rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        .back-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .main-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-subtitle {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .payment-methods {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .method-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .method-card {
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .method-card:hover {
+            border-color: #4CAF50;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .method-card.selected {
+            border-color: #4CAF50;
+            background: #e8f5e8;
+        }
+
+        .method-card.default {
+            border-color: #2196F3;
+            background: #e3f2fd;
+        }
+
+        .default-badge {
+            position: absolute;
+            top: -10px;
+            right: 20px;
+            background: #2196F3;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .method-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .method-icon {
+            font-size: 2rem;
+        }
+
+        .method-info h4 {
+            color: #333;
+            margin-bottom: 0.3rem;
+        }
+
+        .method-info p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .method-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .action-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            flex: 1;
+        }
+
+        .btn-edit {
+            background: #ffc107;
+            color: #333;
+        }
+
+        .btn-delete {
+            background: #f44336;
+            color: white;
+        }
+
+        .btn-default {
+            background: #2196F3;
+            color: white;
+        }
+
+        .btn-edit:hover,
+        .btn-delete:hover,
+        .btn-default:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .add-method-section {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .add-method-btn {
+            width: 100%;
+            padding: 1.5rem;
+            border: 2px dashed #4CAF50;
+            border-radius: 15px;
+            background: transparent;
+            color: #4CAF50;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .add-method-btn:hover {
+            background: #4CAF50;
+            color: white;
+            border-color: #4CAF50;
+        }
+
+        .payment-history {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .history-item:last-child {
+            border-bottom: none;
+        }
+
+        .history-info h4 {
+            color: #333;
+            margin-bottom: 0.3rem;
+        }
+
+        .history-info p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .history-amount {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #4CAF50;
+        }
+
+        .history-status {
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-success {
+            background: #e8f5e8;
+            color: #2e7d32;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-failed {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 2rem;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+        }
+
+        .close {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .close:hover {
+            color: #333;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-cancel {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-save {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .btn-cancel:hover,
+        .btn-save:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+        }
+
+        .empty-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #4CAF50;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .method-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .modal-content {
+                margin: 10% auto;
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div class="logo">JUSTA</div>
+            <a href="home.html" class="back-btn">← Voltar</a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="page-header">
+            <h1 class="page-title">Métodos de Pagamento</h1>
+            <p class="page-subtitle">Gerencie suas formas de pagamento</p>
+        </div>
+
+        <div class="payment-methods">
+            <h3 class="section-title">💳 Seus Métodos de Pagamento</h3>
+            <div class="method-grid" id="methodsGrid">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Carregando métodos de pagamento...</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="add-method-section">
+            <button class="add-method-btn" onclick="openAddMethodModal()">
+                ➕ Adicionar Novo Método de Pagamento
+            </button>
+        </div>
+
+        <div class="payment-history">
+            <h3 class="section-title">📋 Histórico de Pagamentos</h3>
+            <div id="paymentHistory">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Carregando histórico...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para adicionar/editar método de pagamento -->
+    <div id="paymentModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h3 class="modal-title" id="modalTitle">Adicionar Método de Pagamento</h3>
+            
+            <form id="paymentForm">
+                <div class="form-group">
+                    <label for="methodType">Tipo de Pagamento</label>
+                    <select id="methodType" onchange="updateFormFields()">
+                        <option value="card">Cartão de Crédito/Débito</option>
+                        <option value="pix">PIX</option>
+                        <option value="bank">Transferência Bancária</option>
+                    </select>
+                </div>
+                
+                <div id="cardFields">
+                    <div class="form-group">
+                        <label for="cardNumber">Número do Cartão</label>
+                        <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19">
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="expiryDate">Data de Validade</label>
+                            <input type="text" id="expiryDate" placeholder="MM/AA" maxlength="5">
+                        </div>
+                        <div class="form-group">
+                            <label for="cvv">CVV</label>
+                            <input type="text" id="cvv" placeholder="123" maxlength="4">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="cardholderName">Nome no Cartão</label>
+                        <input type="text" id="cardholderName" placeholder="Nome completo">
+                    </div>
+                </div>
+                
+                <div id="pixFields" style="display: none;">
+                    <div class="form-group">
+                        <label for="pixKey">Chave PIX</label>
+                        <input type="text" id="pixKey" placeholder="CPF, e-mail ou telefone">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="pixType">Tipo de Chave</label>
+                        <select id="pixType">
+                            <option value="cpf">CPF</option>
+                            <option value="email">E-mail</option>
+                            <option value="phone">Telefone</option>
+                            <option value="random">Chave Aleatória</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div id="bankFields" style="display: none;">
+                    <div class="form-group">
+                        <label for="bankName">Nome do Banco</label>
+                        <input type="text" id="bankName" placeholder="Nome do banco">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="accountType">Tipo de Conta</label>
+                        <select id="accountType">
+                            <option value="checking">Conta Corrente</option>
+                            <option value="savings">Conta Poupança</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="accountNumber">Número da Conta</label>
+                        <input type="text" id="accountNumber" placeholder="Número da conta">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="methodName">Nome para Identificação</label>
+                    <input type="text" id="methodName" placeholder="Ex: Cartão Principal, PIX Pessoal">
+                </div>
+                
+                <div class="modal-actions">
+                    <button type="button" class="modal-btn btn-cancel" onclick="closeModal()">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="modal-btn btn-save">
+                        Salvar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-storage-compat.js"></script>
+    
+    <!-- Sistema de Pagamento -->
+    <script src="../assets/payment-config.js"></script>
+    
+    <!-- Configuração do Firebase -->
+    <script src="../assets/firebase-config.js"></script>
+
+    <script>
+        let currentUser = null;
+        let paymentMethods = [];
+        let editingMethodId = null;
+        let paymentSystem = null;
+
+        // Verificar se está logado
+        document.addEventListener('DOMContentLoaded', async function() {
+            await waitForFirebase();
+            
+            if (!utils.isLoggedIn()) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Inicializar sistema de pagamento
+            try {
+                paymentSystem = new PaymentSystem();
+                await paymentSystem.initialize('stripe');
+                console.log('Sistema de pagamento inicializado com sucesso');
+            } catch (error) {
+                console.error('Erro ao inicializar sistema de pagamento:', error);
+                utils.showNotification('Sistema de pagamento temporariamente indisponível', 'warning');
+            }
+
+            // Carregar dados do usuário
+            loadUserData();
+            
+            // Carregar métodos de pagamento
+            loadPaymentMethods();
+            
+            // Carregar histórico de pagamentos
+            loadPaymentHistory();
+        });
+
+        // Carregar dados do usuário
+        function loadUserData() {
+            const userData = JSON.parse(localStorage.getItem('userData'));
+            if (userData) {
+                currentUser = userData;
+            }
+        }
+
+        // Carregar métodos de pagamento
+        async function loadPaymentMethods() {
+            try {
+                const userId = localStorage.getItem('userId');
+                const methodsSnapshot = await db.collection('paymentMethods')
+                    .where('userId', '==', userId)
+                    .orderBy('isDefault', 'desc')
+                    .orderBy('createdAt', 'desc')
+                    .get();
+                
+                paymentMethods = methodsSnapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                }));
+                
+                displayPaymentMethods();
+                
+            } catch (error) {
+                console.error('Erro ao carregar métodos de pagamento:', error);
+                utils.showNotification('Erro ao carregar métodos de pagamento', 'error');
+                showEmptyState();
+            }
+        }
+
+        // Exibir métodos de pagamento
+        function displayPaymentMethods() {
+            const grid = document.getElementById('methodsGrid');
+            
+            if (paymentMethods.length === 0) {
+                showEmptyState();
+                return;
+            }
+            
+            let methodsHTML = '';
+            
+            paymentMethods.forEach(method => {
+                methodsHTML += createMethodHTML(method);
+            });
+            
+            grid.innerHTML = methodsHTML;
+        }
+
+        // Criar HTML de um método de pagamento
+        function createMethodHTML(method) {
+            const icon = getMethodIcon(method.type);
+            const typeText = getMethodTypeText(method.type);
+            const details = getMethodDetails(method);
+            
+            return `
+                <div class="method-card ${method.isDefault ? 'default' : ''}" onclick="selectMethod('${method.id}')">
+                    ${method.isDefault ? '<div class="default-badge">Padrão</div>' : ''}
+                    
+                    <div class="method-header">
+                        <div class="method-icon">${icon}</div>
+                        <div class="method-info">
+                            <h4>${method.name}</h4>
+                            <p>${typeText}</p>
+                            <p>${details}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="method-actions">
+                        <button class="action-btn btn-edit" onclick="editMethod('${method.id}')">
+                            ✏️ Editar
+                        </button>
+                        ${!method.isDefault ? `
+                            <button class="action-btn btn-default" onclick="setAsDefault('${method.id}')">
+                                ⭐ Padrão
+                            </button>
+                        ` : ''}
+                        <button class="action-btn btn-delete" onclick="deleteMethod('${method.id}')">
+                            🗑️ Excluir
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Obter ícone do método
+        function getMethodIcon(type) {
+            switch (type) {
+                case 'card': return '💳';
+                case 'pix': return '📱';
+                case 'bank': return '🏦';
+                default: return '💰';
+            }
+        }
+
+        // Obter texto do tipo
+        function getMethodTypeText(type) {
+            switch (type) {
+                case 'card': return 'Cartão de Crédito/Débito';
+                case 'pix': return 'PIX';
+                case 'bank': return 'Transferência Bancária';
+                default: return 'Outro';
+            }
+        }
+
+        // Obter detalhes do método
+        function getMethodDetails(method) {
+            switch (method.type) {
+                case 'card':
+                    return `**** **** **** ${method.cardNumber.slice(-4)}`;
+                case 'pix':
+                    return `${method.pixType.toUpperCase()}: ${method.pixKey}`;
+                case 'bank':
+                    return `${method.bankName} - ${method.accountType === 'checking' ? 'CC' : 'CP'}`;
+                default:
+                    return '';
+            }
+        }
+
+        // Mostrar estado vazio
+        function showEmptyState() {
+            const grid = document.getElementById('methodsGrid');
+            grid.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-icon">💳</div>
+                    <h3>Nenhum método de pagamento</h3>
+                    <p>Adicione sua primeira forma de pagamento para começar a usar o JUSTA.</p>
+                </div>
+            `;
+        }
+
+        // Selecionar método
+        function selectMethod(methodId) {
+            // Remover seleção anterior
+            document.querySelectorAll('.method-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            // Selecionar método atual
+            const selectedCard = document.querySelector(`[onclick="selectMethod('${methodId}')"]`);
+            if (selectedCard) {
+                selectedCard.classList.add('selected');
+            }
+        }
+
+        // Abrir modal para adicionar método
+        function openAddMethodModal() {
+            editingMethodId = null;
+            document.getElementById('modalTitle').textContent = 'Adicionar Método de Pagamento';
+            document.getElementById('paymentForm').reset();
+            updateFormFields();
+            document.getElementById('paymentModal').style.display = 'block';
+        }
+
+        // Editar método
+        function editMethod(methodId) {
+            const method = paymentMethods.find(m => m.id === methodId);
+            if (!method) return;
+            
+            editingMethodId = methodId;
+            document.getElementById('modalTitle').textContent = 'Editar Método de Pagamento';
+            
+            // Preencher formulário
+            document.getElementById('methodType').value = method.type;
+            document.getElementById('methodName').value = method.name;
+            
+            updateFormFields();
+            
+            // Preencher campos específicos
+            if (method.type === 'card') {
+                document.getElementById('cardNumber').value = method.cardNumber;
+                document.getElementById('expiryDate').value = method.expiryDate;
+                document.getElementById('cvv').value = method.cvv;
+                document.getElementById('cardholderName').value = method.cardholderName;
+            } else if (method.type === 'pix') {
+                document.getElementById('pixKey').value = method.pixKey;
+                document.getElementById('pixType').value = method.pixType;
+            } else if (method.type === 'bank') {
+                document.getElementById('bankName').value = method.bankName;
+                document.getElementById('accountType').value = method.accountType;
+                document.getElementById('accountNumber').value = method.accountNumber;
+            }
+            
+            document.getElementById('paymentModal').style.display = 'block';
+        }
+
+        // Atualizar campos do formulário
+        function updateFormFields() {
+            const methodType = document.getElementById('methodType').value;
+            
+            // Ocultar todos os campos
+            document.getElementById('cardFields').style.display = 'none';
+            document.getElementById('pixFields').style.display = 'none';
+            document.getElementById('bankFields').style.display = 'none';
+            
+            // Mostrar campos apropriados
+            switch (methodType) {
+                case 'card':
+                    document.getElementById('cardFields').style.display = 'block';
+                    break;
+                case 'pix':
+                    document.getElementById('pixFields').style.display = 'block';
+                    break;
+                case 'bank':
+                    document.getElementById('bankFields').style.display = 'block';
+                    break;
+            }
+        }
+
+        // Fechar modal
+        function closeModal() {
+            document.getElementById('paymentModal').style.display = 'none';
+            editingMethodId = null;
+        }
+
+        // Salvar método de pagamento
+        document.getElementById('paymentForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const methodType = document.getElementById('methodType').value;
+            const methodName = document.getElementById('methodName').value.trim();
+            
+            if (!methodName) {
+                utils.showNotification('Por favor, insira um nome para identificação', 'warning');
+                return;
+            }
+            
+            // Validar campos específicos
+            if (!validateMethodFields(methodType)) {
+                return;
+            }
+            
+            try {
+                const userId = localStorage.getItem('userId');
+                const methodData = {
+                    userId: userId,
+                    type: methodType,
+                    name: methodName,
+                    isDefault: paymentMethods.length === 0, // Primeiro método será padrão
+                    createdAt: new Date(),
+                    updatedAt: new Date()
+                };
+                
+                // Adicionar campos específicos
+                if (methodType === 'card') {
+                    methodData.cardNumber = document.getElementById('cardNumber').value;
+                    methodData.expiryDate = document.getElementById('expiryDate').value;
+                    methodData.cvv = document.getElementById('cvv').value;
+                    methodData.cardholderName = document.getElementById('cardholderName').value;
+                } else if (methodType === 'pix') {
+                    methodData.pixKey = document.getElementById('pixKey').value;
+                    methodData.pixType = document.getElementById('pixType').value;
+                } else if (methodType === 'bank') {
+                    methodData.bankName = document.getElementById('bankName').value;
+                    methodData.accountType = document.getElementById('accountType').value;
+                    methodData.accountNumber = document.getElementById('accountNumber').value;
+                }
+                
+                if (editingMethodId) {
+                    // Atualizar método existente
+                    await db.collection('paymentMethods').doc(editingMethodId).update({
+                        ...methodData,
+                        updatedAt: new Date()
+                    });
+                    utils.showNotification('Método de pagamento atualizado com sucesso!', 'success');
+                } else {
+                    // Adicionar novo método
+                    await db.collection('paymentMethods').add(methodData);
+                    utils.showNotification('Método de pagamento adicionado com sucesso!', 'success');
+                }
+                
+                closeModal();
+                loadPaymentMethods(); // Recarregar lista
+                
+            } catch (error) {
+                console.error('Erro ao salvar método de pagamento:', error);
+                utils.showNotification('Erro ao salvar método de pagamento', 'error');
+            }
+        });
+
+        // Validar campos do método
+        function validateMethodFields(type) {
+            switch (type) {
+                case 'card':
+                    const cardNumber = document.getElementById('cardNumber').value.replace(/\s/g, '');
+                    const expiryDate = document.getElementById('expiryDate').value;
+                    const cvv = document.getElementById('cvv').value;
+                    const cardholderName = document.getElementById('cardholderName').value.trim();
+                    
+                    // Usar sistema de validação do PaymentSystem se disponível
+                    if (paymentSystem && paymentSystem.validateCard) {
+                        const [month, year] = expiryDate.split('/');
+                        const validation = paymentSystem.validateCard(cardNumber, month, year, cvv);
+                        
+                        if (!validation.valid) {
+                            utils.showNotification(validation.error, 'warning');
+                            return false;
+                        }
+                    } else {
+                        // Validação básica como fallback
+                        if (cardNumber.length < 13 || cardNumber.length > 19) {
+                            utils.showNotification('Número do cartão inválido', 'warning');
+                            return false;
+                        }
+                        
+                        if (!/^\d{2}\/\d{2}$/.test(expiryDate)) {
+                            utils.showNotification('Data de validade inválida (MM/AA)', 'warning');
+                            return false;
+                        }
+                        
+                        if (cvv.length < 3 || cvv.length > 4) {
+                            utils.showNotification('CVV inválido', 'warning');
+                            return false;
+                        }
+                    }
+                    
+                    if (!cardholderName) {
+                        utils.showNotification('Nome no cartão é obrigatório', 'warning');
+                        return false;
+                    }
+                    break;
+                    
+                case 'pix':
+                    const pixKey = document.getElementById('pixKey').value.trim();
+                    if (!pixKey) {
+                        utils.showNotification('Chave PIX é obrigatória', 'warning');
+                        return false;
+                    }
+                    break;
+                    
+                case 'bank':
+                    const bankName = document.getElementById('bankName').value.trim();
+                    const accountNumber = document.getElementById('accountNumber').value.trim();
+                    
+                    if (!bankName) {
+                        utils.showNotification('Nome do banco é obrigatório', 'warning');
+                        return false;
+                    }
+                    
+                    if (!accountNumber) {
+                        utils.showNotification('Número da conta é obrigatório', 'warning');
+                        return false;
+                    }
+                    break;
+            }
+            
+            return true;
+        }
+
+        // Definir como padrão
+        async function setAsDefault(methodId) {
+            try {
+                const userId = localStorage.getItem('userId');
+                
+                // Remover padrão anterior
+                const defaultMethods = paymentMethods.filter(m => m.isDefault);
+                for (const method of defaultMethods) {
+                    await db.collection('paymentMethods').doc(method.id).update({
+                        isDefault: false,
+                        updatedAt: new Date()
+                    });
+                }
+                
+                // Definir novo padrão
+                await db.collection('paymentMethods').doc(methodId).update({
+                    isDefault: true,
+                    updatedAt: new Date()
+                });
+                
+                utils.showNotification('Método definido como padrão!', 'success');
+                loadPaymentMethods(); // Recarregar lista
+                
+            } catch (error) {
+                console.error('Erro ao definir método como padrão:', error);
+                utils.showNotification('Erro ao definir método como padrão', 'error');
+            }
+        }
+
+        // Excluir método
+        async function deleteMethod(methodId) {
+            const method = paymentMethods.find(m => m.id === methodId);
+            if (!method) return;
+            
+            if (confirm(`Tem certeza que deseja excluir "${method.name}"?`)) {
+                try {
+                    await db.collection('paymentMethods').doc(methodId).delete();
+                    utils.showNotification('Método de pagamento excluído com sucesso!', 'success');
+                    loadPaymentMethods(); // Recarregar lista
+                    
+                } catch (error) {
+                    console.error('Erro ao excluir método de pagamento:', error);
+                    utils.showNotification('Erro ao excluir método de pagamento', 'error');
+                }
+            }
+        }
+
+        // Carregar histórico de pagamentos
+        async function loadPaymentHistory() {
+            try {
+                const userId = localStorage.getItem('userId');
+                const paymentsSnapshot = await db.collection('payments')
+                    .where('userId', '==', userId)
+                    .orderBy('createdAt', 'desc')
+                    .limit(10)
+                    .get();
+                
+                const payments = paymentsSnapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                }));
+                
+                displayPaymentHistory(payments);
+                
+            } catch (error) {
+                console.error('Erro ao carregar histórico de pagamentos:', error);
+                document.getElementById('paymentHistory').innerHTML = 
+                    '<p style="text-align: center; color: #666;">Erro ao carregar histórico</p>';
+            }
+        }
+
+        // Exibir histórico de pagamentos
+        function displayPaymentHistory(payments) {
+            const container = document.getElementById('paymentHistory');
+            
+            if (payments.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📋</div>
+                        <h3>Nenhum pagamento encontrado</h3>
+                        <p>Seu histórico de pagamentos aparecerá aqui.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            let historyHTML = '';
+            
+            payments.forEach(payment => {
+                const statusClass = getPaymentStatusClass(payment.status);
+                const statusText = getPaymentStatusText(payment.status);
+                const paymentDate = payment.createdAt.toDate();
+                const formattedDate = paymentDate.toLocaleDateString('pt-BR');
+                const formattedTime = paymentDate.toLocaleTimeString('pt-BR', { 
+                    hour: '2-digit', 
+                    minute: '2-digit' 
+                });
+                
+                historyHTML += `
+                    <div class="history-item">
+                        <div class="history-info">
+                            <h4>${payment.description || 'Pagamento de corrida'}</h4>
+                            <p>${formattedDate} às ${formattedTime}</p>
+                        </div>
+                        <div class="history-amount">${utils.formatCurrency(payment.amount)}</div>
+                        <div class="history-status ${statusClass}">${statusText}</div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = historyHTML;
+        }
+
+        // Obter classe CSS do status do pagamento
+        function getPaymentStatusClass(status) {
+            switch (status) {
+                case 'completed': return 'status-success';
+                case 'pending': return 'status-pending';
+                case 'failed': return 'status-failed';
+                default: return 'status-pending';
+            }
+        }
+
+        // Obter texto do status do pagamento
+        function getPaymentStatusText(status) {
+            switch (status) {
+                case 'completed': return 'Concluído';
+                case 'pending': return 'Pendente';
+                case 'failed': return 'Falhou';
+                default: return 'Desconhecido';
+            }
+        }
+
+        // Máscaras para campos
+        document.getElementById('cardNumber').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 16) value = value.slice(0, 16);
+            
+            // Adicionar espaços a cada 4 dígitos
+            value = value.replace(/(\d{4})(?=\d)/g, '$1 ');
+            e.target.value = value;
+        });
+
+        document.getElementById('expiryDate').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 4) value = value.slice(0, 4);
+            
+            if (value.length > 2) {
+                value = value.slice(0, 2) + '/' + value.slice(2);
+            }
+            
+            e.target.value = value;
+        });
+
+        document.getElementById('cvv').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 4) value = value.slice(0, 4);
+            e.target.value = value;
+        });
+
+        // Fechar modal ao clicar fora
+        window.onclick = function(event) {
+            const modal = document.getElementById('paymentModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        };
+    </script>
+</body>
+</html>

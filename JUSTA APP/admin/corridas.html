@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JUSTA - Gerenciar Corridas</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #9C27B0, #673AB7);
+            color: white;
+            padding: 1rem 1.5rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .nav-link.active {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-subtitle {
+            color: #666;
+            font-size: 1.2rem;
+        }
+
+        .stats-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #9C27B0;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .filters-section {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .filters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            align-items: end;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .filter-group label {
+            font-weight: 500;
+            color: #333;
+            font-size: 0.9rem;
+        }
+
+        .filter-group input,
+        .filter-group select {
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .filter-group input:focus,
+        .filter-group select:focus {
+            outline: none;
+            border-color: #9C27B0;
+        }
+
+        .filter-btn {
+            background: linear-gradient(135deg, #9C27B0, #673AB7);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(156, 39, 176, 0.3);
+        }
+
+        .rides-section {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .refresh-btn {
+            background: #9C27B0;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .refresh-btn:hover {
+            background: #673AB7;
+            transform: translateY(-2px);
+        }
+
+        .rides-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .rides-table th,
+        .rides-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .rides-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #333;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+        }
+
+        .rides-table tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .ride-info h4 {
+            color: #333;
+            margin-bottom: 0.3rem;
+            font-size: 1rem;
+        }
+
+        .ride-info p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-pending {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        .status-confirmed {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .status-started {
+            background: #e8f5e8;
+            color: #2e7d32;
+        }
+
+        .status-completed {
+            background: #e8f5e8;
+            color: #2e7d32;
+        }
+
+        .status-cancelled {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .action-btn.view {
+            background: #2196F3;
+            color: white;
+        }
+
+        .action-btn.view:hover {
+            background: #1976D2;
+        }
+
+        .action-btn.cancel {
+            background: #f44336;
+            color: white;
+        }
+
+        .action-btn.cancel:hover {
+            background: #d32f2f;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .page-btn {
+            padding: 8px 16px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            color: #333;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .page-btn:hover {
+            border-color: #9C27B0;
+            color: #9C27B0;
+        }
+
+        .page-btn.active {
+            background: #9C27B0;
+            border-color: #9C27B0;
+            color: white;
+        }
+
+        .page-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 3rem;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #9C27B0;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .no-rides {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+        }
+
+        .no-rides-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #4CAF50;
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.error {
+            background: #f44336;
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            
+            .filters-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .rides-table {
+                font-size: 0.8rem;
+            }
+            
+            .rides-table th,
+            .rides-table td {
+                padding: 0.5rem;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                gap: 0.3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div class="logo">👑 JUSTA Admin</div>
+            <div class="nav-links">
+                <a href="dashboard.html" class="nav-link">Dashboard</a>
+                <a href="corridas.html" class="nav-link active">Corridas</a>
+                <a href="motoristas.html" class="nav-link">Motoristas</a>
+                <a href="usuarios.html" class="nav-link">Usuários</a>
+                <a href="financeiro.html" class="nav-link">Financeiro</a>
+                <a href="promocoes.html" class="nav-link">Promoções</a>
+                <a href="suporte.html" class="nav-link">Suporte</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="page-header">
+            <h1 class="page-title">🚗 Gerenciar Corridas</h1>
+            <p class="page-subtitle">Visualize e gerencie todas as corridas da plataforma</p>
+        </div>
+
+        <!-- Estatísticas -->
+        <div class="stats-cards">
+            <div class="stat-card">
+                <div class="stat-icon">🚗</div>
+                <div class="stat-value" id="totalRides">0</div>
+                <div class="stat-label">Total de Corridas</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">⏳</div>
+                <div class="stat-value" id="pendingRides">0</div>
+                <div class="stat-label">Pendentes</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">✅</div>
+                <div class="stat-value" id="completedRides">0</div>
+                <div class="stat-label">Finalizadas</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">💰</div>
+                <div class="stat-value" id="totalRevenue">R$ 0</div>
+                <div class="stat-label">Receita Total</div>
+            </div>
+        </div>
+
+        <!-- Filtros -->
+        <div class="filters-section">
+            <div class="filters-grid">
+                <div class="filter-group">
+                    <label for="statusFilter">Status</label>
+                    <select id="statusFilter">
+                        <option value="">Todos os status</option>
+                        <option value="pending">Pendentes</option>
+                        <option value="confirmed">Confirmadas</option>
+                        <option value="started">Iniciadas</option>
+                        <option value="completed">Finalizadas</option>
+                        <option value="cancelled">Canceladas</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label for="dateFilter">Data</label>
+                    <select id="dateFilter">
+                        <option value="">Todas as datas</option>
+                        <option value="today">Hoje</option>
+                        <option value="week">Esta semana</option>
+                        <option value="month">Este mês</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label for="searchFilter">Buscar</label>
+                    <input type="text" id="searchFilter" placeholder="Origem, destino ou ID">
+                </div>
+                
+                <div class="filter-group">
+                    <button class="filter-btn" onclick="applyFilters()">🔍 Aplicar Filtros</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lista de Corridas -->
+        <div class="rides-section">
+            <div class="section-header">
+                <h2 class="section-title">🚗 Lista de Corridas</h2>
+                <button class="refresh-btn" onclick="loadRides()">🔄 Atualizar</button>
+            </div>
+            
+            <div id="ridesContainer">
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <p>Carregando corridas...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notificação -->
+    <div class="notification" id="notification"></div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-storage-compat.js"></script>
+    
+    <!-- Configuração do Firebase -->
+    <script src="../assets/firebase-config.js"></script>
+
+    <script>
+        let allRides = [];
+        let filteredRides = [];
+        let currentPage = 1;
+        const ridesPerPage = 10;
+
+        // Verificar se está logado
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!utils.isLoggedIn()) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            const userType = localStorage.getItem('userType');
+            if (userType !== 'admin') {
+                utils.logout();
+                window.location.href = '../index.html';
+                return;
+            }
+
+            // Carregar corridas
+            loadRides();
+            
+            // Configurar filtros
+            setupFilters();
+        });
+
+        // Carregar corridas
+        async function loadRides() {
+            try {
+                const loading = document.getElementById('loading');
+                loading.style.display = 'block';
+                
+                // Buscar todas as corridas
+                const ridesSnapshot = await db.collection('rides').get();
+                
+                allRides = [];
+                ridesSnapshot.forEach(doc => {
+                    allRides.push({
+                        id: doc.id,
+                        ...doc.data()
+                    });
+                });
+                
+                // Aplicar filtros
+                applyFilters();
+                
+                // Atualizar estatísticas
+                updateStats();
+                
+            } catch (error) {
+                console.error('Erro ao carregar corridas:', error);
+                utils.showNotification('Erro ao carregar corridas', 'error');
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+
+        // Configurar filtros
+        function setupFilters() {
+            document.getElementById('statusFilter').addEventListener('change', applyFilters);
+            document.getElementById('dateFilter').addEventListener('change', applyFilters);
+            document.getElementById('searchFilter').addEventListener('input', applyFilters);
+        }
+
+        // Aplicar filtros
+        function applyFilters() {
+            const statusFilter = document.getElementById('statusFilter').value;
+            const dateFilter = document.getElementById('dateFilter').value;
+            const searchFilter = document.getElementById('searchFilter').value.toLowerCase();
+            
+            filteredRides = allRides.filter(ride => {
+                // Filtro de status
+                if (statusFilter && ride.status !== statusFilter) {
+                    return false;
+                }
+                
+                // Filtro de data
+                if (dateFilter && ride.createdAt) {
+                    if (!isWithinFilter(ride.createdAt, dateFilter)) {
+                        return false;
+                    }
+                }
+                
+                // Filtro de busca
+                if (searchFilter) {
+                    const searchText = `${ride.origin || ''} ${ride.destination || ''} ${ride.id || ''}`.toLowerCase();
+                    if (!searchText.includes(searchFilter)) {
+                        return false;
+                    }
+                }
+                
+                return true;
+            });
+            
+            // Resetar para primeira página
+            currentPage = 1;
+            
+            // Exibir corridas
+            displayRides();
+        }
+
+        // Verificar se está dentro do filtro de data
+        function isWithinFilter(timestamp, filter) {
+            if (!timestamp) return false;
+            
+            const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+            const now = new Date();
+            
+            switch (filter) {
+                case 'today':
+                    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                    return date >= todayStart;
+                case 'week':
+                    const weekStart = new Date(now.getTime() - (7 * 24 * 60 * 60 * 1000));
+                    return date >= weekStart;
+                case 'month':
+                    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+                    return date >= monthStart;
+                default:
+                    return true;
+            }
+        }
+
+        // Atualizar estatísticas
+        function updateStats() {
+            const total = allRides.length;
+            const pending = allRides.filter(r => r.status === 'pending').length;
+            const completed = allRides.filter(r => r.status === 'completed').length;
+            
+            let totalRevenue = 0;
+            allRides.forEach(ride => {
+                if (ride.totalPrice) {
+                    totalRevenue += ride.totalPrice;
+                }
+            });
+            
+            document.getElementById('totalRides').textContent = total;
+            document.getElementById('pendingRides').textContent = pending;
+            document.getElementById('completedRides').textContent = completed;
+            document.getElementById('totalRevenue').textContent = utils.formatCurrency(totalRevenue);
+        }
+
+        // Exibir corridas
+        function displayRides() {
+            const container = document.getElementById('ridesContainer');
+            
+            if (filteredRides.length === 0) {
+                showNoRides();
+                return;
+            }
+            
+            // Calcular paginação
+            const startIndex = (currentPage - 1) * ridesPerPage;
+            const endIndex = startIndex + ridesPerPage;
+            const pageRides = filteredRides.slice(startIndex, endIndex);
+            
+            // Criar tabela
+            const tableHTML = `
+                <table class="rides-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Passageiro</th>
+                            <th>Motorista</th>
+                            <th>Rota</th>
+                            <th>Status</th>
+                            <th>Valor</th>
+                            <th>Data</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${pageRides.map(ride => createRideRow(ride)).join('')}
+                    </tbody>
+                </table>
+            `;
+            
+            // Adicionar paginação
+            const paginationHTML = createPagination();
+            
+            container.innerHTML = tableHTML + paginationHTML;
+        }
+
+        // Criar linha da tabela
+        function createRideRow(ride) {
+            const statusClass = `status-${ride.status}`;
+            const statusText = getStatusText(ride.status);
+            const createdAt = formatDate(ride.createdAt);
+            const value = ride.totalPrice ? utils.formatCurrency(ride.totalPrice) : 'N/A';
+            
+            return `
+                <tr>
+                    <td><strong>${ride.id.slice(0, 8)}...</strong></td>
+                    <td>
+                        <div class="ride-info">
+                            <h4>${ride.passengerName || 'N/A'}</h4>
+                            <p>${ride.passengerPhone || 'N/A'}</p>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="ride-info">
+                            <h4>${ride.driverName || 'N/A'}</h4>
+                            <p>${ride.driverPhone || 'N/A'}</p>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="ride-info">
+                            <h4>${ride.origin || 'N/A'}</h4>
+                            <p>→ ${ride.destination || 'N/A'}</p>
+                        </div>
+                    </td>
+                    <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                    <td><strong>${value}</strong></td>
+                    <td>${createdAt}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="action-btn view" onclick="viewRide('${ride.id}')">👁️ Ver</button>
+                            ${ride.status === 'pending' || ride.status === 'confirmed' ? `
+                                <button class="action-btn cancel" onclick="cancelRide('${ride.id}')">❌ Cancelar</button>
+                            ` : ''}
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }
+
+        // Mostrar mensagem de nenhuma corrida
+        function showNoRides() {
+            const container = document.getElementById('ridesContainer');
+            container.innerHTML = `
+                <div class="no-rides">
+                    <div class="no-rides-icon">🚗</div>
+                    <div>Nenhuma corrida encontrada</div>
+                </div>
+            `;
+        }
+
+        // Criar paginação
+        function createPagination() {
+            const totalPages = Math.ceil(filteredRides.length / ridesPerPage);
+            
+            if (totalPages <= 1) return '';
+            
+            let paginationHTML = '<div class="pagination">';
+            
+            // Botão anterior
+            paginationHTML += `
+                <button class="page-btn" onclick="previousPage()" ${currentPage === 1 ? 'disabled' : ''}>
+                    ← Anterior
+                </button>
+            `;
+            
+            // Páginas
+            for (let i = 1; i <= totalPages; i++) {
+                paginationHTML += `
+                    <button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="goToPage(${i})">
+                        ${i}
+                    </button>
+                `;
+            }
+            
+            // Botão próximo
+            paginationHTML += `
+                <button class="page-btn" onclick="nextPage()" ${currentPage === totalPages ? 'disabled' : ''}>
+                    Próxima →
+                </button>
+            `;
+            
+            paginationHTML += '</div>';
+            
+            return paginationHTML;
+        }
+
+        // Navegação de páginas
+        function previousPage() {
+            if (currentPage > 1) {
+                currentPage--;
+                displayRides();
+            }
+        }
+
+        function nextPage() {
+            const totalPages = Math.ceil(filteredRides.length / ridesPerPage);
+            if (currentPage < totalPages) {
+                currentPage++;
+                displayRides();
+            }
+        }
+
+        function goToPage(page) {
+            currentPage = page;
+            displayRides();
+        }
+
+        // Ações das corridas
+        async function cancelRide(rideId) {
+            if (confirm('Tem certeza que deseja cancelar esta corrida?')) {
+                try {
+                    await db.collection('rides').doc(rideId).update({
+                        status: 'cancelled',
+                        cancelledAt: new Date(),
+                        cancelledBy: 'admin'
+                    });
+                    
+                    utils.showNotification('Corrida cancelada com sucesso!', 'success');
+                    loadRides();
+                    
+                } catch (error) {
+                    console.error('Erro ao cancelar corrida:', error);
+                    utils.showNotification('Erro ao cancelar corrida', 'error');
+                }
+            }
+        }
+
+        function viewRide(rideId) {
+            // Implementar visualização detalhada da corrida
+            utils.showNotification('Funcionalidade de visualização em desenvolvimento', 'info');
+        }
+
+        // Funções auxiliares
+        function getStatusText(status) {
+            const statusTexts = {
+                'pending': 'Pendente',
+                'confirmed': 'Confirmada',
+                'started': 'Iniciada',
+                'completed': 'Finalizada',
+                'cancelled': 'Cancelada'
+            };
+            return statusTexts[status] || 'Desconhecido';
+        }
+
+        function formatDate(timestamp) {
+            if (!timestamp) return 'N/A';
+            
+            const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+            return date.toLocaleDateString('pt-BR', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        function showNotification(message, type = 'info') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${type}`;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

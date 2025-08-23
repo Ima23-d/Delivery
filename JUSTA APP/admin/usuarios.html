@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JUSTA - Gerenciar Usuários</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #9C27B0, #673AB7);
+            color: white;
+            padding: 1rem 1.5rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .nav-link.active {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-subtitle {
+            color: #666;
+            font-size: 1.2rem;
+        }
+
+        .stats-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #9C27B0;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .filters-section {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .filters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            align-items: end;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .filter-group label {
+            font-weight: 500;
+            color: #333;
+            font-size: 0.9rem;
+        }
+
+        .filter-group input,
+        .filter-group select {
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .filter-group input:focus,
+        .filter-group select:focus {
+            outline: none;
+            border-color: #9C27B0;
+        }
+
+        .filter-btn {
+            background: linear-gradient(135deg, #9C27B0, #673AB7);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(156, 39, 176, 0.3);
+        }
+
+        .users-section {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .refresh-btn {
+            background: #9C27B0;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .refresh-btn:hover {
+            background: #673AB7;
+            transform: translateY(-2px);
+        }
+
+        .users-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .users-table th,
+        .users-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .users-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #333;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+        }
+
+        .users-table tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #9C27B0, #673AB7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        .user-info h4 {
+            color: #333;
+            margin-bottom: 0.3rem;
+            font-size: 1rem;
+        }
+
+        .user-info p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .user-type-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .type-passageiro {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .type-motorista {
+            background: #e8f5e8;
+            color: #2e7d32;
+        }
+
+        .type-admin {
+            background: #fce4ec;
+            color: #c2185b;
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-active {
+            background: #e8f5e8;
+            color: #2e7d32;
+        }
+
+        .status-pending {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        .status-suspended {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .action-btn.view {
+            background: #2196F3;
+            color: white;
+        }
+
+        .action-btn.view:hover {
+            background: #1976D2;
+        }
+
+        .action-btn.suspend {
+            background: #FF9800;
+            color: white;
+        }
+
+        .action-btn.suspend:hover {
+            background: #f57c00;
+        }
+
+        .action-btn.activate {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .action-btn.activate:hover {
+            background: #45a049;
+        }
+
+        .action-btn.delete {
+            background: #f44336;
+            color: white;
+        }
+
+        .action-btn.delete:hover {
+            background: #d32f2f;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .page-btn {
+            padding: 8px 16px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            color: #333;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .page-btn:hover {
+            border-color: #9C27B0;
+            color: #9C27B0;
+        }
+
+        .page-btn.active {
+            background: #9C27B0;
+            border-color: #9C27B0;
+            color: white;
+        }
+
+        .page-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 3rem;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #9C27B0;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .no-users {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+        }
+
+        .no-users-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #4CAF50;
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.error {
+            background: #f44336;
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            
+            .filters-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .users-table {
+                font-size: 0.8rem;
+            }
+            
+            .users-table th,
+            .users-table td {
+                padding: 0.5rem;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                gap: 0.3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div class="logo">👑 JUSTA Admin</div>
+            <div class="nav-links">
+                <a href="dashboard.html" class="nav-link">Dashboard</a>
+                <a href="corridas.html" class="nav-link">Corridas</a>
+                <a href="motoristas.html" class="nav-link">Motoristas</a>
+                <a href="usuarios.html" class="nav-link active">Usuários</a>
+                <a href="financeiro.html" class="nav-link">Financeiro</a>
+                <a href="promocoes.html" class="nav-link">Promoções</a>
+                <a href="suporte.html" class="nav-link">Suporte</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="page-header">
+            <h1 class="page-title">👥 Gerenciar Usuários</h1>
+            <p class="page-subtitle">Visualize e gerencie todos os usuários da plataforma</p>
+        </div>
+
+        <!-- Estatísticas -->
+        <div class="stats-cards">
+            <div class="stat-card">
+                <div class="stat-icon">👥</div>
+                <div class="stat-value" id="totalUsers">0</div>
+                <div class="stat-label">Total de Usuários</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">👤</div>
+                <div class="stat-value" id="passageiros">0</div>
+                <div class="stat-label">Passageiros</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">👨‍💼</div>
+                <div class="stat-value" id="motoristas">0</div>
+                <div class="stat-label">Motoristas</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">👑</div>
+                <div class="stat-value" id="admins">0</div>
+                <div class="stat-label">Administradores</div>
+            </div>
+        </div>
+
+        <!-- Filtros -->
+        <div class="filters-section">
+            <div class="filters-grid">
+                <div class="filter-group">
+                    <label for="userTypeFilter">Tipo de Usuário</label>
+                    <select id="userTypeFilter">
+                        <option value="">Todos os tipos</option>
+                        <option value="passageiro">Passageiros</option>
+                        <option value="motorista">Motoristas</option>
+                        <option value="admin">Administradores</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label for="statusFilter">Status</label>
+                    <select id="statusFilter">
+                        <option value="">Todos os status</option>
+                        <option value="active">Ativos</option>
+                        <option value="pending">Pendentes</option>
+                        <option value="suspended">Suspensos</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label for="searchFilter">Buscar</label>
+                    <input type="text" id="searchFilter" placeholder="Nome, e-mail ou CPF">
+                </div>
+                
+                <div class="filter-group">
+                    <button class="filter-btn" onclick="applyFilters()">🔍 Aplicar Filtros</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lista de Usuários -->
+        <div class="users-section">
+            <div class="section-header">
+                <h2 class="section-title">👥 Lista de Usuários</h2>
+                <button class="refresh-btn" onclick="loadUsers()">🔄 Atualizar</button>
+            </div>
+            
+            <div id="usersContainer">
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <p>Carregando usuários...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notificação -->
+    <div class="notification" id="notification"></div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-storage-compat.js"></script>
+    
+    <!-- Configuração do Firebase -->
+    <script src="../assets/firebase-config.js"></script>
+
+    <script>
+        let allUsers = [];
+        let filteredUsers = [];
+        let currentPage = 1;
+        const usersPerPage = 10;
+
+        // Verificar se está logado
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!utils.isLoggedIn()) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            const userType = localStorage.getItem('userType');
+            if (userType !== 'admin') {
+                utils.logout();
+                window.location.href = '../index.html';
+                return;
+            }
+
+            // Carregar usuários
+            loadUsers();
+            
+            // Configurar filtros
+            setupFilters();
+        });
+
+        // Carregar usuários
+        async function loadUsers() {
+            try {
+                const loading = document.getElementById('loading');
+                loading.style.display = 'block';
+                
+                // Buscar todos os usuários
+                const usersSnapshot = await db.collection('users').get();
+                
+                allUsers = [];
+                usersSnapshot.forEach(doc => {
+                    allUsers.push({
+                        id: doc.id,
+                        ...doc.data()
+                    });
+                });
+                
+                // Aplicar filtros
+                applyFilters();
+                
+                // Atualizar estatísticas
+                updateStats();
+                
+            } catch (error) {
+                console.error('Erro ao carregar usuários:', error);
+                utils.showNotification('Erro ao carregar usuários', 'error');
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+
+        // Configurar filtros
+        function setupFilters() {
+            document.getElementById('userTypeFilter').addEventListener('change', applyFilters);
+            document.getElementById('statusFilter').addEventListener('change', applyFilters);
+            document.getElementById('searchFilter').addEventListener('input', applyFilters);
+        }
+
+        // Aplicar filtros
+        function applyFilters() {
+            const userTypeFilter = document.getElementById('userTypeFilter').value;
+            const statusFilter = document.getElementById('statusFilter').value;
+            const searchFilter = document.getElementById('searchFilter').value.toLowerCase();
+            
+            filteredUsers = allUsers.filter(user => {
+                // Filtro de tipo
+                if (userTypeFilter && user.userType !== userTypeFilter) {
+                    return false;
+                }
+                
+                // Filtro de status
+                if (statusFilter && user.status !== statusFilter) {
+                    return false;
+                }
+                
+                // Filtro de busca
+                if (searchFilter) {
+                    const searchText = `${user.name || ''} ${user.email || ''} ${user.cpf || ''}`.toLowerCase();
+                    if (!searchText.includes(searchFilter)) {
+                        return false;
+                    }
+                }
+                
+                return true;
+            });
+            
+            // Resetar para primeira página
+            currentPage = 1;
+            
+            // Exibir usuários
+            displayUsers();
+        }
+
+        // Atualizar estatísticas
+        function updateStats() {
+            const total = allUsers.length;
+            const passageiros = allUsers.filter(u => u.userType === 'passageiro').length;
+            const motoristas = allUsers.filter(u => u.userType === 'motorista').length;
+            const admins = allUsers.filter(u => u.userType === 'admin').length;
+            
+            document.getElementById('totalUsers').textContent = total;
+            document.getElementById('passageiros').textContent = passageiros;
+            document.getElementById('motoristas').textContent = motoristas;
+            document.getElementById('admins').textContent = admins;
+        }
+
+        // Exibir usuários
+        function displayUsers() {
+            const container = document.getElementById('usersContainer');
+            
+            if (filteredUsers.length === 0) {
+                showNoUsers();
+                return;
+            }
+            
+            // Calcular paginação
+            const startIndex = (currentPage - 1) * usersPerPage;
+            const endIndex = startIndex + usersPerPage;
+            const pageUsers = filteredUsers.slice(startIndex, endIndex);
+            
+            // Criar tabela
+            const tableHTML = `
+                <table class="users-table">
+                    <thead>
+                        <tr>
+                            <th>Usuário</th>
+                            <th>Tipo</th>
+                            <th>Status</th>
+                            <th>Data de Cadastro</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${pageUsers.map(user => createUserRow(user)).join('')}
+                    </tbody>
+                </table>
+            `;
+            
+            // Adicionar paginação
+            const paginationHTML = createPagination();
+            
+            container.innerHTML = tableHTML + paginationHTML;
+        }
+
+        // Criar linha da tabela
+        function createUserRow(user) {
+            const userTypeClass = `type-${user.userType}`;
+            const userTypeText = getUserTypeText(user.userType);
+            const statusClass = `status-${user.status || 'active'}`;
+            const statusText = getStatusText(user.status);
+            const createdAt = formatDate(user.createdAt);
+            
+            return `
+                <tr>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 1rem;">
+                            <div class="user-avatar">${getInitials(user.name)}</div>
+                            <div class="user-info">
+                                <h4>${user.name || 'N/A'}</h4>
+                                <p>${user.email || 'N/A'}</p>
+                            </div>
+                        </div>
+                    </td>
+                    <td><span class="user-type-badge ${userTypeClass}">${userTypeText}</span></td>
+                    <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                    <td>${createdAt}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="action-btn view" onclick="viewUser('${user.id}')">👁️ Ver</button>
+                            ${user.status === 'active' ? `
+                                <button class="action-btn suspend" onclick="suspendUser('${user.id}')">⏸️ Suspender</button>
+                            ` : ''}
+                            ${user.status === 'suspended' ? `
+                                <button class="action-btn activate" onclick="activateUser('${user.id}')">✅ Ativar</button>
+                            ` : ''}
+                            ${user.userType !== 'admin' ? `
+                                <button class="action-btn delete" onclick="deleteUser('${user.id}')">🗑️ Excluir</button>
+                            ` : ''}
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }
+
+        // Mostrar mensagem de nenhum usuário
+        function showNoUsers() {
+            const container = document.getElementById('usersContainer');
+            container.innerHTML = `
+                <div class="no-users">
+                    <div class="no-users-icon">👥</div>
+                    <div>Nenhum usuário encontrado</div>
+                </div>
+            `;
+        }
+
+        // Criar paginação
+        function createPagination() {
+            const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
+            
+            if (totalPages <= 1) return '';
+            
+            let paginationHTML = '<div class="pagination">';
+            
+            // Botão anterior
+            paginationHTML += `
+                <button class="page-btn" onclick="previousPage()" ${currentPage === 1 ? 'disabled' : ''}>
+                    ← Anterior
+                </button>
+            `;
+            
+            // Páginas
+            for (let i = 1; i <= totalPages; i++) {
+                paginationHTML += `
+                    <button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="goToPage(${i})">
+                        ${i}
+                    </button>
+                `;
+            }
+            
+            // Botão próximo
+            paginationHTML += `
+                <button class="page-btn" onclick="nextPage()" ${currentPage === totalPages ? 'disabled' : ''}>
+                    Próxima →
+                </button>
+            `;
+            
+            paginationHTML += '</div>';
+            
+            return paginationHTML;
+        }
+
+        // Navegação de páginas
+        function previousPage() {
+            if (currentPage > 1) {
+                currentPage--;
+                displayUsers();
+            }
+        }
+
+        function nextPage() {
+            const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
+            if (currentPage < totalPages) {
+                currentPage++;
+                displayUsers();
+            }
+        }
+
+        function goToPage(page) {
+            currentPage = page;
+            displayUsers();
+        }
+
+        // Ações dos usuários
+        async function suspendUser(userId) {
+            if (confirm('Tem certeza que deseja suspender este usuário?')) {
+                try {
+                    await db.collection('users').doc(userId).update({
+                        status: 'suspended',
+                        suspendedAt: new Date()
+                    });
+                    
+                    utils.showNotification('Usuário suspenso com sucesso!', 'success');
+                    loadUsers();
+                    
+                } catch (error) {
+                    console.error('Erro ao suspender usuário:', error);
+                    utils.showNotification('Erro ao suspender usuário', 'error');
+                }
+            }
+        }
+
+        async function activateUser(userId) {
+            if (confirm('Tem certeza que deseja ativar este usuário?')) {
+                try {
+                    await db.collection('users').doc(userId).update({
+                        status: 'active',
+                        activatedAt: new Date()
+                    });
+                    
+                    utils.showNotification('Usuário ativado com sucesso!', 'success');
+                    loadUsers();
+                    
+                } catch (error) {
+                    console.error('Erro ao ativar usuário:', error);
+                    utils.showNotification('Erro ao ativar usuário', 'error');
+                }
+            }
+        }
+
+        async function deleteUser(userId) {
+            if (confirm('Tem certeza que deseja excluir este usuário? Esta ação não pode ser desfeita.')) {
+                try {
+                    await db.collection('users').doc(userId).delete();
+                    
+                    utils.showNotification('Usuário excluído com sucesso!', 'success');
+                    loadUsers();
+                    
+                } catch (error) {
+                    console.error('Erro ao excluir usuário:', error);
+                    utils.showNotification('Erro ao excluir usuário', 'error');
+                }
+            }
+        }
+
+        function viewUser(userId) {
+            // Implementar visualização detalhada do usuário
+            utils.showNotification('Funcionalidade de visualização em desenvolvimento', 'info');
+        }
+
+        // Funções auxiliares
+        function getUserTypeText(userType) {
+            const typeTexts = {
+                'passageiro': 'Passageiro',
+                'motorista': 'Motorista',
+                'admin': 'Admin'
+            };
+            return typeTexts[userType] || 'Desconhecido';
+        }
+
+        function getStatusText(status) {
+            const statusTexts = {
+                'active': 'Ativo',
+                'pending': 'Pendente',
+                'suspended': 'Suspenso'
+            };
+            return statusTexts[status] || 'Ativo';
+        }
+
+        function getInitials(name) {
+            if (!name) return '?';
+            return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+        }
+
+        function formatDate(timestamp) {
+            if (!timestamp) return 'N/A';
+            
+            const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+            return date.toLocaleDateString('pt-BR', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        function showNotification(message, type = 'info') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${type}`;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
