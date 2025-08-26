@@ -241,63 +241,87 @@ window.MapSystem = {
 
 // Sistema de Geolocalização Avançado
 window.GeoLocationSystem = {
-    // Obter localização atual
+    // Obter localização atual com fallback e timeouts maiores
     getCurrentLocation: function() {
         return new Promise((resolve, reject) => {
             if (!navigator.geolocation) {
                 reject(new Error('Geolocalização não suportada'));
                 return;
             }
-            
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    resolve({
-                        lat: position.coords.latitude,
-                        lng: position.coords.longitude,
-                        accuracy: position.coords.accuracy,
-                        timestamp: position.timestamp
-                    });
-                },
-                (error) => {
-                    reject(error);
-                },
-                {
-                    enableHighAccuracy: true,
-                    timeout: 10000,
-                    maximumAge: 30000
+
+            const tryGet = (options, onFail) => {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const coords = {
+                            lat: position.coords.latitude,
+                            lng: position.coords.longitude,
+                            accuracy: position.coords.accuracy,
+                            timestamp: position.timestamp
+                        };
+                        try { localStorage.setItem('lastKnownLocation', JSON.stringify(coords)); } catch (e) {}
+                        resolve(coords);
+                    },
+                    async (error) => {
+                        if (typeof onFail === 'function') {
+                            onFail(error);
+                        } else {
+                            // Fallback: usar última localização conhecida se existir
+                            try {
+                                const cached = localStorage.getItem('lastKnownLocation');
+                                if (cached) {
+                                    return resolve(JSON.parse(cached));
+                                }
+                            } catch (e) {}
+                            reject(error);
+                        }
+                    },
+                    options
+                );
+            };
+
+            // Primeira tentativa: alta precisão
+            tryGet({ enableHighAccuracy: true, timeout: 20000, maximumAge: 60000 }, (err) => {
+                // Se estourar timeout, tentar com menor precisão e timeout um pouco maior
+                if (err && err.code === 3) {
+                    tryGet({ enableHighAccuracy: false, timeout: 25000, maximumAge: 120000 });
+                } else {
+                    // Outras falhas: tentar novamente com menor precisão
+                    tryGet({ enableHighAccuracy: false, timeout: 25000, maximumAge: 120000 });
                 }
-            );
+            });
         });
     },
     
-    // Monitorar localização em tempo real
+    // Monitorar localização em tempo real com reconfiguração em caso de timeout
     watchLocation: function(callback, errorCallback) {
         if (!navigator.geolocation) {
             console.error('Geolocalização não suportada');
             return null;
         }
-        
-        return navigator.geolocation.watchPosition(
+
+        const startWatch = (options) => navigator.geolocation.watchPosition(
             (position) => {
-                callback({
+                const coords = {
                     lat: position.coords.latitude,
                     lng: position.coords.longitude,
                     accuracy: position.coords.accuracy,
                     timestamp: position.timestamp
-                });
+                };
+                try { localStorage.setItem('lastKnownLocation', JSON.stringify(coords)); } catch (e) {}
+                callback(coords);
             },
             (error) => {
                 console.error('Erro na geolocalização:', error);
-                if (errorCallback) {
-                    errorCallback(error);
+                if (error.code === 3) { // timeout
+                    // Reiniciar com menor precisão e timeout maior
+                    return startWatch({ enableHighAccuracy: false, timeout: 25000, maximumAge: 120000 });
                 }
+                if (errorCallback) errorCallback(error);
             },
-            {
-                enableHighAccuracy: true,
-                timeout: 10000,
-                maximumAge: 30000
-            }
+            options
         );
+
+        return startWatch({ enableHighAccuracy: true, timeout: 20000, maximumAge: 60000 });
     },
     
     // Parar monitoramento

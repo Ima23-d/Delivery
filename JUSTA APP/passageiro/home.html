@@ -426,6 +426,18 @@
             margin-bottom: 20px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             text-align: center;
+            border-left: 4px solid #4CAF50;
+        }
+
+        .status-chip {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            background: #e8f5e9;
+            color: #2e7d32;
         }
         
         .driver-info {
@@ -454,6 +466,16 @@
             gap: 5px;
             font-size: 14px;
             color: #666;
+        }
+
+        .badge {
+            display: inline-block;
+            background: #fff;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 2px 8px;
+            font-weight: 600;
+            color: #333;
         }
     </style>
 </head>
@@ -1063,6 +1085,13 @@
                 }
                 
                 // Salvar no Firebase
+                // Gerar código de verificação (4 dígitos)
+                const verificationCode = Math.floor(1000 + Math.random() * 9000).toString();
+
+                // Incluir código de verificação e flags de controle
+                rideData.verificationCode = verificationCode;
+                rideData.passengerConfirmed = false;
+
                 const rideRef = await db.collection('rides').add(rideData);
                 rideData.id = rideRef.id;
                 
@@ -1203,6 +1232,17 @@
                         if (spinnerElement) spinnerElement.style.display = 'none';
                         break;
                 }
+
+                // Chip de status
+                if (!document.getElementById('statusChip')) {
+                    const chip = document.createElement('div');
+                    chip.id = 'statusChip';
+                    chip.className = 'status-chip';
+                    chip.textContent = titleElement.textContent;
+                    statusDiv.prepend(chip);
+                } else {
+                    document.getElementById('statusChip').textContent = titleElement.textContent;
+                }
             }
         }
         
@@ -1228,8 +1268,20 @@
                         <strong>${driverData.nome || driverData.name || 'Motorista'}</strong>
                     </div>
                     <div class="driver-detail">
+                        <span>🚘 Marca:</span>
+                        <strong>${driverData.veiculo?.marca || 'N/A'}</strong>
+                    </div>
+                    <div class="driver-detail">
+                        <span>🚗 Modelo:</span>
+                        <strong>${driverData.veiculo?.modelo || 'N/A'}</strong>
+                    </div>
+                    <div class="driver-detail">
                         <span>🚗 Placa:</span>
                         <strong>${driverData.veiculo?.placa || 'N/A'}</strong>
+                    </div>
+                    <div class="driver-detail">
+                        <span>🎨 Cor:</span>
+                        <strong>${driverData.veiculo?.cor || 'N/A'}</strong>
                     </div>
                     <div class="driver-detail">
                         <span>📋 CNH:</span>
@@ -1242,10 +1294,6 @@
                     <div class="driver-detail">
                         <span>📱 Telefone:</span>
                         <strong>${driverData.telefone || 'N/A'}</strong>
-                    </div>
-                    <div class="driver-detail">
-                        <span>🚗 Modelo:</span>
-                        <strong>${driverData.veiculo?.modelo || 'N/A'}</strong>
                     </div>
                 `;
             }
@@ -1337,6 +1385,11 @@
                     showRideStatus('Corrida em andamento...', 'accepted');
                     break;
                     
+                case 'arrived':
+                    showRideStatus('O motorista chegou!', 'accepted');
+                    showArrivalCode(rideData);
+                    break;
+
                 case 'completed':
                     showRideStatus('Corrida finalizada!', 'completed');
                     RideTrackingSystem.stopTracking();
@@ -1354,6 +1407,27 @@
                         resetRideForm();
                     }, 3000);
                     break;
+            }
+        }
+
+        // Mostrar código de chegada para o passageiro
+        function showArrivalCode(rideData) {
+            try {
+                const driverInfoDiv = document.getElementById('driverInfo');
+                if (driverInfoDiv && rideData.verificationCode) {
+                    const existing = document.getElementById('arrivalCodeBox');
+                    if (existing) existing.remove();
+                    const codeBox = document.createElement('div');
+                    codeBox.id = 'arrivalCodeBox';
+                    codeBox.style.cssText = 'margin-top:12px;padding:12px;border-radius:10px;background:#fff3cd;border:1px solid #ffeaa7;text-align:center;font-weight:700;font-size:18px;';
+                    codeBox.innerHTML = `
+                        <div style="margin-bottom:6px;color:#8a6d3b;font-weight:600;">Informe este código ao motorista para confirmar</div>
+                        <div style="font-size:26px;letter-spacing:4px;color:#333;">${rideData.verificationCode}</div>
+                    `;
+                    driverInfoDiv.appendChild(codeBox);
+                }
+            } catch (e) {
+                console.error('Erro ao exibir código de chegada:', e);
             }
         }
         

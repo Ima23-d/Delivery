@@ -499,21 +499,64 @@
     <script src="../assets/firebase-config.js"></script>
 
     <script>
+        // Variáveis globais
+        let db = null;
+        let auth = null;
+
+        // Aguardar Firebase estar pronto
+        function waitForFirebase() {
+            return new Promise((resolve, reject) => {
+                console.log('⏳ Aguardando Firebase estar pronto...');
+                const maxAttempts = 100;
+                let attempts = 0;
+                
+                const checkFirebase = () => {
+                    attempts++;
+                    
+                    if (typeof firebase !== 'undefined' && firebase.auth && firebase.firestore) {
+                        console.log('✅ Firebase detectado, configurando...');
+                        
+                        if (!firebase.apps.length) {
+                            console.log('⚙️ Inicializando Firebase...');
+                            firebase.initializeApp({});
+                        }
+                        
+                        db = firebase.firestore();
+                        auth = firebase.auth();
+                        
+                        console.log('✅ Firebase configurado com sucesso');
+                        resolve();
+                    } else if (attempts >= maxAttempts) {
+                        reject(new Error('Firebase não carregou em tempo hábil'));
+                    } else {
+                        setTimeout(checkFirebase, 100);
+                    }
+                };
+                
+                checkFirebase();
+            });
+        }
+
         // Aguardar o Firebase estar pronto
         async function initializeApp() {
             await waitForFirebase();
             
-            // Verificar se está logado
-            if (!utils.isLoggedIn()) {
+                    // Verificar se está logado
+        if (!window.utils || !window.utils.isLoggedIn || !window.utils.isLoggedIn()) {
+            window.location.href = 'login.html';
+            return;
+        }
+        
+        const userType = localStorage.getItem('userType');
+        if (userType !== 'motorista') {
+            if (window.utils && window.utils.logout) {
+                window.utils.logout();
+            } else {
+                localStorage.clear();
                 window.location.href = 'login.html';
-                return;
             }
-            
-            const userType = localStorage.getItem('userType');
-            if (userType !== 'motorista') {
-                utils.logout();
-                return;
-            }
+            return;
+        }
             
             // Carregar dados
             await loadDriverStats();
@@ -537,13 +580,19 @@
                     .get();
                 
                 const totalRides = totalRidesSnapshot.size;
-                document.getElementById('totalRides').textContent = totalRides;
+                const totalRidesElement = document.getElementById('totalRides');
+                if (totalRidesElement) {
+                    totalRidesElement.textContent = totalRides;
+                }
                 
                 // Corridas completadas
                 const completedRides = totalRidesSnapshot.docs.filter(doc => {
                     return doc.data().status === 'completed';
                 }).length;
-                document.getElementById('completedRides').textContent = completedRides;
+                const completedRidesElement = document.getElementById('completedRides');
+                if (completedRidesElement) {
+                    completedRidesElement.textContent = completedRides;
+                }
                 
                 // Ganhos totais
                 const totalEarnings = totalRidesSnapshot.docs
@@ -554,7 +603,14 @@
                         return total + driverEarnings;
                     }, 0);
                 
-                document.getElementById('totalEarnings').textContent = utils.formatCurrency(totalEarnings);
+                const totalEarningsElement = document.getElementById('totalEarnings');
+                if (totalEarningsElement) {
+                    if (window.utils && window.utils.formatCurrency) {
+                        totalEarningsElement.textContent = window.utils.formatCurrency(totalEarnings);
+                    } else {
+                        totalEarningsElement.textContent = `R$ ${totalEarnings.toFixed(2)}`;
+                    }
+                }
                 
                 // Média de avaliação
                 const ratingsSnapshot = await db.collection('ratings')
@@ -562,20 +618,27 @@
                     .where('toUserType', '==', 'driver')
                     .get();
                 
-                if (!ratingsSnapshot.empty) {
-                    const totalRating = ratingsSnapshot.docs.reduce((sum, doc) => {
-                        return sum + doc.data().rating;
-                    }, 0);
-                    
-                    const averageRating = totalRating / ratingsSnapshot.size;
-                    document.getElementById('averageRating').textContent = averageRating.toFixed(1);
-                } else {
-                    document.getElementById('averageRating').textContent = '0.0';
+                const avgRatingElement = document.getElementById('avgRating');
+                if (avgRatingElement) {
+                    if (!ratingsSnapshot.empty) {
+                        const totalRating = ratingsSnapshot.docs.reduce((sum, doc) => {
+                            return sum + doc.data().rating;
+                        }, 0);
+                        
+                        const averageRating = totalRating / ratingsSnapshot.size;
+                        avgRatingElement.textContent = averageRating.toFixed(1);
+                    } else {
+                        avgRatingElement.textContent = '0.0';
+                    }
                 }
                 
             } catch (error) {
                 console.error('Erro ao carregar estatísticas:', error);
-                utils.showNotification('Erro ao carregar estatísticas', 'error');
+                if (window.utils && window.utils.showNotification) {
+                    window.utils.showNotification('Erro ao carregar estatísticas', 'error');
+                } else {
+                    alert('Erro ao carregar estatísticas');
+                }
             }
         }
 
@@ -619,31 +682,49 @@
                 // Aplicar filtros
                 const filteredRides = applyFilters(rides);
                 
+                // Atualizar variável global e paginação
+                allRides = filteredRides;
+                currentPage = 1;
+                
                 // Renderizar lista
                 renderRidesList(filteredRides);
+                updatePagination();
                 
             } catch (error) {
                 console.error('Erro ao carregar histórico:', error);
-                utils.showNotification('Erro ao carregar histórico', 'error');
+                if (window.utils && window.utils.showNotification) {
+                    window.utils.showNotification('Erro ao carregar histórico', 'error');
+                } else {
+                    alert('Erro ao carregar histórico');
+                }
             }
         }
 
         // Configurar filtros
         function setupFilters() {
             // Filtro de status
-            document.getElementById('statusFilter').addEventListener('change', function() {
-                loadRidesHistory();
-            });
+            const statusFilter = document.getElementById('statusFilter');
+            if (statusFilter) {
+                statusFilter.addEventListener('change', function() {
+                    loadRidesHistory();
+                });
+            }
             
             // Filtro de data
-            document.getElementById('dateFilter').addEventListener('change', function() {
-                loadRidesHistory();
-            });
+            const dateFilter = document.getElementById('dateFilter');
+            if (dateFilter) {
+                dateFilter.addEventListener('change', function() {
+                    loadRidesHistory();
+                });
+            }
             
             // Busca
-            document.getElementById('searchFilter').addEventListener('input', function() {
-                loadRidesHistory();
-            });
+            const searchFilter = document.getElementById('searchFilter');
+            if (searchFilter) {
+                searchFilter.addEventListener('input', function() {
+                    loadRidesHistory();
+                });
+            }
         }
 
         // Aplicar filtros
@@ -651,18 +732,18 @@
             let filtered = [...rides];
             
             // Filtro de status
-            const statusFilter = document.getElementById('statusFilter').value;
-            if (statusFilter && statusFilter !== 'all') {
-                filtered = filtered.filter(ride => ride.status === statusFilter);
+            const statusFilter = document.getElementById('statusFilter');
+            if (statusFilter && statusFilter.value && statusFilter.value !== 'all') {
+                filtered = filtered.filter(ride => ride.status === statusFilter.value);
             }
             
             // Filtro de data
-            const dateFilter = document.getElementById('dateFilter').value;
-            if (dateFilter && dateFilter !== 'all') {
+            const dateFilter = document.getElementById('dateFilter');
+            if (dateFilter && dateFilter.value && dateFilter.value !== 'all') {
                 const today = new Date();
                 const filterDate = new Date();
                 
-                switch (dateFilter) {
+                switch (dateFilter.value) {
                     case 'today':
                         filterDate.setHours(0, 0, 0, 0);
                         filtered = filtered.filter(ride => {
@@ -688,8 +769,9 @@
             }
             
             // Busca por texto
-            const searchTerm = document.getElementById('searchFilter').value.toLowerCase();
-            if (searchTerm) {
+            const searchFilter = document.getElementById('searchFilter');
+            if (searchFilter && searchFilter.value) {
+                const searchTerm = searchFilter.value.toLowerCase();
                 filtered = filtered.filter(ride => {
                     return (ride.origin && ride.origin.toLowerCase().includes(searchTerm)) ||
                            (ride.destination && ride.destination.toLowerCase().includes(searchTerm)) ||
@@ -703,13 +785,28 @@
         // Renderizar lista de corridas
         function renderRidesList(rides) {
             const ridesList = document.getElementById('ridesContainer');
+            if (!ridesList) {
+                console.error('Elemento ridesContainer não encontrado');
+                return;
+            }
             
             if (rides.length === 0) {
                 ridesList.innerHTML = '<p class="text-muted">Nenhuma corrida encontrada.</p>';
                 return;
             }
             
-            ridesList.innerHTML = rides.map(ride => createRideItem(ride)).join('');
+            // Aplicar paginação
+            const startIndex = (currentPage - 1) * ridesPerPage;
+            const endIndex = startIndex + ridesPerPage;
+            const paginatedRides = rides.slice(startIndex, endIndex);
+            
+            ridesList.innerHTML = paginatedRides.map(ride => createRideItem(ride)).join('');
+            
+            // Atualizar contador
+            const ridesCountElement = document.getElementById('ridesCount');
+            if (ridesCountElement) {
+                ridesCountElement.textContent = `${rides.length} corridas`;
+            }
         }
 
         // Criar item de corrida
@@ -717,8 +814,12 @@
             const status = getStatusText(ride.status);
             const statusClass = getStatusClass(ride.status);
             const date = formatDate(ride.createdAt);
-            const fare = utils.formatCurrency(ride.estimatedFare || 0);
-            const driverEarnings = utils.formatCurrency((ride.estimatedFare || 0) - 1);
+            const fare = window.utils && window.utils.formatCurrency ? 
+                window.utils.formatCurrency(ride.estimatedFare || 0) : 
+                `R$ ${(ride.estimatedFare || 0).toFixed(2)}`;
+            const driverEarnings = window.utils && window.utils.formatCurrency ? 
+                window.utils.formatCurrency((ride.estimatedFare || 0) - 1) : 
+                `R$ ${((ride.estimatedFare || 0) - 1).toFixed(2)}`;
             
             let ratingHtml = '';
             if (ride.passengerRating) {
@@ -819,7 +920,11 @@
         // Ver detalhes da corrida
         function viewRideDetails(rideId) {
             // Implementar modal com detalhes da corrida
-            utils.showNotification('Funcionalidade em desenvolvimento', 'info');
+            if (window.utils && window.utils.showNotification) {
+                window.utils.showNotification('Funcionalidade em desenvolvimento', 'info');
+            } else {
+                alert('Funcionalidade em desenvolvimento');
+            }
         }
 
         // Avaliar passageiro
@@ -828,59 +933,46 @@
             window.location.href = `corrida_finalizada.html?rideId=${rideId}`;
         }
 
-        // Funções auxiliares
-        function getStatusClass(status) {
-            const classes = {
-                'completed': 'status-completed',
-                'cancelled': 'status-cancelled',
-                'in_progress': 'status-in-progress',
-                'accepted': 'status-in-progress',
-                'started': 'status-in-progress',
-                'arrived': 'status-in-progress'
-            };
-            return classes[status] || 'status-in-progress';
-        }
+        // Paginação
+        let currentPage = 1;
+        const ridesPerPage = 10;
+        let allRides = [];
 
-        function getStatusText(status) {
-            const texts = {
-                'completed': 'Finalizada',
-                'cancelled': 'Cancelada',
-                'in_progress': 'Em andamento',
-                'accepted': 'Aceita',
-                'started': 'Iniciada',
-                'arrived': 'Chegou'
-            };
-            return texts[status] || 'Em andamento';
-        }
-
-        function formatDate(timestamp) {
-            if (!timestamp) return 'N/A';
-            
-            const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
-            return date.toLocaleDateString('pt-BR', {
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-            });
-        }
-
-        function formatDuration(minutes) {
-            if (!minutes) return 'N/A';
-            
-            if (minutes < 60) {
-                return `${minutes} min`;
-            } else {
-                const hours = Math.floor(minutes / 60);
-                const remainingMinutes = minutes % 60;
-                if (remainingMinutes === 0) {
-                    return `${hours}h`;
-                } else {
-                    return `${hours}h ${remainingMinutes}min`;
-                }
+        function previousPage() {
+            if (currentPage > 1) {
+                currentPage--;
+                renderRidesList(allRides);
+                updatePagination();
             }
         }
+
+        function nextPage() {
+            const maxPages = Math.ceil(allRides.length / ridesPerPage);
+            if (currentPage < maxPages) {
+                currentPage++;
+                renderRidesList(allRides);
+                updatePagination();
+            }
+        }
+
+        function updatePagination() {
+            const maxPages = Math.ceil(allRides.length / ridesPerPage);
+            const currentPageElement = document.getElementById('currentPage');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            
+            if (currentPageElement) currentPageElement.textContent = currentPage;
+            if (prevBtn) prevBtn.disabled = currentPage <= 1;
+            if (nextBtn) nextBtn.disabled = currentPage >= maxPages;
+        }
+
+        function applyFilters() {
+            // Esta função é chamada pelo botão HTML
+            // A lógica de filtros está na função applyFilters(rides)
+            loadRidesHistory();
+        }
+
+
     </script>
 </body>
 </html>

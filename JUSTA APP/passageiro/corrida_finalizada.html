@@ -750,11 +750,13 @@
             loading.style.display = 'block';
             
             try {
-                // Salvar avaliação no Firebase
+                // Salvar avaliação no Firebase (passageiro -> motorista)
                 const ratingData = {
                     rideId: rideId,
-                    passengerId: localStorage.getItem('userId'),
-                    driverId: currentRide.driverId,
+                    fromUserId: localStorage.getItem('userId'),
+                    fromUserType: 'passenger',
+                    toUserId: currentRide.driverId,
+                    toUserType: 'driver',
                     rating: selectedRating,
                     comment: comment,
                     createdAt: new Date()
@@ -763,7 +765,7 @@
                 await db.collection('ratings').add(ratingData);
                 
                 // Atualizar rating médio do motorista
-                await updateDriverRating(currentRide.driverId, selectedRating);
+                await updateDriverRating(currentRide.driverId);
                 
                 // Marcar como avaliada
                 hasRated = true;
@@ -790,21 +792,20 @@
         }
 
         // Atualizar rating do motorista
-        async function updateDriverRating(driverId, newRating) {
+        async function updateDriverRating(driverId) {
             try {
-                const driverDoc = await db.collection('drivers').doc(driverId).get();
+                const ratingsSnapshot = await db.collection('ratings')
+                    .where('toUserId', '==', driverId)
+                    .where('toUserType', '==', 'driver')
+                    .get();
                 
-                if (driverDoc.exists) {
-                    const driverData = driverDoc.data();
-                    const currentRating = driverData.rating || 0;
-                    const totalRatings = driverData.totalRatings || 0;
+                if (!ratingsSnapshot.empty) {
+                    const totalRating = ratingsSnapshot.docs.reduce((sum, doc) => sum + (doc.data().rating || 0), 0);
+                    const averageRating = totalRating / ratingsSnapshot.size;
                     
-                    // Calcular novo rating médio
-                    const newAverageRating = ((currentRating * totalRatings) + newRating) / (totalRatings + 1);
-                    
-                    await db.collection('drivers').doc(driverId).update({
-                        rating: newAverageRating,
-                        totalRatings: totalRatings + 1
+                    await db.collection('users').doc(driverId).update({
+                        rating: averageRating,
+                        totalRatings: ratingsSnapshot.size
                     });
                 }
                 

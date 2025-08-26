@@ -828,8 +828,8 @@
                     },
                     {
                         enableHighAccuracy: true,
-                        timeout: 10000,
-                        maximumAge: 30000
+                        timeout: 20000,
+                        maximumAge: 60000
                     }
                 );
             }
@@ -1223,11 +1223,11 @@
                     return;
                 }
                 
-                // Atualizar status da corrida
+                // Atualizar status da corrida para accepted para alinhar com fluxo do passageiro
                 await db.collection('rides').doc(rideId).update({
-                    status: 'confirmed',
+                    status: 'accepted',
                     driverId: userId,
-                    confirmedAt: new Date()
+                    acceptedAt: new Date()
                 });
                 
                 // Redirecionar para página da corrida
