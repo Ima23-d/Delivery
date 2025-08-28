@@ -1,0 +1,1821 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JUSTA - Home do Passageiro</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variáveis de cores e estilos */
+        :root {
+            --primary-color: #1fbad6;
+            --secondary-color: #086d83;
+            --background-color: #ffffff;
+            --text-color: #333333;
+            --light-gray: #f8f9fa;
+            --medium-gray: #e0e0e0;
+            --dark-gray: #666666;
+            --success-color: #4caf50;
+            --warning-color: #ff9800;
+            --error-color: #f44336;
+            --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            --card-radius: 16px;
+            --element-radius: 12px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Uber Move', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            padding-bottom: 80px; /* Espaço para a navbar */
+        }
+
+        /* Header */
+        .header {
+            background-color: var(--background-color);
+            padding: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .user-name {
+            font-weight: 500;
+        }
+
+        .logout-btn {
+            background: var(--light-gray);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--text-color);
+        }
+
+        .logout-btn:hover {
+            background: var(--medium-gray);
+        }
+
+        /* Mapa */
+        .map-container {
+            height: 40vh;
+            width: 100%;
+            position: relative;
+        }
+
+        #rideMap {
+            height: 100%;
+            width: 100%;
+        }
+
+        .location-button {
+            position: absolute;
+            bottom: 16px;
+            right: 16px;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background-color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow);
+            z-index: 10;
+            cursor: pointer;
+        }
+
+        /* Formulário de corrida */
+        .ride-form-container {
+            background-color: white;
+            border-radius: var(--card-radius) var(--card-radius) 0 0;
+            padding: 20px 16px;
+            margin-top: -20px;
+            position: relative;
+            z-index: 5;
+        }
+
+        .destination-inputs {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            display: flex;
+            align-items: center;
+            background-color: var(--light-gray);
+            border-radius: var(--element-radius);
+            padding: 12px 16px;
+        }
+
+        .input-icon {
+            margin-right: 12px;
+            color: var(--dark-gray);
+            width: 24px;
+            text-align: center;
+        }
+
+        .input-field {
+            flex: 1;
+            border: none;
+            background: transparent;
+            font-size: 16px;
+            outline: none;
+        }
+
+        .input-divider {
+            height: 20px;
+            width: 2px;
+            background-color: var(--primary-color);
+            margin-left: 12px;
+        }
+
+        .current-location-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            margin-top: 0.5rem;
+            width: 100%;
+        }
+
+        .current-location-btn:hover {
+            background: var(--secondary-color);
+        }
+
+        /* Seções do formulário */
+        .form-section {
+            background: var(--light-gray);
+            border-radius: var(--element-radius);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 1rem;
+        }
+
+        .payment-methods {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .payment-method {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 10px 16px;
+            border: 2px solid var(--medium-gray);
+            border-radius: var(--element-radius);
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .payment-method.selected {
+            border-color: var(--primary-color);
+            background: rgba(31, 186, 214, 0.1);
+        }
+
+        .payment-method:hover {
+            border-color: var(--primary-color);
+        }
+
+        .coupon-section {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: var(--element-radius);
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .coupon-input {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .coupon-input input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid var(--medium-gray);
+            border-radius: var(--element-radius);
+            font-size: 1rem;
+        }
+
+        .apply-coupon-btn {
+            background: #ffc107;
+            color: #333;
+            border: none;
+            padding: 12px 20px;
+            border-radius: var(--element-radius);
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .apply-coupon-btn:hover {
+            background: #ffb300;
+        }
+
+        .request-ride-btn {
+            width: 100%;
+            padding: 16px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: var(--element-radius);
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        .request-ride-btn:hover {
+            background: var(--secondary-color);
+        }
+
+        .request-ride-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* Modal de confirmação de corrida */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .ride-confirm-modal {
+            background-color: white;
+            width: 100%;
+            border-radius: var(--card-radius) var(--card-radius) 0 0;
+            padding: 24px;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-overlay.active .ride-confirm-modal {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--dark-gray);
+        }
+
+        .ride-options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .ride-option {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            border: 1px solid var(--medium-gray);
+            border-radius: var(--element-radius);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .ride-option.selected {
+            border-color: var(--primary-color);
+            background-color: rgba(31, 186, 214, 0.05);
+        }
+
+        .ride-option-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .ride-option-icon {
+            font-size: 24px;
+            color: var(--primary-color);
+        }
+
+        .ride-option-details h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .ride-option-details p {
+            font-size: 14px;
+            color: var(--dark-gray);
+        }
+
+        .ride-option-price {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .confirm-ride-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: var(--element-radius);
+            padding: 16px;
+            font-size: 16px;
+            font-weight: 600;
+            width: 100%;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .confirm-ride-btn:hover {
+            background-color: var(--secondary-color);
+        }
+
+        /* Status da corrida */
+        .ride-status-container {
+            background-color: white;
+            padding: 16px;
+            border-radius: var(--card-radius);
+            margin: 16px;
+            box-shadow: var(--shadow);
+            display: none;
+        }
+
+        .status-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .status-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .status-time {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .status-message {
+            color: var(--dark-gray);
+            margin-bottom: 16px;
+        }
+
+        .driver-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background-color: var(--light-gray);
+            border-radius: var(--element-radius);
+        }
+
+        .driver-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background-color: var(--medium-gray);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .driver-details h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .driver-details p {
+            font-size: 14px;
+            color: var(--dark-gray);
+        }
+
+        .car-details {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 8px;
+            font-size: 14px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 12px;
+            border-radius: var(--element-radius);
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .call-btn {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .cancel-btn {
+            background-color: var(--light-gray);
+            color: var(--text-color);
+        }
+
+        /* Navegação inferior */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: white;
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 0;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 90;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            text-decoration: none;
+            color: var(--dark-gray);
+            font-size: 12px;
+        }
+
+        .nav-item.active {
+            color: var(--primary-color);
+        }
+
+        .nav-icon {
+            font-size: 20px;
+        }
+
+        /* Página de histórico */
+        .history-page {
+            display: none;
+            padding: 16px;
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .rides-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .ride-card {
+            background-color: white;
+            border-radius: var(--card-radius);
+            padding: 16px;
+            box-shadow: var(--shadow);
+        }
+
+        .ride-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .ride-date {
+            font-size: 14px;
+            color: var(--dark-gray);
+        }
+
+        .ride-price {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .ride-route {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .route-point {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .route-icon {
+            width: 24px;
+            text-align: center;
+            color: var(--primary-color);
+        }
+
+        .route-text {
+            flex: 1;
+        }
+
+        .ride-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid var(--medium-gray);
+            padding-top: 12px;
+        }
+
+        .ride-driver {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .driver-small-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background-color: var(--medium-gray);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .ride-rating {
+            color: var(--warning-color);
+        }
+
+        /* Utilitários */
+        .hidden {
+            display: none;
+        }
+
+        .spinner {
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(31, 186, 214, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--primary-color);
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsividade */
+        @media (min-width: 768px) {
+            .ride-confirm-modal {
+                width: 500px;
+                border-radius: var(--card-radius);
+            }
+            
+            .payment-methods {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="logo">JUSTA</div>
+        <div class="user-info">
+            <div class="user-avatar" id="userAvatar">U</div>
+            <div class="user-name" id="userName">Usuário</div>
+            <button class="logout-btn" onclick="logout()">Sair</button>
+        </div>
+    </div>
+
+    <!-- Mapa -->
+    <div class="map-container">
+        <div id="rideMap"></div>
+        <div class="location-button" onclick="getCurrentLocation()">
+            <i class="fas fa-location-arrow"></i>
+        </div>
+    </div>
+
+    <!-- Status da Corrida -->
+    <div class="ride-status-container" id="rideStatus">
+        <div class="status-header">
+            <h2 class="status-title" id="statusTitle">Aguardando Motorista</h2>
+            <div class="status-time" id="estimatedTime">--</div>
+        </div>
+        <p class="status-message" id="statusMessage">Procurando motoristas próximos...</p>
+        <div class="spinner" id="statusSpinner"></div>
+        
+        <div class="driver-info" id="driverInfo" style="display: none;">
+            <div class="driver-avatar"><i class="fas fa-user"></i></div>
+            <div class="driver-details">
+                <h3 id="driverName">Motorista</h3>
+                <p id="driverRating">0.0 ★</p>
+                <div class="car-details">
+                    <span id="carModel">Veículo</span> • 
+                    <span id="carPlate">Placa</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="action-buttons">
+            <button class="action-btn call-btn"><i class="fas fa-phone"></i> Ligar</button>
+            <button class="action-btn cancel-btn" onclick="cancelRide()">Cancelar</button>
+        </div>
+    </div>
+
+    <!-- Formulário de corrida -->
+    <div class="ride-form-container">
+        <h2 class="modal-title">Solicitar Corrida</h2>
+        
+        <div class="destination-inputs">
+            <div class="input-group">
+                <div class="input-icon"><i class="fas fa-circle" style="color: #4CAF50;"></i></div>
+                <input type="text" class="input-field" id="origin" placeholder="Digite sua origem" required>
+                <div class="input-divider"></div>
+            </div>
+            <button type="button" class="current-location-btn" onclick="getCurrentLocation('origin')">
+                <i class="fas fa-location-arrow"></i> Usar localização atual
+            </button>
+
+            <div class="input-group">
+                <div class="input-icon"><i class="fas fa-flag" style="color: #1fbad6;"></i></div>
+                <input type="text" class="input-field" id="destination" placeholder="Digite seu destino" required>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <div class="section-title">Forma de Pagamento</div>
+            <div class="payment-methods">
+                <div class="payment-method selected" onclick="selectPayment('card')">
+                    <i class="fas fa-credit-card"></i>
+                    <span>Cartão</span>
+                </div>
+                <div class="payment-method" onclick="selectPayment('pix')">
+                    <i class="fas fa-qrcode"></i>
+                    <span>PIX</span>
+                </div>
+                <div class="payment-method" onclick="selectPayment('cash')">
+                    <i class="fas fa-money-bill-wave"></i>
+                    <span>Dinheiro</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="coupon-section">
+            <div class="section-title">Cupom de Desconto</div>
+            <div class="coupon-input">
+                <input type="text" id="couponCode" placeholder="Digite o código do cupom">
+                <button type="button" class="apply-coupon-btn" onclick="applyCoupon()">
+                    Aplicar
+                </button>
+            </div>
+        </div>
+
+        <button type="button" class="request-ride-btn" id="requestRideBtn" onclick="showRideOptions()">
+            Solicitar Corrida
+        </button>
+    </div>
+
+    <!-- Modal de confirmação de corrida -->
+    <div class="modal-overlay" id="rideModal">
+        <div class="ride-confirm-modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Escolha seu trajeto</h2>
+                <button class="close-modal" onclick="hideRideOptions()">&times;</button>
+            </div>
+            
+            <div class="ride-options">
+                <div class="ride-option selected" onclick="selectRideOption('uberx')">
+                    <div class="ride-option-info">
+                        <div class="ride-option-icon"><i class="fas fa-car"></i></div>
+                        <div class="ride-option-details">
+                            <h3>JUSTA X</h3>
+                            <p>Chegada em 5 min</p>
+                        </div>
+                    </div>
+                    <div class="ride-option-price" id="priceUberX">R$ --</div>
+                </div>
+                
+                <div class="ride-option" onclick="selectRideOption('comfort')">
+                    <div class="ride-option-info">
+                        <div class="ride-option-icon"><i class="fas fa-car"></i></div>
+                        <div class="ride-option-details">
+                            <h3>JUSTA Confort</h3>
+                            <p>Chegada em 7 min</p>
+                        </div>
+                    </div>
+                    <div class="ride-option-price" id="priceComfort">R$ --</div>
+                </div>
+                
+                <div class="ride-option" onclick="selectRideOption('xl')">
+                    <div class="ride-option-info">
+                        <div class="ride-option-icon"><i class="fas fa-shuttle-van"></i></div>
+                        <div class="ride-option-details">
+                            <h3>JUSTA XL</h3>
+                            <p>Chegada em 10 min</p>
+                        </div>
+                    </div>
+                    <div class="ride-option-price" id="priceXL">R$ --</div>
+                </div>
+            </div>
+            
+            <div class="form-section">
+                <h3 class="section-title">Forma de pagamento</h3>
+                <div class="payment-methods">
+                    <div class="payment-method selected" onclick="selectPaymentModal('card')">
+                        <i class="fas fa-credit-card"></i>
+                        <span>Cartão</span>
+                    </div>
+                    <div class="payment-method" onclick="selectPaymentModal('pix')">
+                        <i class="fas fa-qrcode"></i>
+                        <span>PIX</span>
+                    </div>
+                    <div class="payment-method" onclick="selectPaymentModal('cash')">
+                        <i class="fas fa-money-bill-wave"></i>
+                        <span>Dinheiro</span>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="confirm-ride-btn" onclick="requestRide()">Solicitar JUSTA X</button>
+        </div>
+    </div>
+
+    <!-- Página de histórico (inicialmente oculta) -->
+    <div class="history-page" id="historyPage">
+        <h2 class="page-title">Suas viagens</h2>
+        <div class="rides-list" id="ridesList">
+            <!-- As corridas serão carregadas aqui dinamicamente -->
+        </div>
+    </div>
+
+    <!-- Navegação inferior -->
+    <div class="bottom-nav">
+        <a href="#" class="nav-item active" onclick="showHomePage()">
+            <i class="fas fa-home nav-icon"></i>
+            <span>Início</span>
+        </a>
+        <a href="#" class="nav-item" onclick="showHistoryPage()">
+            <i class="fas fa-history nav-icon"></i>
+            <span>Histórico</span>
+        </a>
+        <a href="#" class="nav-item" onclick="goToPayments()">
+            <i class="fas fa-credit-card nav-icon"></i>
+            <span>Pagamentos</span>
+        </a>
+        <a href="#" class="nav-item" onclick="goToProfile()">
+            <i class="fas fa-user nav-icon"></i>
+            <span>Perfil</span>
+        </a>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+    
+    <script>
+        // Configuração do Firebase (substitua com suas próprias configurações)
+        const firebaseConfig = {
+            apiKey: "sua-api-key",
+            authDomain: "seu-projeto.firebaseapp.com",
+            projectId: "seu-projeto",
+            storageBucket: "seu-projeto.appspot.com",
+            messagingSenderId: "seu-sender-id",
+            appId: "seu-app-id"
+        };
+        
+        // Inicializar Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+    </script>
+
+    <script>
+        // Variáveis globais
+        let map;
+        let userMarker;
+        let driverMarker;
+        let routePolyline;
+        let currentUser = null;
+        let userLocation = null;
+        let currentRide = null;
+        let locationWatchId = null;
+        let rideListener = null;
+        let selectedRideType = 'uberx';
+        let selectedPayment = 'card';
+        let estimatedPrice = 0;
+        
+        // Aguardar Firebase carregar
+        function waitForFirebase() {
+            return new Promise((resolve) => {
+                if (typeof firebase !== 'undefined' && firebase.auth && typeof db !== 'undefined') {
+                    resolve();
+                } else {
+                    const checkFirebase = setInterval(() => {
+                        if (typeof firebase !== 'undefined' && firebase.auth && typeof db !== 'undefined') {
+                            clearInterval(checkFirebase);
+                            resolve();
+                        }
+                    }, 100);
+                }
+            });
+        }
+
+        // Verificar se está logado
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Aguardar Firebase carregar
+            await waitForFirebase();
+            
+            // Verificar autenticação (simplificado para exemplo)
+            const userId = localStorage.getItem('userId');
+            if (!userId) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Carregar dados do usuário
+            await loadUserData();
+            
+            // Carregar corridas recentes
+            await loadRecentRides();
+            
+            // Inicializar mapa
+            await initializeMap();
+            
+            // Obter localização atual
+            await getCurrentLocation();
+            
+            // Iniciar monitoramento de localização
+            startLocationTracking();
+        });
+
+        // Inicializar o mapa
+        function initMap() {
+            map = L.map('rideMap').setView([-23.5505, -46.6333], 13); // Coordenadas de São Paulo
+            
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap contributors'
+            }).addTo(map);
+            
+            // Adicionar marcador de usuário
+            userMarker = L.marker([-23.5505, -46.6333])
+                .addTo(map)
+                .bindPopup('Sua localização')
+                .openPopup();
+        }
+        
+        // Carregar dados do usuário
+        async function loadUserData() {
+            try {
+                const userData = JSON.parse(localStorage.getItem('userData'));
+                const userId = localStorage.getItem('userId');
+                
+                if (userData && userData.name) {
+                    currentUser = userData;
+                    const userNameElement = document.getElementById('userName');
+                    const userAvatarElement = document.getElementById('userAvatar');
+                    
+                    if (userNameElement) {
+                        userNameElement.textContent = userData.name;
+                    }
+                    
+                    if (userAvatarElement) {
+                        if (userData.photoURL) {
+                            userAvatarElement.style.backgroundImage = `url(${userData.photoURL})`;
+                            userAvatarElement.textContent = '';
+                        } else {
+                            userAvatarElement.textContent = userData.name.charAt(0).toUpperCase();
+                        }
+                    }
+                } else if (userId) {
+                    // Se não tem userData no localStorage, buscar do Firestore
+                    const userDoc = await db.collection('users').doc(userId).get();
+                    if (userDoc.exists) {
+                        const firestoreUserData = userDoc.data();
+                        currentUser = {
+                            name: firestoreUserData.nome || firestoreUserData.name || 'Usuário',
+                            email: firestoreUserData.email || '',
+                            photoURL: firestoreUserData.photoURL || null
+                        };
+                        
+                        // Atualizar localStorage
+                        localStorage.setItem('userData', JSON.stringify(currentUser));
+                        
+                        const userNameElement = document.getElementById('userName');
+                        const userAvatarElement = document.getElementById('userAvatar');
+                        
+                        if (userNameElement) {
+                            userNameElement.textContent = currentUser.name;
+                        }
+                        
+                        if (userAvatarElement) {
+                            if (currentUser.photoURL) {
+                                userAvatarElement.style.backgroundImage = `url(${currentUser.photoURL})`;
+                                userAvatarElement.textContent = '';
+                            } else {
+                                userAvatarElement.textContent = currentUser.name.charAt(0).toUpperCase();
+                            }
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('Erro ao carregar dados do usuário:', error);
+                // Fallback para evitar erros
+                currentUser = {
+                    name: 'Usuário',
+                    email: '',
+                    photoURL: null
+                };
+                
+                const userNameElement = document.getElementById('userName');
+                const userAvatarElement = document.getElementById('userAvatar');
+                
+                if (userNameElement) {
+                    userNameElement.textContent = 'Usuário';
+                }
+                
+                if (userAvatarElement) {
+                    userAvatarElement.textContent = 'U';
+                }
+            }
+        }
+        
+        // Inicializar mapa
+        async function initializeMap() {
+            try {
+                // Aguardar um pouco para garantir que o DOM está pronto
+                await new Promise(resolve => setTimeout(resolve, 100));
+                
+                // Inicializar mapa
+                initMap();
+                
+                console.log('Mapa inicializado com sucesso');
+            } catch (error) {
+                console.error('Erro ao inicializar mapa:', error);
+            }
+        }
+        
+        // Iniciar monitoramento de localização
+        function startLocationTracking() {
+            try {
+                if (navigator.geolocation) {
+                    locationWatchId = navigator.geolocation.watchPosition(
+                        (position) => {
+                            userLocation = {
+                                lat: position.coords.latitude,
+                                lng: position.coords.longitude
+                            };
+                            
+                            // Atualizar posição no mapa
+                            if (userMarker) {
+                                userMarker.setLatLng([userLocation.lat, userLocation.lng]);
+                                map.setView([userLocation.lat, userLocation.lng], 15);
+                            }
+                            
+                            // Atualizar localização no Firestore
+                            updateUserLocation(userLocation);
+                        },
+                        (error) => {
+                            console.error('Erro ao obter localização:', error);
+                        },
+                        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+                    );
+                    
+                    console.log('Monitoramento de localização iniciado');
+                }
+            } catch (error) {
+                console.error('Erro ao iniciar monitoramento de localização:', error);
+            }
+        }
+        
+        // Atualizar localização do usuário no Firestore
+        async function updateUserLocation(position) {
+            try {
+                const userId = localStorage.getItem('userId');
+                if (userId) {
+                    await db.collection('users').doc(userId).update({
+                        currentLocation: new firebase.firestore.GeoPoint(position.lat, position.lng),
+                        lastLocationUpdate: new Date()
+                    });
+                }
+            } catch (error) {
+                console.error('Erro ao atualizar localização:', error);
+            }
+        }
+        
+        // Obter localização atual
+        async function getCurrentLocation(field = null) {
+            try {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(
+                        (position) => {
+                            const lat = position.coords.latitude;
+                            const lng = position.coords.longitude;
+                            
+                            userLocation = {
+                                lat: lat,
+                                lng: lng
+                            };
+                            
+                            // Atualizar mapa
+                            map.setView([lat, lng], 15);
+                            if (userMarker) {
+                                userMarker.setLatLng([lat, lng]);
+                            } else {
+                                userMarker = L.marker([lat, lng])
+                                    .addTo(map)
+                                    .bindPopup('Sua localização')
+                                    .openPopup();
+                            }
+                            
+                            // Buscar endereço a partir das coordenadas
+                            if (field === 'origin') {
+                                getAddressFromCoords(lat, lng, 'origin');
+                            }
+                        },
+                        (error) => {
+                            console.error('Erro ao obter localização:', error);
+                            alert('Não foi possível obter sua localização. Verifique as permissões do navegador.');
+                        }
+                    );
+                } else {
+                    alert('Geolocalização não é suportada por este navegador.');
+                }
+            } catch (error) {
+                console.error('Erro ao obter localização:', error);
+                return null;
+            }
+        }
+
+        // Obter endereço a partir de coordenadas
+        function getAddressFromCoords(lat, lng, field) {
+            // Usando a API de geocodificação do OpenStreetMap (Nominatim)
+            fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data && data.display_name) {
+                        document.getElementById(field).value = data.display_name;
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro ao obter endereço:', error);
+                    document.getElementById(field).value = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+                });
+        }
+
+        // Selecionar método de pagamento
+        function selectPayment(method) {
+            selectedPayment = method;
+            
+            // Remover seleção anterior
+            document.querySelectorAll('.payment-method').forEach(el => {
+                el.classList.remove('selected');
+            });
+            
+            // Selecionar método atual
+            document.querySelectorAll('.payment-method')[method === 'card' ? 0 : method === 'pix' ? 1 : 2].classList.add('selected');
+        }
+
+        // Selecionar método de pagamento no modal
+        function selectPaymentModal(method) {
+            selectedPayment = method;
+            
+            // Remover seleção anterior
+            document.querySelectorAll('#rideModal .payment-method').forEach(el => {
+                el.classList.remove('selected');
+            });
+            
+            // Selecionar método atual
+            event.currentTarget.classList.add('selected');
+        }
+
+        // Aplicar cupom
+        async function applyCoupon() {
+            const couponElement = document.getElementById('couponCode');
+            if (!couponElement) {
+                console.error('Elemento couponCode não encontrado');
+                return;
+            }
+            
+            const couponCode = couponElement.value.trim();
+            
+            if (!couponCode) {
+                alert('Digite um código de cupom');
+                return;
+            }
+            
+            try {
+                // Verificar cupom no Firebase
+                const couponDoc = await db.collection('promotions')
+                    .where('code', '==', couponCode.toUpperCase())
+                    .where('isActive', '==', true)
+                    .get();
+                
+                if (!couponDoc.empty) {
+                    const coupon = couponDoc.docs[0].data();
+                    alert(`Cupom aplicado! Desconto de ${coupon.discount}%`);
+                } else {
+                    alert('Cupom inválido ou expirado');
+                }
+            } catch (error) {
+                console.error('Erro ao aplicar cupom:', error);
+                alert('Erro ao aplicar cupom');
+            }
+        }
+
+        // Mostrar opções de corrida
+        async function showRideOptions() {
+            const origin = document.getElementById('origin').value;
+            const destination = document.getElementById('destination').value;
+            
+            if (!origin || !destination) {
+                alert('Por favor, informe origem e destino.');
+                return;
+            }
+            
+            // Simular cálculo de preços
+            document.getElementById('priceUberX').textContent = 'R$ 15,90';
+            document.getElementById('priceComfort').textContent = 'R$ 21,50';
+            document.getElementById('priceXL').textContent = 'R$ 26,90';
+            
+            document.getElementById('rideModal').classList.add('active');
+        }
+        
+        // Ocultar opções de corrida
+        function hideRideOptions() {
+            document.getElementById('rideModal').classList.remove('active');
+        }
+        
+        // Selecionar tipo de corrida
+        function selectRideOption(option) {
+            selectedRideType = option;
+            
+            // Remover seleção anterior
+            document.querySelectorAll('.ride-option').forEach(el => {
+                el.classList.remove('selected');
+            });
+            
+            // Adicionar seleção atual
+            event.currentTarget.classList.add('selected');
+            
+            // Atualizar texto do botão
+            let rideTypeText = '';
+            switch(option) {
+                case 'uberx': rideTypeText = 'JUSTA X'; break;
+                case 'comfort': rideTypeText = 'JUSTA Confort'; break;
+                case 'xl': rideTypeText = 'JUSTA XL'; break;
+            }
+            
+            document.querySelector('.confirm-ride-btn').textContent = `Solicitar ${rideTypeText}`;
+        }
+        
+        // Solicitar corrida
+        async function requestRide() {
+            const origin = document.getElementById('origin').value;
+            const destination = document.getElementById('destination').value;
+            const couponCode = document.getElementById('couponCode').value.trim();
+            
+            if (!origin || !destination) {
+                alert('Por favor, preencha origem e destino.');
+                return;
+            }
+            
+            // Fechar modal
+            hideRideOptions();
+            
+            const requestBtn = document.getElementById('requestRideBtn');
+            requestBtn.disabled = true;
+            requestBtn.textContent = 'Solicitando...';
+            
+            try {
+                const userId = localStorage.getItem('userId');
+                
+                if (!userId) {
+                    throw new Error('Usuário não autenticado');
+                }
+                
+                if (!userLocation) {
+                    throw new Error('Localização não disponível. Aguarde um momento e tente novamente.');
+                }
+                
+                // Simular geocodificação de origem e destino
+                const originCoords = await simulateGeocodeAddress(origin);
+                const destinationCoords = await simulateGeocodeAddress(destination);
+                
+                if (!originCoords || !destinationCoords) {
+                    throw new Error('Não foi possível localizar o endereço. Verifique se os endereços estão corretos.');
+                }
+                
+                // Calcular distância e duração estimada
+                const estimatedDistance = calculateDistance(
+                    originCoords.lat, originCoords.lng,
+                    destinationCoords.lat, destinationCoords.lng
+                );
+                
+                const estimatedDuration = Math.round(estimatedDistance * 3); // ~3 min por km
+                
+                // Calcular preço estimado
+                estimatedPrice = calculateEstimatedPrice(estimatedDistance, estimatedDuration);
+                
+                // Buscar motoristas próximos
+                const nearbyDrivers = await findNearbyDrivers(userLocation.lat, userLocation.lng, 10);
+                
+                if (nearbyDrivers.length === 0) {
+                    // Tentar criar motoristas de teste se não houver nenhum
+                    await createTestDrivers(userLocation);
+                }
+                
+                // Criar solicitação de corrida
+                const rideData = {
+                    passengerId: userId,
+                    passengerName: currentUser.name,
+                    passengerEmail: currentUser.email || '',
+                    origin: origin,
+                    destination: destination,
+                    originCoords: {
+                        latitude: originCoords.lat,
+                        longitude: originCoords.lng
+                    },
+                    destinationCoords: {
+                        latitude: destinationCoords.lat,
+                        longitude: destinationCoords.lng
+                    },
+                    paymentMethod: selectedPayment,
+                    couponCode: couponCode || null,
+                    status: 'requested',
+                    createdAt: new Date(),
+                    userLocation: {
+                        latitude: userLocation.lat,
+                        longitude: userLocation.lng
+                    },
+                    estimatedDistance: Math.round(estimatedDistance * 100) / 100,
+                    estimatedDuration: estimatedDuration,
+                    estimatedPrice: Math.round(estimatedPrice * 100) / 100,
+                    finalPrice: 0,
+                    distance: 0,
+                    duration: 0
+                };
+                
+                // Salvar no Firebase
+                const rideRef = await db.collection('rides').add(rideData);
+                rideData.id = rideRef.id;
+                
+                // Mostrar status de busca
+                showRideStatus('Procurando motoristas próximos...', 'searching');
+                
+                // Iniciar listener para mudanças na corrida
+                startRideListener(rideRef.id);
+                
+                alert('Corrida solicitada! Procurando motoristas...');
+                
+                // Salvar ID da corrida atual
+                currentRide = rideRef.id;
+                localStorage.setItem('currentRideId', rideRef.id);
+                
+            } catch (error) {
+                console.error('Erro ao solicitar corrida:', error);
+                alert('Erro ao solicitar corrida: ' + error.message);
+            } finally {
+                requestBtn.disabled = false;
+                requestBtn.textContent = 'Solicitar Corrida';
+            }
+        }
+
+        // Simular geocodificação
+        async function simulateGeocodeAddress(address) {
+            // Em uma aplicação real, isso seria feito com uma API de geocodificação
+            return {
+                lat: -23.5505 + (Math.random() * 0.05 - 0.025),
+                lng: -46.6333 + (Math.random() * 0.05 - 0.025)
+            };
+        }
+
+        // Calcular distância entre dois pontos
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371; // Raio da Terra em km
+            const dLat = deg2rad(lat2 - lat1);
+            const dLon = deg2rad(lon2 - lon1);
+            const a = 
+                Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * 
+                Math.sin(dLon/2) * Math.sin(dLon/2); 
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+            const distance = R * c; // Distância em km
+            return distance;
+        }
+
+        function deg2rad(deg) {
+            return deg * (Math.PI/180);
+        }
+
+        // Calcular preço estimado
+        function calculateEstimatedPrice(distance, duration) {
+            const baseFare = 5;
+            const distanceRate = 2.5; // por km
+            const timeRate = 0.5; // por minuto
+            return baseFare + (distance * distanceRate) + (duration * timeRate);
+        }
+
+        // Encontrar motoristas próximos
+        async function findNearbyDrivers(lat, lng, radius) {
+            try {
+                // Simulação - em uma aplicação real, isso seria uma consulta geográfica ao Firestore
+                const driversSnapshot = await db.collection('users')
+                    .where('userType', '==', 'motorista')
+                    .where('isOnline', '==', true)
+                    .where('status', '==', 'approved')
+                    .get();
+                
+                const drivers = [];
+                driversSnapshot.forEach(doc => {
+                    const driverData = doc.data();
+                    if (driverData.currentLocation) {
+                        const driverLat = driverData.currentLocation.latitude;
+                        const driverLng = driverData.currentLocation.longitude;
+                        const distance = calculateDistance(lat, lng, driverLat, driverLng);
+                        
+                        if (distance <= radius) {
+                            drivers.push({
+                                id: doc.id,
+                                ...driverData,
+                                distance: distance
+                            });
+                        }
+                    }
+                });
+                
+                return drivers;
+            } catch (error) {
+                console.error('Erro ao buscar motoristas:', error);
+                return [];
+            }
+        }
+
+        // Criar motoristas de teste
+        async function createTestDrivers(userLocation) {
+            try {
+                const testDrivers = [
+                    {
+                        nome: 'João Silva',
+                        email: 'joao.motorista@test.com',
+                        telefone: '(11) 99999-1111',
+                        cnh: '12345678901',
+                        userType: 'motorista',
+                        status: 'approved',
+                        isOnline: true,
+                        rating: 4.8,
+                        veiculo: {
+                            marca: 'Toyota',
+                            modelo: 'Corolla',
+                            placa: 'ABC-1234',
+                            cor: 'Branco',
+                            ano: 2020
+                        },
+                        currentLocation: new firebase.firestore.GeoPoint(
+                            userLocation.lat + 0.01, // ~1km de distância
+                            userLocation.lng + 0.01
+                        ),
+                        lastLocationUpdate: new Date()
+                    }
+                ];
+                
+                for (const driver of testDrivers) {
+                    const existingDriver = await db.collection('users')
+                        .where('email', '==', driver.email)
+                        .get();
+                    
+                    if (existingDriver.empty) {
+                        await db.collection('users').add(driver);
+                    } else {
+                        const driverDoc = existingDriver.docs[0];
+                        await db.collection('users').doc(driverDoc.id).update({
+                            isOnline: true,
+                            currentLocation: driver.currentLocation,
+                            lastLocationUpdate: new Date()
+                        });
+                    }
+                }
+                
+                console.log('Motoristas de teste criados/atualizados com sucesso!');
+                
+            } catch (error) {
+                console.error('Erro ao criar motoristas de teste:', error);
+            }
+        }
+
+        // Carregar corridas recentes
+        async function loadRecentRides() {
+            try {
+                const userId = localStorage.getItem('userId');
+                
+                if (!userId) {
+                    console.log('Usuário não autenticado, pulando carregamento de corridas recentes');
+                    return;
+                }
+                
+                // Simulação - em uma aplicação real, isso buscaria do Firestore
+                const rides = [
+                    {
+                        origin: 'Av. Paulista, 1000',
+                        destination: 'Shopping Ibirapuera',
+                        createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+                        finalPrice: 18.50
+                    },
+                    {
+                        origin: 'Rua Augusta, 500',
+                        destination: 'Aeroporto de Congonhas',
+                        createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
+                        finalPrice: 22.30
+                    },
+                    {
+                        origin: 'Praça da Sé, 100',
+                        destination: 'Parque Ibirapuera',
+                        createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+                        finalPrice: 15.90
+                    }
+                ];
+                
+                const ridesList = document.getElementById('ridesList');
+                ridesList.innerHTML = '';
+                
+                rides.forEach(ride => {
+                    const rideCard = document.createElement('div');
+                    rideCard.className = 'ride-card';
+                    rideCard.innerHTML = `
+                        <div class="ride-header">
+                            <div class="ride-date">${ride.createdAt.toLocaleDateString('pt-BR')}</div>
+                            <div class="ride-price">R$ ${ride.finalPrice.toFixed(2)}</div>
+                        </div>
+                        <div class="ride-route">
+                            <div class="route-point">
+                                <div class="route-icon"><i class="fas fa-circle" style="color: #4CAF50; font-size: 12px;"></i></div>
+                                <div class="route-text">${ride.origin}</div>
+                            </div>
+                            <div class="route-point">
+                                <div class="route-icon"><i class="fas fa-flag" style="color: #1fbad6; font-size: 12px;"></i></div>
+                                <div class="route-text">${ride.destination}</div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    ridesList.appendChild(rideCard);
+                });
+                
+            } catch (error) {
+                console.error('Erro ao carregar corridas:', error);
+                const ridesList = document.getElementById('ridesList');
+                if (ridesList) {
+                    ridesList.innerHTML = '<p style="text-align: center; color: #f44336;">Erro ao carregar corridas recentes</p>';
+                }
+            }
+        }
+
+        // Iniciar listener para mudanças na corrida
+        function startRideListener(rideId) {
+            if (rideListener) {
+                rideListener();
+            }
+            
+            // Simulação - em uma aplicação real, isso seria um listener do Firestore
+            // Simular motorista aceitando a corrida após 5 segundos
+            setTimeout(() => {
+                simulateRideUpdate({
+                    status: 'accepted',
+                    driverId: 'test-driver-id',
+                    estimatedTime: '5 min'
+                });
+            }, 5000);
+        }
+        
+        // Simular atualização de corrida
+        function simulateRideUpdate(rideData) {
+            handleRideUpdate(rideData);
+        }
+        
+        // Lidar com atualizações da corrida
+        async function handleRideUpdate(rideData) {
+            switch (rideData.status) {
+                case 'accepted':
+                    showRideStatus('Motorista aceitou sua corrida!', 'accepted');
+                    
+                    // Buscar dados do motorista
+                    if (rideData.driverId) {
+                        try {
+                            // Simular dados do motorista
+                            const driverData = {
+                                nome: 'Carlos Silva',
+                                rating: 4.9,
+                                veiculo: {
+                                    marca: 'Honda',
+                                    modelo: 'Civic',
+                                    placa: 'ABC-1234',
+                                    cor: 'Prata'
+                                },
+                                telefone: '(11) 99999-9999'
+                            };
+                            
+                            showDriverInfo(driverData);
+                            document.getElementById('estimatedTime').textContent = rideData.estimatedTime || '5 min';
+                            
+                            // Simular motorista no mapa
+                            simulateDriverOnMap();
+                            
+                        } catch (error) {
+                            console.error('Erro ao buscar dados do motorista:', error);
+                        }
+                    }
+                    break;
+                    
+                case 'in_progress':
+                    showRideStatus('Corrida em andamento...', 'accepted');
+                    break;
+                    
+                case 'arrived':
+                    showRideStatus('O motorista chegou!', 'accepted');
+                    break;
+
+                case 'completed':
+                    showRideStatus('Corrida finalizada!', 'completed');
+                    setTimeout(() => {
+                        hideRideStatus();
+                        resetRideForm();
+                    }, 2000);
+                    break;
+                    
+                case 'cancelled':
+                    showRideStatus('Corrida cancelada', 'cancelled');
+                    hideDriverInfo();
+                    setTimeout(() => {
+                        hideRideStatus();
+                        resetRideForm();
+                    }, 3000);
+                    break;
+            }
+        }
+
+        // Simular motorista no mapa
+        function simulateDriverOnMap() {
+            if (userLocation) {
+                // Criar marcador do motorista em uma posição aleatória próxima
+                const driverLat = userLocation.lat + (Math.random() * 0.02 - 0.01);
+                const driverLng = userLocation.lng + (Math.random() * 0.02 - 0.01);
+                
+                if (driverMarker) {
+                    map.removeLayer(driverMarker);
+                }
+                
+                driverMarker = L.marker([driverLat, driverLng], {
+                    icon: L.divIcon({
+                        className: 'driver-marker',
+                        html: '<i class="fas fa-car" style="color: #1fbad6; font-size: 24px;"></i>',
+                        iconSize: [24, 24]
+                    })
+                }).addTo(map);
+                
+                // Simular rota do motorista até o usuário
+                const routePoints = [
+                    [driverLat, driverLng],
+                    [userLocation.lat, userLocation.lng]
+                ];
+                
+                if (routePolyline) {
+                    map.removeLayer(routePolyline);
+                }
+                
+                routePolyline = L.polyline(routePoints, { color: '#1fbad6', weight: 4 }).addTo(map);
+                
+                // Ajustar o zoom para mostrar a rota completa
+                map.fitBounds(routePoints);
+            }
+        }
+
+        // Mostrar informações do motorista
+        function showDriverInfo(driverData) {
+            const driverInfo = document.getElementById('driverInfo');
+            if (driverInfo) {
+                driverInfo.style.display = 'flex';
+                document.getElementById('driverName').textContent = driverData.nome;
+                document.getElementById('driverRating').textContent = driverData.rating + ' ★';
+                document.getElementById('carModel').textContent = driverData.veiculo.marca + ' ' + driverData.veiculo.modelo;
+                document.getElementById('carPlate').textContent = driverData.veiculo.placa;
+            }
+        }
+        
+        // Esconder informações do motorista
+        function hideDriverInfo() {
+            const driverInfo = document.getElementById('driverInfo');
+            if (driverInfo) {
+                driverInfo.style.display = 'none';
+            }
+        }
+        
+        // Mostrar status da corrida
+        function showRideStatus(message, type = 'searching') {
+            const statusDiv = document.getElementById('rideStatus');
+            const titleElement = document.getElementById('statusTitle');
+            const messageElement = document.getElementById('statusMessage');
+            const spinnerElement = document.getElementById('statusSpinner');
+            
+            if (statusDiv && titleElement && messageElement) {
+                statusDiv.style.display = 'block';
+                messageElement.textContent = message;
+                
+                switch (type) {
+                    case 'searching':
+                        titleElement.textContent = 'Procurando Motorista';
+                        if (spinnerElement) spinnerElement.style.display = 'block';
+                        break;
+                    case 'accepted':
+                        titleElement.textContent = 'Motorista a Caminho';
+                        if (spinnerElement) spinnerElement.style.display = 'none';
+                        break;
+                    case 'completed':
+                        titleElement.textContent = 'Corrida Finalizada';
+                        if (spinnerElement) spinnerElement.style.display = 'none';
+                        break;
+                    case 'cancelled':
+                        titleElement.textContent = 'Corrida Cancelada';
+                        if (spinnerElement) spinnerElement.style.display = 'none';
+                        break;
+                }
+            }
+        }
+        
+        // Esconder status da corrida
+        function hideRideStatus() {
+            const statusDiv = document.getElementById('rideStatus');
+            if (statusDiv) {
+                statusDiv.style.display = 'none';
+            }
+        }
+        
+        // Cancelar corrida
+        function cancelRide() {
+            if (confirm('Tem certeza que deseja cancelar a corrida?')) {
+                // Limpar marcadores e rotas
+                if (driverMarker) {
+                    map.removeLayer(driverMarker);
+                }
+                if (routePolyline) {
+                    map.removeLayer(routePolyline);
+                }
+                
+                // Ocultar status da corrida
+                hideRideStatus();
+                hideDriverInfo();
+                
+                alert('Corrida cancelada com sucesso.');
+            }
+        }
+        
+        // Resetar formulário de corrida
+        function resetRideForm() {
+            document.getElementById('destination').value = '';
+            hideRideStatus();
+            hideDriverInfo();
+            
+            if (driverMarker) {
+                map.removeLayer(driverMarker);
+            }
+            if (routePolyline) {
+                map.removeLayer(routePolyline);
+            }
+        }
+        
+        // Navegação
+        function showHomePage() {
+            document.getElementById('historyPage').style.display = 'none';
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            document.querySelectorAll('.nav-item')[0].classList.add('active');
+        }
+
+        function showHistoryPage() {
+            document.getElementById('historyPage').style.display = 'block';
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            document.querySelectorAll('.nav-item')[1].classList.add('active');
+            
+            // Carregar histórico de corridas
+            loadRecentRides();
+        }
+
+        function goToHistory() {
+            showHistoryPage();
+        }
+
+        function goToPayments() {
+            alert('Redirecionando para página de pagamentos...');
+            // window.location.href = 'pagamentos.html';
+        }
+
+        function goToProfile() {
+            alert('Redirecionando para página de perfil...');
+            // window.location.href = 'perfil.html';
+        }
+        
+        function logout() {
+            localStorage.clear();
+            window.location.href = 'login.html';
+        }
+
+        // Inicializar seleção de pagamento
+        setTimeout(() => {
+            selectPayment('card');
+        }, 100);
+    </script>
+</body>
+</html>

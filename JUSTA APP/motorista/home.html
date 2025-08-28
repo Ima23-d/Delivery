@@ -2,6 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JUSTA - Home do Motorista</title>
     <style>
@@ -18,7 +19,7 @@
         }
 
         .header {
-            background: linear-gradient(135deg, #2196F3, #1976D2);
+            background:  #2196F3;
             color: white;
             padding: 1rem 1.5rem;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -41,18 +42,10 @@
             display: flex;
             align-items: center;
             gap: 1rem;
+            flex-direction: row;
         }
 
-        .driver-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-        }
+       
 
         .driver-details {
             text-align: right;
@@ -381,8 +374,56 @@
         
         /* Estilos do Mapa */
         .map-container {
-            margin-bottom: 20px;
+            width: 100%;
+            margin: 0 0 20px 0;
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
         }
+
+#driverMap {
+    height: 400px;
+    width: 100%;
+    border-radius: 15px;
+}
+
+/* Garantir que o container principal não tenha padding ou margin que afete a largura */
+.main-content {
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+}
+
+/* Ajustes para telas menores */
+@media (max-width: 768px) {
+    .map-container {
+        border-radius: 10px;
+        margin: 0 0 15px 0;
+    }
+    
+    #driverMap {
+        height: 300px;
+        border-radius: 10px;
+    }
+    
+    .main-content {
+        padding: 1rem;
+    }
+}
+
+.location-status {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    background: white;
+    padding: 8px 12px;
+    border-radius: 20px;
+    z-index: 1000;
+    font-size: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    font-weight: 500;
+}
         
         .user-marker {
             background: #2196F3;
@@ -538,38 +579,115 @@
                 flex-direction: column;
             }
         }
+           /* Navegação inferior */
+           .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 12px 5px;
+            box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: #777;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+            padding: 5px 10px;
+            border-radius: 12px;
+        }
+
+        .nav-item.active {
+            color: #2196F3;
+            background: rgba(33, 150, 243, 0.1);
+        }
+
+        .nav-icon {
+            font-size: 1.4rem;
+            margin-bottom: 4px;
+        }
+
+        .nav-item:hover {
+            color: #2196F3;
+            background: rgba(33, 150, 243, 0.1);
+        }
+        .header2{
+            width: 100%;
+        
+            justify-content:space-between;
+            align-items: center;
+            display: flex;
+            flex-direction: row;
+        }
+        .leaflet-container {
+    height: 100%;
+    width: 100%;
+    border-radius: 15px;
+    z-index: 1;
+}
+
+.location-status {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    background: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    z-index: 1000;
+    font-size: 12px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
     </style>
 </head>
 <body>
-    <div class="header">
+
+    <div class="header" style="background-color: white;">
         <div class="header-content">
-            <div class="logo">🚗 JUSTA</div>
+
+            <div class="header2">
+                <div class="logo" style="color: #2196F3;">JUSTA</div>
             
-            <div class="driver-info">
-                <div class="driver-avatar" id="driverAvatar">👤</div>
-                <div class="driver-details">
-                    <div class="driver-name" id="driverName">Motorista</div>
-                    <div class="driver-status" id="driverStatus">Pendente</div>
-                    <div class="driver-rating" id="driverRating">⭐ 0.0</div>
+                <div class="driver-info">
+                    <div class="driver-details">
+                        <div class="driver-name" id="driverName" style="color: black;">Motorista</div>
+                        <div class="driver-status" id="driverStatus" style="color: black;">Pendente</div>
+                        <div class="driver-rating" id="driverRating" style="color: black;">⭐ 0.0</div>
+                    </div>
                 </div>
             </div>
+          
             
             <div class="online-toggle">
                 <label class="toggle-switch">
                     <input type="checkbox" id="onlineToggle" onchange="toggleOnlineStatus()">
                     <span class="toggle-slider"></span>
                 </label>
-                <span class="status-text" id="statusText">Offline</span>
+                <span class="status-text" id="statusText" style="color: black;">Offline</span>
             </div>
             
-            <button class="logout-btn" onclick="logout()">Sair</button>
+            <button class="logout-btn" onclick="logout()" style="background-color: #d32f2f;">Sair</button>
         </div>
     </div>
+
 
     <div class="main-content">
         <!-- Mapa Interativo -->
         <div class="map-container">
-            <div id="driverMap" style="height: 300px; width: 100%; border-radius: 15px; margin-bottom: 20px;"></div>
+            <div id="driverMap"></div>
+            <div class="location-status" id="locationStatus">
+                Obtendo localização...
+            </div>
         </div>
         
         <!-- Estatísticas -->
@@ -629,6 +747,28 @@
         </div>
     </div>
 
+    <nav class="bottom-nav">
+        <a href="home.html" class="nav-item active">
+            <i class="fas fa-home nav-icon"></i>
+            <span>Início</span>
+        </a>
+        <a href="historico.html" class="nav-item">
+            <i class="fas fa-history nav-icon"></i>
+            <span>Histórico</span>
+        </a>
+        <a href="pagamento.html" class="nav-item">
+            <i class="fas fa-credit-card nav-icon"></i>
+            <span>Pagamentos</span>
+        </a>
+        <a href="saldo.html" class="nav-item">
+            <i class="fas fa-credit-card nav-icon"></i>
+            <span>Saldo</span>
+        </a>
+        <a href="perfil.html" class="nav-item">
+            <i class="fas fa-user nav-icon"></i>
+            <span>Perfil</span>
+        </a>
+    </nav>
     <!-- Notificação -->
     <div class="notification" id="notification"></div>
 
@@ -671,7 +811,23 @@
         let userLocation = null;
         let notificationListener = null;
         let currentRide = null;
-
+        let map = null;
+        let userMarker = null;
+        let accuracyCircle = null;
+        let watchId = null;
+        // Função para calcular distância entre coordenadas (Haversine)
+        function getDistanceKm(lat1, lon1, lat2, lon2) {
+            const R = 6371; // Raio da Terra em km
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = 
+                Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(lat1 * Math.PI/180) * Math.cos(lat2 * Math.PI/180) * 
+                Math.sin(dLon/2) * Math.sin(dLon/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            const distance = R * c;
+            return distance;
+        }
         // Aguardar o Firebase estar pronto
         async function initializeApp() {
             await waitForFirebase();
@@ -752,6 +908,7 @@
         }
 
         // Alternar status online/offline
+        // Alternar status online/offline
         async function toggleOnlineStatus() {
             try {
                 const toggle = document.getElementById('onlineToggle');
@@ -772,7 +929,7 @@
                     ridesContainer.innerHTML = '<p class="text-muted">Você está offline. Ative o modo online para receber corridas.</p>';
                 } else {
                     // Conectar
-                    statusText.textContent = 'Online';
+                    statusText.textContent = 'Online (10km)';
                     toggle.checked = true;
                     await loadAvailableRides();
                 }
@@ -783,57 +940,175 @@
                 }
             }
         }
+        async function getCurrentLocation(field = null) {
+            try {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(
+                        (position) => {
+                            const lat = position.coords.latitude;
+                            const lng = position.coords.longitude;
+                            
+                            userLocation = {
+                                lat: lat,
+                                lng: lng
+                            };
+                            
+                            // Atualizar mapa
+                            map.setView([lat, lng], 15);
+                            if (userMarker) {
+                                userMarker.setLatLng([lat, lng]);
+                            } else {
+                                userMarker = L.marker([lat, lng])
+                                    .addTo(map)
+                                    .bindPopup('Sua localização')
+                                    .openPopup();
+                            }
+                            
+                            // Buscar endereço a partir das coordenadas
+                            if (field === 'origin') {
+                                getAddressFromCoords(lat, lng, 'origin');
+                            }
+                        },
+                        (error) => {
+                            console.error('Erro ao obter localização:', error);
+                            alert('Não foi possível obter sua localização. Verifique as permissões do navegador.');
+                        }
+                    );
+                } else {
+                    alert('Geolocalização não é suportada por este navegador.');
+                }
+            } catch (error) {
+                console.error('Erro ao obter localização:', error);
+                return null;
+            }
+        }
 
         // Inicializar mapa
-        async function initializeMap() {
-            try {
-                // Aguardar um pouco para garantir que o DOM está pronto
-                await new Promise(resolve => setTimeout(resolve, 100));
-                
-                // Inicializar mapa
-                MapSystem.initMap('driverMap');
-                
-                console.log('Mapa do motorista inicializado com sucesso');
-            } catch (error) {
-                console.error('Erro ao inicializar mapa:', error);
-            }
+     // Inicializar mapa
+async function initializeMap() {
+    try {
+        // Aguardar um pouco para garantir que o DOM está pronto
+        await new Promise(resolve => setTimeout(resolve, 100));
+        
+        // Inicializar mapa centralizado em uma posição padrão (será atualizada)
+        map = L.map('driverMap').setView([-23.5505, -46.6333], 13); // Coordenadas de São Paulo
+        
+        // Adicionar camada do mapa
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+        
+        // Adicionar camada de tráfego (opcional)
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+        
+        // Obter localização do usuário
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const userLat = position.coords.latitude;
+                    const userLng = position.coords.longitude;
+                    
+                    // Centralizar mapa na localização do usuário
+                    map.setView([userLat, userLng], 15);
+                    
+                    // Adicionar marcador para a localização do usuário
+                    userMarker = L.marker([userLat, userLng])
+                        .addTo(map)
+                        .bindPopup('Sua localização atual')
+                        .openPopup();
+                    
+                    // Adicionar círculo para indicar precisão
+                    L.circle([userLat, userLng], {
+                        color: '#2196F3',
+                        fillColor: '#2196F3',
+                        fillOpacity: 0.2,
+                        radius: position.coords.accuracy / 2
+                    }).addTo(map);
+                    
+                    // Salvar localização do usuário
+                    userLocation = {
+                        lat: userLat,
+                        lng: userLng
+                    };
+                },
+                (error) => {
+                    console.error('Erro ao obter localização:', error);
+                    alert('Não foi possível obter sua localização. Verifique as permissões do navegador.');
+                },
+                {
+                    enableHighAccuracy: true,
+                    timeout: 10000,
+                    maximumAge: 60000
+                }
+            );
+        } else {
+            alert('Seu navegador não suporta geolocalização.');
         }
         
+        console.log('Mapa do motorista inicializado com sucesso');
+    } catch (error) {
+        console.error('Erro ao inicializar mapa:', error);
+    }
+}
+        
         // Iniciar monitoramento de localização
-        function startLocationMonitoring() {
-            if ('geolocation' in navigator) {
-                navigator.geolocation.watchPosition(
-                    async (position) => {
-                        const { latitude, longitude } = position.coords;
-                        userLocation = { lat: latitude, lng: longitude };
-                        
-                        try {
-                            const userId = localStorage.getItem('userId');
-                            await db.collection('users').doc(userId).update({
-                                currentLocation: new firebase.firestore.GeoPoint(latitude, longitude),
-                                lastLocationUpdate: new Date()
-                            });
-                            
-                            // Atualizar posição no mapa
-                            MapSystem.updateDriverPosition(latitude, longitude);
-                        } catch (error) {
-                            console.error('Erro ao atualizar localização:', error);
-                        }
-                    },
-                    (error) => {
-                        console.error('Erro de geolocalização:', error);
-                        if (window.utils && window.utils.showNotification) {
-                            utils.showNotification('Erro ao obter localização', 'error');
-                        }
-                    },
-                    {
-                        enableHighAccuracy: true,
-                        timeout: 20000,
-                        maximumAge: 60000
+       // Iniciar monitoramento de localização
+function startLocationMonitoring() {
+    if ('geolocation' in navigator) {
+        watchId = navigator.geolocation.watchPosition(
+            async (position) => {
+                const { latitude, longitude, accuracy } = position.coords;
+                userLocation = { lat: latitude, lng: longitude };
+                
+                try {
+                    const userId = localStorage.getItem('userId');
+                    await db.collection('users').doc(userId).update({
+                        currentLocation: new firebase.firestore.GeoPoint(latitude, longitude),
+                        lastLocationUpdate: new Date()
+                    });
+                    
+                    // Atualizar posição no mapa
+                    if (userMarker) {
+                        userMarker.setLatLng([latitude, longitude]);
+                    } else {
+                        userMarker = L.marker([latitude, longitude])
+                            .addTo(map)
+                            .bindPopup('Sua localização atual')
+                            .openPopup();
                     }
-                );
+                    
+                    // Centralizar mapa na nova localização (opcional)
+                    // map.setView([latitude, longitude], map.getZoom());
+                    
+                    // Atualizar círculo de precisão
+                    if (accuracyCircle) {
+                        map.removeLayer(accuracyCircle);
+                    }
+                    accuracyCircle = L.circle([latitude, longitude], {
+                        color: '#2196F3',
+                        fillColor: '#2196F3',
+                        fillOpacity: 0.2,
+                        radius: accuracy / 2
+                    }).addTo(map);
+                    
+                } catch (error) {
+                    console.error('Erro ao atualizar localização:', error);
+                }
+            },
+            (error) => {
+                console.error('Erro de geolocalização:', error);
+                if (window.utils && window.utils.showNotification) {
+                    utils.showNotification('Erro ao obter localização', 'error');
+                }
+            },
+            {
+                enableHighAccuracy: true,
+                timeout: 20000,
+                maximumAge: 60000
             }
-        }
+        );
+    }
+}
         
         // Configurar listener para notificações
         function setupNotificationListener() {
@@ -860,6 +1135,7 @@
         }
         
         // Lidar com nova notificação
+       // Lidar com nova notificação
         async function handleNewNotification(notification) {
             try {
                 if (notification.type === 'new_ride') {
@@ -867,7 +1143,24 @@
                     const rideDoc = await db.collection('rides').doc(notification.rideId).get();
                     if (rideDoc.exists) {
                         const rideData = rideDoc.data();
-                        showRideNotification(rideData, notification.id);
+                        
+                        // Verificar se a corrida está dentro do raio de 10km
+                        if (rideData.userLocation && userLocation) {
+                            const distance = getDistanceKm(
+                                userLocation.lat, userLocation.lng,
+                                rideData.userLocation.latitude, rideData.userLocation.longitude
+                            );
+                            
+                            if (distance <= 10) {
+                                showRideNotification(rideData, notification.id);
+                            } else {
+                                console.log('Notificação de corrida fora do raio de 10km, ignorando...');
+                                // Marcar como lida para não aparecer novamente
+                                await db.collection('notifications').doc(notification.id).update({
+                                    read: true
+                                });
+                            }
+                        }
                     }
                 }
             } catch (error) {
@@ -876,11 +1169,22 @@
         }
         
         // Mostrar notificação de corrida
+        // Mostrar notificação de corrida
         function showRideNotification(rideData, notificationId) {
             const notificationsDiv = document.getElementById('rideNotifications');
             
             if (notificationsDiv) {
                 notificationsDiv.style.display = 'block';
+                
+                // Calcular distância
+                let distanceText = 'Distância não disponível';
+                if (rideData.userLocation && userLocation) {
+                    const distance = getDistanceKm(
+                        userLocation.lat, userLocation.lng,
+                        rideData.userLocation.latitude, rideData.userLocation.longitude
+                    );
+                    distanceText = `${distance.toFixed(1)} km de você`;
+                }
                 
                 const notificationHTML = `
                     <div class="ride-notification" id="notification-${notificationId}">
@@ -895,12 +1199,12 @@
                                 <strong>${rideData.destination}</strong>
                             </div>
                             <div class="ride-detail">
-                                <span>💰 Valor:</span>
-                                <strong>R$ ${(rideData.estimatedPrice || 0).toFixed(2)}</strong>
+                                <span>📏 Distância:</span>
+                                <strong>${distanceText}</strong>
                             </div>
                             <div class="ride-detail">
-                                <span>📏 Distância:</span>
-                                <strong>${(rideData.estimatedDistance || 0).toFixed(1)} km</strong>
+                                <span>💰 Valor:</span>
+                                <strong>R$ ${(rideData.estimatedPrice || 0).toFixed(2)}</strong>
                             </div>
                             <div class="ride-detail">
                                 <span>⏱️ Tempo:</span>
@@ -1121,10 +1425,35 @@
                     .where('status', '==', 'requested')
                     .orderBy('createdAt', 'desc');
                 
-                ridesRef.onSnapshot((snapshot) => {
-                    snapshot.docChanges().forEach((change) => {
+                ridesRef.onSnapshot(async (snapshot) => {
+                    // Obter localização atual do motorista primeiro
+                    if (!userLocation) {
+                        console.log('Aguardando localização do motorista...');
+                        return;
+                    }
+                    
+                    snapshot.docChanges().forEach(async (change) => {
                         if (change.type === 'added') {
-                            addRideToList(change.doc);
+                            const rideData = change.doc.data();
+                            
+                            // Verificar se a corrida está dentro do raio de 10km
+                            if (rideData.userLocation) {
+                                const distance = getDistanceKm(
+                                    userLocation.lat, userLocation.lng,
+                                    rideData.userLocation.latitude, rideData.userLocation.longitude
+                                );
+                                
+                                console.log(`Distância até corrida: ${distance.toFixed(2)} km`);
+                                
+                                if (distance <= 10) {
+                                    addRideToList(change.doc);
+                                } else {
+                                    console.log('Corrida fora do raio de 10km, ignorando...');
+                                }
+                            } else {
+                                // Se não tiver localização, não mostrar a corrida
+                                console.log('Corrida sem localização, ignorando...');
+                            }
                         } else if (change.type === 'removed') {
                             removeRideFromList(change.doc.id);
                         }
@@ -1144,6 +1473,7 @@
         }
 
         // Adicionar corrida à lista
+       // Adicionar corrida à lista
         function addRideToList(rideDoc) {
             try {
                 const rideData = rideDoc.data();
@@ -1157,6 +1487,16 @@
                 // Verificar se já existe
                 if (document.getElementById(`ride-${rideDoc.id}`)) {
                     return;
+                }
+                
+                // Calcular distância
+                let distanceText = 'Distância não disponível';
+                if (rideData.userLocation && userLocation) {
+                    const distance = getDistanceKm(
+                        userLocation.lat, userLocation.lng,
+                        rideData.userLocation.latitude, rideData.userLocation.longitude
+                    );
+                    distanceText = `${distance.toFixed(1)} km de você`;
                 }
                 
                 const rideElement = document.createElement('div');
@@ -1178,7 +1518,7 @@
                             </div>
                         </div>
                         <div class="ride-details">
-                            <span class="distance">📏 ${distance} km</span>
+                            <span class="distance">📏 ${distanceText}</span>
                             <span class="duration">⏱️ ${duration} min</span>
                             <span class="fare">💰 ${window.utils && window.utils.showNotification ? utils.formatCurrency(fare) : `R$ ${fare.toFixed(2)}`}</span>
                         </div>
@@ -1281,12 +1621,13 @@
         }
 
         // Carregar corridas disponíveis
+       // Carregar corridas disponíveis
         async function loadAvailableRides() {
             try {
                 const ridesSnapshot = await db.collection('rides')
                     .where('status', '==', 'requested')
                     .orderBy('createdAt', 'desc')
-                    .limit(10)
+                    .limit(20)
                     .get();
                 
                 const ridesContainer = document.getElementById('ridesContainer');
@@ -1302,9 +1643,28 @@
                     return;
                 }
                 
-                ridesSnapshot.forEach(doc => {
-                    addRideToList(doc);
-                });
+                // Filtrar corridas dentro do raio de 10km
+                let hasRidesInRange = false;
+                
+                for (const doc of ridesSnapshot.docs) {
+                    const rideData = doc.data();
+                    
+                    if (rideData.userLocation && userLocation) {
+                        const distance = getDistanceKm(
+                            userLocation.lat, userLocation.lng,
+                            rideData.userLocation.latitude, rideData.userLocation.longitude
+                        );
+                        
+                        if (distance <= 10) {
+                            addRideToList(doc);
+                            hasRidesInRange = true;
+                        }
+                    }
+                }
+                
+                if (!hasRidesInRange) {
+                    ridesContainer.innerHTML = '<p class="text-muted">Nenhuma corrida disponível em um raio de 10km.</p>';
+                }
                 
             } catch (error) {
                 console.error('Erro ao carregar corridas:', error);
@@ -1315,15 +1675,21 @@
         }
 
         // Fazer logout
-        function logout() {
-            if (window.utils && window.utils.logout) {
-                utils.logout();
-            } else {
-                // Fallback se utils não estiver disponível
-                localStorage.clear();
-                window.location.href = 'login.html';
-            }
-        }
+       // Fazer logout
+function logout() {
+    // Parar o monitoramento de localização
+    if (watchId !== null && navigator.geolocation) {
+        navigator.geolocation.clearWatch(watchId);
+    }
+    
+    if (window.utils && window.utils.logout) {
+        utils.logout();
+    } else {
+        // Fallback se utils não estiver disponível
+        localStorage.clear();
+        window.location.href = 'login.html';
+    }
+}
     </script>
 </body>
 </html>
